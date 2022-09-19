@@ -2,18 +2,20 @@ import hashlib
 import tempfile
 import zipfile
 
-from .json2omgc import json2omgc
+from .read_json import read_json
+from .write_omgc import write_omgc
 
 
-def make_omgz(music_path: str, illustration_path: str,
-              title: str, composer: str, illustrator: str,
-              charts_info: list, omgz_path: str) -> None:
+def write_omgz(music_path: str, illustration_path: str,
+               title: str, composer: str, illustrator: str,
+               charts_info: list, omgz_path: str) -> None:
     """
     打包成 omgz 文件。
     """
     for chart_info in charts_info:
         chart_info['omgc_path'] = tempfile.mkstemp()[1]  # 获取临时 omgc 文件名
-        json2omgc(chart_info['json_path'], chart_info['omgc_path'])  # json -> omgc
+        instructions = read_json(chart_info['json_path'])
+        write_omgc(instructions, chart_info['omgc_path'])
         chart_info['md5'] = hashlib.md5(open(chart_info['omgc_path'], 'rb').read()).hexdigest()  # 计算 omgc 文件 MD5
 
     info_path = tempfile.mkstemp()[1]  # 获取临时 info.txt 文件名

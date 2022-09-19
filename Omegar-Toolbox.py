@@ -1,12 +1,13 @@
 import easygui
 
-import project_exporter
+import export_omgz
+import import_malody
 
 TITLE = 'Omegar Toolbox v0.1.220918'
 
 builtin_functions = {
-    '将项目导出为 OMGZ 文件': project_exporter.main,
-    '测试': lambda: print('Hello World!')
+    '导入 Malody 谱面': import_malody.main,
+    '导出 OMGZ 文件': export_omgz.main
 }
 
 if __name__ == '__main__':

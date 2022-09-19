@@ -1,39 +1,12 @@
 import json
 import math
-import struct
 
-# 画面高度
-FRAME_HEIGHT = 1000
-
-# 在 note 出现前提前几秒将其激活
-PREACTIVATING_TIME = 0.1
-
-# 指令列表
-ADD_NOTE = 0x01
-CHANGE_NOTE_POS = 0x02
-CHANGE_NOTE_TRACK = 0x03
-ACTIVATE_NOTE = 0x04
-CHANGE_LINE_POS = 0x10
-
-# 用 2 的整数次幂表示 note 属性以便通过加法运算合并属性
-NOTE_PROPERTIES = [
-    ('property_1', 1 << 0),
-    ('property_2', 1 << 1),
-    ('property_3', 1 << 2),
-    ('property_4', 1 << 3)
-]
-
-# 缓动类型
-LINEAR_SLOW_MOVING = 0x01
-SIN_SLOW_MOVING = 0x02
-
-# 写入格式
-WRITING_FORMATS = {int: '>i', float: '>f'}
+from .constants import *
 
 
-def json2omgc(json_path: str, omgc_path: str) -> None:
+def read_json(json_path: str) -> list:
     """
-    将 json 项目文件转换为 omgc 谱面文件。
+    将 json 项目文件读取为指令列表。
     """
     project_data = json.load(open(json_path))  # 读取 json 数据
     instructions = []  # 谱面指令列表
@@ -178,9 +151,4 @@ def json2omgc(json_path: str, omgc_path: str) -> None:
     for t in line_motions_processed:
         instructions.append((t, CHANGE_LINE_POS, *line_motions_processed[t]))  # 改变判定线位置函数指令
 
-    instructions_processed = [len(instructions)]
-    for instruction in sorted(instructions):
-        instructions_processed.extend(instruction)
-    with open(omgc_path, 'wb') as f:
-        for data in instructions_processed:
-            f.write(struct.pack(WRITING_FORMATS[type(data)], data))
+    return sorted(instructions)  # 将指令按时间排序
