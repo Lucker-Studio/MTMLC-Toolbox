@@ -3,6 +3,9 @@ import math
 
 from .constants import *
 
+print('没写完，勿使用')
+raise Exception()
+
 
 def read_json(json_path: str) -> list:
     """
@@ -10,12 +13,16 @@ def read_json(json_path: str) -> list:
     """
     project_data = json.load(open(json_path))  # 读取 json 数据
     instructions = []  # 谱面指令列表
-    beats = [j for i in project_data['beats'] for j in i]  # 节拍对应的秒数
+    beats = []  # 节拍对应的秒数
+    bpm_list = sorted((i[0]+i[1]/i[2], j) for i, j in project_data['bpm_list'])
+    last_time = bpm_list[0][0]  # 上一个 BPM 时间点
+    i = 1
 
-    def beat2sec(beat: int or float) -> float:
+    def beat2sec(beat: list) -> float:
         """
         将拍数转换为秒数。
         """
+        beat = beat[0]+beat[1]/beat[2]
         beat -= 1
         if int(beat) == beat:
             beat = int(beat)
@@ -48,20 +55,21 @@ def read_json(json_path: str) -> list:
             val_0 = cur_val  # 初值
             val_1 = cur_val = change['target']  # 末值
             moving_type = change['type']
-            if moving_type == LINEAR_SLOW_MOVING:  # 线性缓动
-                k = (val_1-val_0)/(t_1-t_0)
-                b = (t_1*val_0-t_0*val_1)/(t_1-t_0)
-                changes_processed[t_0] = (moving_type, k, b)
-            elif moving_type == SIN_SLOW_MOVING:  # 正弦缓动
-                A = (val_0-val_1)/2
-                o = math.pi/(t_0-t_1)
-                p = o*(t_0+t_1)/2
-                b = (val_0+val_1)/2
-                changes_processed[t_0] = (moving_type, A, o, p, b)
+            if t_0 != t_1:  # 若相等则为瞬时事件
+                if moving_type == LINEAR_SLOW_MOVING:  # 线性缓动
+                    k = (val_1-val_0)/(t_1-t_0)
+                    b = (t_1*val_0-t_0*val_1)/(t_1-t_0)
+                    changes_processed[t_0] = (moving_type, k, b)
+                elif moving_type == SIN_SLOW_MOVING:  # 正弦缓动
+                    A = (val_0-val_1)/2
+                    o = math.pi/(t_0-t_1)
+                    p = o*(t_0+t_1)/2
+                    b = (val_0+val_1)/2
+                    changes_processed[t_0] = (moving_type, A, o, p, b)
             changes_processed[t_1] = (LINEAR_SLOW_MOVING, 0, val_1)
         return changes_processed
 
-    for note in project_data['notes']:
+    for note in project_data['note_list']:
         start_time = beat2sec(note['start'])  # 判定秒数
         end_time = beat2sec(note['end'])  # 结束秒数
         key_points = list((beat2sec(i), j) for i, j in note['speed_key_points'])  # 转换关键点列表
@@ -70,26 +78,27 @@ def read_json(json_path: str) -> list:
         key_points_abc = []  # 位置函数列表
 
         for i in range(len(key_points)-1):  # 通过关键点计算二次函数
-            k = (key_points[i+1][1]-key_points[i][1]) / (key_points[i+1][0]-key_points[i][0])  # 速度函数斜率
-            a = k/2  # 对速度函数做不定积分
-            b = key_points[i][1]-k*key_points[i][0]  # 将当前关键点代入速度函数求解 b
+            if key_points[i][0] != key_points[i+1][0]:  # 若相等则为瞬时变速事件，无需处理
+                k = (key_points[i+1][1]-key_points[i][1]) / (key_points[i+1][0]-key_points[i][0])  # 速度函数斜率
+                a = k/2  # 对速度函数做不定积分
+                b = key_points[i][1]-k*key_points[i][0]  # 将当前关键点代入速度函数求解 b
 
-            def first_two(x: float) -> float:
-                """
-                计算二次函数前两项之和。
-                """
-                return a*x**2+b*x
+                def first_two(x: float) -> float:
+                    """
+                    计算二次函数前两项之和。
+                    """
+                    return a*x**2+b*x
 
-            # 将当前关键点代入二次函数求解 c
-            c = cur_point_pos-first_two(key_points[i][0])
-            key_points_abc.append([key_points[i][0], a, b, c])
-            if key_points[i][0] <= start_time < key_points[i+1][0]:  # 开始时间处于当前区间
-                # 计算 note 开始时的位置以便后续计算显示长度
-                start_pos = first_two(start_time)+c
-            if key_points[i][0] <= end_time < key_points[i+1][0]:  # 结束时间处于当前区间
-                # 计算 note 结束时的位置以便后续计算显示长度
-                end_pos = first_two(end_time)+c
-            cur_point_pos = first_two(key_points[i+1][0])+c  # 将下一个关键点代入二次函数
+                # 将当前关键点代入二次函数求解 c
+                c = cur_point_pos-first_two(key_points[i][0])
+                key_points_abc.append([key_points[i][0], a, b, c])
+                if key_points[i][0] <= start_time < key_points[i+1][0]:  # 开始时间处于当前区间
+                    # 计算 note 开始时的位置以便后续计算显示长度
+                    start_pos = first_two(start_time)+c
+                if key_points[i][0] <= end_time < key_points[i+1][0]:  # 结束时间处于当前区间
+                    # 计算 note 结束时的位置以便后续计算显示长度
+                    end_pos = first_two(end_time)+c
+                cur_point_pos = first_two(key_points[i+1][0])+c  # 将下一个关键点代入二次函数
         for i in range(len(key_points_abc)):
             # 使 note 判定时的位置为 0，即与判定线重合
             key_points_abc[i][-1] -= start_pos
@@ -129,7 +138,7 @@ def read_json(json_path: str) -> list:
 
         instr_add = [0]*10  # 初始化长度为 10 的数组
         instr_add[0] = note['id']  # note 的 ID
-        instr_add[1] = sum(j for i, j in NOTE_PROPERTIES if note[i])  # note 的属性
+        instr_add[1] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j))  # 用 2 的整数次幂表示 note 的属性
         instr_add[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
         instr_add[5] = note['initial_showing_track']  # 初始显示轨道
         instr_add[6] = note['judging_track']  # 实际判定轨道

@@ -83,6 +83,6 @@ def main() -> None:
                 break
 
         if data:
-            json_path = easygui.fileopenbox('请选择谱面项目文件', '导出 OMGZ 文件', '*.json')
+            json_path = easygui.fileopenbox('请选择谱面工程文件', '导出 OMGZ 文件', '*.json')
             if json_path:
                 charts_info.append({'difficulty': difficulty, 'diff_number': diff_number, 'writer': writer, 'json_path': json_path})
