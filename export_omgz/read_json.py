@@ -14,10 +14,8 @@ def read_json(json_path: str) -> list:
     beat_time_spb = [(0, project_data['music_offset'], beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
     i = 1
     while i < len(beat_spb):
-        beat_time_spb.append((beat_spb[i][0], beat_time_spb[i][1]+(beat_spb[i][0]-beat_spb[i-1][0])*beat_spb[i-1][1], beat_spb[i][1]))
+        beat_time_spb.append((beat_spb[i][0], beat_time_spb[i-1][1]+(beat_spb[i][0]-beat_spb[i-1][0])*beat_spb[i-1][1], beat_spb[i][1]))
         i += 1
-
-    global_key_points = key_points = list((beat2sec(i), j) for i, j in project_data['speed_key_points'])
 
     def beat2sec(beat: list) -> float:
         """
@@ -25,17 +23,17 @@ def read_json(json_path: str) -> list:
         """
         beat = beat[0]+beat[1]/beat[2]
         i = 0
-        while i+1 < len(beat_time_spb) and beat_time_spb[i+1] <= beat:
+        while i+1 < len(beat_time_spb) and beat_time_spb[i+1][0] <= beat:
             i += 1
-        return beat_time_spb[i+1][1]+beat_time_spb[i+1][2]*(beat-beat_time_spb[i-1][0])
+        return beat_time_spb[i][1]+beat_time_spb[i][2]*(beat-beat_time_spb[i][0])
 
-    def process_changes(initial_val: int, changes: list, include_first: bool = False) -> dict:
+    global_key_points = key_points = list((beat2sec(i), j) for i, j in project_data['global_speed_key_points'])
+
+    def process_changes(initial_val: int, changes: list) -> dict:
         """
         处理缓动。
         """
         changes_processed = {}
-        if include_first:
-            changes_processed[0] = (LINEAR_SLOW_MOVING, 0, initial_val)
         cur_val = initial_val
         for change in changes:
             t_0 = beat2sec(change['start'])  # 初时间
@@ -57,7 +55,7 @@ def read_json(json_path: str) -> list:
             changes_processed[t_1] = (LINEAR_SLOW_MOVING, 0, val_1)
         return changes_processed
 
-    for id, note in enumerate(project_data['note_list']):
+    for note_id, note in enumerate(project_data['note_list']):
         start_time = beat2sec(note['start'])  # 判定秒数
         end_time = beat2sec(note['end'])  # 结束秒数
         key_points = list((beat2sec(i), j) for i, j in note['speed_key_points'])  # 转换关键点列表
@@ -94,24 +92,18 @@ def read_json(json_path: str) -> list:
             # 使 note 判定时的位置为 0，即与判定线重合
             key_points_abc[i][-1] -= start_pos
 
-        if abs(key_points_abc[0][-1]) <= FRAME_HEIGHT:  # note 开始就可见
+        if 0 <= key_points_abc[0][-1] <= FRAME_HEIGHT:  # note 开始就可见
             activate_time = -PREACTIVATING_TIME  # 提前激活 note
         else:
-            for i in range(len(key_points_abc)-1):
+            for i in range(len(key_points_abc)):
                 t_0, a, b, c = key_points_abc[i]
-                t_1 = key_points_abc[i+1][0]
+                t_1 = key_points_abc[i+1][0] if i+1 < len(key_points_abc) else math.inf
 
                 def solve(pos):
                     """
                     解方程，返回区间内的最小解，若无解则返回 inf。
                     """
-                    if b == 0:  # 不是方程
-                        return math.inf
-                    elif a == 0:  # 一元一次方程
-                        x = (pos-c)/b
-                        if t_0 <= x <= t_1:
-                            return x
-                    else:  # 一元二次方程
+                    if a != 0:  # 一元二次方程
                         d = b**2-4*a*(c-pos)  # 求根判别式
                         if d >= 0:  # 在实数范围内有解
                             x_1 = (-b-math.sqrt(d))/(2*a)  # 较小的根
@@ -120,15 +112,19 @@ def read_json(json_path: str) -> list:
                                 return x_1
                             elif t_0 <= x_2 <= t_1:
                                 return x_2
+                    elif b != 0:  # 一元一次方程
+                        x = (pos-c)/b
+                        if t_0 <= x <= t_1:
+                            return x
                     return math.inf
 
-                t = min(solve(FRAME_HEIGHT), solve(-FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
+                t = min(solve(0), solve(FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
                 if t != math.inf:
                     activate_time = t-PREACTIVATING_TIME
                     break
 
         instr_add = [0]*10  # 初始化长度为 10 的数组
-        instr_add[0] = id  # note 的 ID
+        instr_add[0] = note_id  # note 的 ID
         instr_add[1] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j))  # 用 2 的整数次幂表示 note 的属性
         instr_add[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
         instr_add[5] = note['initial_showing_track']  # 初始显示轨道
@@ -136,18 +132,19 @@ def read_json(json_path: str) -> list:
         instr_add[7] = float(start_time)  # 开始时间
         instr_add[8] = float(end_time)  # 结束时间
         instr_add[9] = float(end_pos-start_pos)  # 显示长度
-        instructions.append((-1, ADD_NOTE, *instr_add))  # 添加 note 指令
+        instructions.append((-PREACTIVATING_TIME, ADD_NOTE, *instr_add))  # 添加 note 指令
 
-        instructions.append((activate_time, ACTIVATE_NOTE, note['id']))  # 激活 note 指令
+        instructions.append((activate_time, ACTIVATE_NOTE, note_id))  # 激活 note 指令
 
         for t, a, b, c in key_points_abc:
-            instructions.append((float(t), CHANGE_NOTE_POS, note['id'], float(a), float(b), float(c)))  # 改变 note 位置函数指令
+            instructions.append((float(t), CHANGE_NOTE_POS, note_id, float(a), float(b), float(c)))  # 改变 note 位置函数指令
 
         showing_track_changes_processed = process_changes(note['initial_showing_track'], note['showing_track_changes'])
         for t in showing_track_changes_processed:
             instructions.append((t, CHANGE_NOTE_TRACK, *showing_track_changes_processed[t]))  # 改变 note 轨道函数指令
 
-    line_motions_processed = process_changes(project_data['line']['initial_position'], project_data['line']['motions'], True)
+    instructions.append((-PREACTIVATING_TIME, CHANGE_LINE_POS, LINEAR_SLOW_MOVING, 0, project_data['line']['initial_position']))
+    line_motions_processed = process_changes(project_data['line']['initial_position'], project_data['line']['motions'])
     for t in line_motions_processed:
         instructions.append((t, CHANGE_LINE_POS, *line_motions_processed[t]))  # 改变判定线位置函数指令
 

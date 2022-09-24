@@ -1,3 +1,4 @@
+import os
 import pickle
 
 import easygui
@@ -14,31 +15,39 @@ def main() -> None:
     charts_info = []
     omgz_path = ''
 
+    using_template = False
     if easygui.ynbox('是否要使用已有的模板？', '导出 OMGZ 文件', ('是', '否')):
-        pickle_path = easygui.fileopenbox('请选择生成设置文件', '导出 OMGZ 文件', '*.pkl')
+        pickle_path = easygui.fileopenbox('请选择模板文件', '导出 OMGZ 文件', '*.pkl')
         try:
-            music_path, illustration_path, title, composer, illustrator,  charts_info = pickle.load(open(pickle_path, 'rb'))
+            music_path, illustration_path, title, composer, illustrator, charts_info = pickle.load(open(pickle_path, 'rb'))
+            using_template = True
         except:
-            easygui.msgbox('未成功读取模板文件，将不使用模板。')
+            easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出 OMGZ 文件', '好的')
 
-    data = title, composer, illustrator
-    while True:
-        data = easygui.multenterbox(
-            '请输入歌曲信息：', '导出 OMGZ 文件', ['曲名', '曲师', '画师'], data)
-        if not data:
+    if using_template:
+        check_ok = os.path.isfile(music_path) and os.path.isfile(illustration_path)
+        if not check_ok:
+            easygui.msgbox('模板中的部分文件路径已经失效，需要重新选择。', '导出 OMGZ 文件', '好的')
+
+    if not using_template or check_ok and not easygui.ynbox(f'是否确认以下信息？\n\n曲名：{title}\n曲师：{composer}\n画师：{illustrator}\n歌曲音频：{music_path}\n曲绘图片：{illustration_path}', '导出 OMGZ 文件', ('确认', '更改')):
+        data = title, composer, illustrator
+        while True:
+            data = easygui.multenterbox(
+                '请输入歌曲信息：', '导出 OMGZ 文件', ['曲名', '曲师', '画师'], data)
+            if not data:
+                return
+            if not all(data):
+                easygui.msgbox('请将歌曲信息填写完整！', '导出 OMGZ 文件', '哦~')
+            else:
+                title, composer, illustrator = data
+                break
+
+        music_path = easygui.fileopenbox('请选择歌曲音频', '导出 OMGZ 文件', music_path)
+        if not music_path:
             return
-        if not all(data):
-            easygui.msgbox('请将歌曲信息填写完整！', '导出 OMGZ 文件', '哦~')
-        else:
-            title, composer, illustrator = data
-            break
-
-    music_path = easygui.fileopenbox('请选择歌曲音频', '导出 OMGZ 文件', music_path)
-    if not music_path:
-        return
-    illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出 OMGZ 文件', illustration_path)
-    if not illustration_path:
-        return
+        illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出 OMGZ 文件', illustration_path)
+        if not illustration_path:
+            return
 
     while True:
         if charts_info:  # 至少添加一张谱面
@@ -47,6 +56,16 @@ def main() -> None:
             if not ch:
                 return
             if ch == '完成添加':
+                if using_template:
+                    if easygui.ynbox('是否更新模板？', '导出 OMGZ 文件', ('是', '否')):
+                        pickle.dump((music_path, illustration_path, title, composer, illustrator, charts_info), open(pickle_path, 'wb'))
+                        easygui.msgbox('模板更新成功！', '导出 OMGZ 文件', '好耶')
+                else:
+                    if easygui.ynbox('是否保存模板供以后使用？', '导出 OMGZ 文件', ('是', '否')):
+                        pickle_path = easygui.filesavebox('保存模板', '导出 OMGZ 文件', title+'.pkl')
+                        if pickle_path:
+                            pickle.dump((music_path, illustration_path, title, composer, illustrator, charts_info), open(pickle_path, 'wb'))
+                            easygui.msgbox('模板保存成功！', '导出 OMGZ 文件', '好耶')
                 if not omgz_path:
                     omgz_path = title+'.omgz'
                 omgz_path = easygui.filesavebox('保存 OMGZ 文件', default=omgz_path)
@@ -54,11 +73,6 @@ def main() -> None:
                     try:
                         write_omgz(music_path, illustration_path, title, composer, illustrator, charts_info, omgz_path)
                         easygui.msgbox('导出成功！', '导出 OMGZ 文件', '好耶')
-                        if easygui.ynbox('是否保存模板供以后使用？', '导出 OMGZ 文件', ('是', '否')):
-                            pickle_path = easygui.filesavebox('保存生成设置', '导出 OMGZ 文件', title+'.pkl')
-                            if pickle_path:
-                                pickle.dump((music_path, illustration_path, title, composer, illustrator, charts_info, omgz_path), open(pickle_path, 'wb'))
-                                easygui.msgbox('生成设置保存成功！', '导出 OMGZ 文件', '好耶')
                     except:
                         easygui.exceptionbox('出错啦！', '导出 OMGZ 文件')
                     return
