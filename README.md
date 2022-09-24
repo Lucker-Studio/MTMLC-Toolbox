@@ -69,9 +69,10 @@ pipenv run pip install easygui pyinstaller
 ### 1. 工程文件（`.json`，json 格式）
 
 - `project_name`：工程名称。
-- `music_path`：OGG 音频文件路径。
+- `music_path`：音频文件路径。
 - `music_offset`：第 $0$ 拍对应音乐第几秒。
 - `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍（从 $0$ 开始）起 BPM **瞬间变为** `v`。
+- `global_speed_key_points`：全局流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
 - `note_list`：note 列表。
   - `start`：判定节拍（`[a, b, c]`）。
   - `end`：结束节拍（瞬时 note 的 `start` 与  `end` 相等）。
@@ -82,7 +83,8 @@ pipenv run pip install easygui pyinstaller
     - `end`：终止节拍（瞬时事件的 `start` 与  `end` 相等）。
     - `target`：目标轨道。
     - `type`：缓动类型（$1$ 为线性缓动，$2$ 为正弦缓动；瞬时事件的缓动类型任意）。
-  - `speed_key_points`：速度关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时 BPM 为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
+  - `speed_key_points`：流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
+  - `free_from_global_speed`：是否不受全局流速影响（当此项为 `true` 且 `speed_key_points` 不为空时，将两组关键点叠加）。
   - `properties`：属性（`value` 的类型均为 `bool`）。
     - `property_1`：属性 1。
     - `property_2`：属性 2。

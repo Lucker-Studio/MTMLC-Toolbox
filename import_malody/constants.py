@@ -1,0 +1,2 @@
+# 判定线初始位置
+LINE_INITIAL_POSITION = 800

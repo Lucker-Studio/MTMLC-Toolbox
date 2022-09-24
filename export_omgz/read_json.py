@@ -8,7 +8,7 @@ def read_json(json_path: str) -> list:
     """
     将 json 项目文件读取为指令列表。
     """
-    project_data = json.load(open(json_path))  # 读取 json 数据
+    project_data = json.load(open(json_path, encoding='utf-8'))  # 读取 json 数据
     instructions = []  # 谱面指令列表
     beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in project_data['bpm_list'])
     beat_time_spb = [(0, project_data['music_offset'], beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
@@ -16,6 +16,8 @@ def read_json(json_path: str) -> list:
     while i < len(beat_spb):
         beat_time_spb.append((beat_spb[i][0], beat_time_spb[i][1]+(beat_spb[i][0]-beat_spb[i-1][0])*beat_spb[i-1][1], beat_spb[i][1]))
         i += 1
+
+    global_key_points = key_points = list((beat2sec(i), j) for i, j in project_data['speed_key_points'])
 
     def beat2sec(beat: list) -> float:
         """
@@ -55,10 +57,13 @@ def read_json(json_path: str) -> list:
             changes_processed[t_1] = (LINEAR_SLOW_MOVING, 0, val_1)
         return changes_processed
 
-    for note in project_data['note_list']:
+    for id, note in enumerate(project_data['note_list']):
         start_time = beat2sec(note['start'])  # 判定秒数
         end_time = beat2sec(note['end'])  # 结束秒数
         key_points = list((beat2sec(i), j) for i, j in note['speed_key_points'])  # 转换关键点列表
+        if not note['free_from_global_speed']:
+            key_points += global_key_points
+        key_points.sort()
         key_points.append((math.inf, key_points[-1][1]))
         cur_point_pos = 0  # 当前关键点的 note 位置
         key_points_abc = []  # 位置函数列表
@@ -123,7 +128,7 @@ def read_json(json_path: str) -> list:
                     break
 
         instr_add = [0]*10  # 初始化长度为 10 的数组
-        instr_add[0] = note['id']  # note 的 ID
+        instr_add[0] = id  # note 的 ID
         instr_add[1] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j))  # 用 2 的整数次幂表示 note 的属性
         instr_add[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
         instr_add[5] = note['initial_showing_track']  # 初始显示轨道

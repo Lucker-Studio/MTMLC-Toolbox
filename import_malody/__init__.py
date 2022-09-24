@@ -12,24 +12,15 @@ def main() -> None:
         return
 
     charts_path = []
-    music_path = []
     for i in os.listdir(project_folder):
         path = os.path.join(project_folder, i)
         if os.path.isfile(path):
             if path.endswith('.mc'):
                 charts_path.append(path)
-            elif path.endswith('.ogg'):
-                music_path.append(path)
 
     if not charts_path:
         easygui.msgbox('未找到 Malody 谱面文件，请参照教程正确处理和选择文件夹！', '导入 Malody 谱面', '好的')
         return
-    if len(music_path) == 1:
-        music_path = music_path[0]
-    else:
-        easygui.msgbox('请确保文件夹中有且只有一个 OGG 音频文件！', '导入 Malody 谱面', '好的')
-        return
-
     charts_data = {}
     for mc_path in charts_path:
         data = read_malody(mc_path)
@@ -45,12 +36,12 @@ def main() -> None:
     for name in charts_data.keys():
         if name in charts_name:
             try:
-                write_omegar(charts_data[name], music_path, os.path.join(project_folder, name+'.json'))
+                write_omegar(charts_data[name], os.path.join(project_folder, name+'.json'))
                 ok_list.append(name)
             except:
                 not_ok_list.append(name)
 
-    msg = '{len(ok_list)} 个谱面导入成功'+'。；'[bool(ok_list)]
+    msg = f'{len(ok_list)} 个谱面导入成功'+'。；'[bool(ok_list)]
     for i in ok_list:
         msg += '\n'+i
     if not_ok_list:
