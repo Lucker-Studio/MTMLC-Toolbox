@@ -28,8 +28,10 @@ def main() -> None:
 
     if len(charts_data) > 1:
         charts_name = easygui.multchoicebox('请选择要导入的谱面（可多选）', '导入 Malody 谱面', charts_data.keys())
-    if not charts_name:
-        return
+        if not charts_name:
+            return
+    else:
+        charts_name = list(charts_data.keys())
 
     ok_list = []
     not_ok_list = []

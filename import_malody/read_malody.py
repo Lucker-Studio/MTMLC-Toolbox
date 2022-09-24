@@ -7,7 +7,7 @@ def read_malody(mc_path: str) -> dict:
     """
     读取 Malody 谱面。
     """
-    mc_data = json.load(open(mc_path))
+    mc_data = json.load(open(mc_path, encoding='utf-8'))
     project_data = {}
     project_data['project_name'] = mc_data['meta']['song']['title']+' '+mc_data['meta']['version']
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in mc_data['time'])
@@ -24,7 +24,7 @@ def read_malody(mc_path: str) -> dict:
             cur_base = i[2]
         elif i[1] == 'rate':
             cur_rate = i[2]
-        speed[i[0]] = cur_base*cur_rate
+        speed[tuple(i[0])] = cur_base*cur_rate
     speed = sorted(speed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
     speed_key_points = [speed[0]]
     for i in range(len(speed)-1):
@@ -32,6 +32,7 @@ def read_malody(mc_path: str) -> dict:
         speed_key_points.append(speed[i+1])
     project_data['global_speed_key_points'] = speed_key_points
 
+    project_data['note_list'] = []
     for i in mc_data['note']:
         if 'column' in i:
             project_data['note_list'].append({
@@ -46,7 +47,7 @@ def read_malody(mc_path: str) -> dict:
             })
         elif 'sound' in i:
             project_data['music_path'] = i['sound']
-            project_data['music_offset'] = i['offset']/1000
+            project_data['music_offset'] = i.get('offset', 0)/1000
 
     project_data['line'] = {'initial_position': LINE_INITIAL_POSITION, 'motions': []}
     return project_data
