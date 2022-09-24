@@ -3,9 +3,6 @@ import math
 
 from .constants import *
 
-print('没写完，勿使用')
-raise Exception()
-
 
 def read_json(json_path: str) -> list:
     """
@@ -13,33 +10,22 @@ def read_json(json_path: str) -> list:
     """
     project_data = json.load(open(json_path))  # 读取 json 数据
     instructions = []  # 谱面指令列表
-    beats = []  # 节拍对应的秒数
-    bpm_list = sorted((i[0]+i[1]/i[2], j) for i, j in project_data['bpm_list'])
-    last_time = bpm_list[0][0]  # 上一个 BPM 时间点
+    beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in project_data['bpm_list'])
+    beat_time_spb = [(0, project_data['music_offset'], beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
     i = 1
+    while i < len(beat_spb):
+        beat_time_spb.append((beat_spb[i][0], beat_time_spb[i][1]+(beat_spb[i][0]-beat_spb[i-1][0])*beat_spb[i-1][1], beat_spb[i][1]))
+        i += 1
 
     def beat2sec(beat: list) -> float:
         """
         将拍数转换为秒数。
         """
         beat = beat[0]+beat[1]/beat[2]
-        beat -= 1
-        if int(beat) == beat:
-            beat = int(beat)
-        if beat < 0:
-            # 根据开头两拍确定的直线计算
-            return (beats[1]-beats[0])*beat+beats[0]
-        elif beat > len(beats)-1:
-            # 根据结尾两拍确定的直线计算
-            return (beats[-1]-beats[-2])*(beat-len(beats)+1)+beats[-1]
-        elif type(beat) == int:
-            # 直接作为下标获取
-            return beats[beat]
-        else:
-            # 根据前后两拍确定的直线计算
-            last_beat = math.floor(beat)
-            next_beat = math.ceil(beat)
-            return beats[last_beat]*(next_beat-beat)+beats[next_beat]*(beat-last_beat)
+        i = 0
+        while i+1 < len(beat_time_spb) and beat_time_spb[i+1] <= beat:
+            i += 1
+        return beat_time_spb[i+1][1]+beat_time_spb[i+1][2]*(beat-beat_time_spb[i-1][0])
 
     def process_changes(initial_val: int, changes: list, include_first: bool = False) -> dict:
         """

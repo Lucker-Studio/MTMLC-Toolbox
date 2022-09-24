@@ -70,6 +70,7 @@ pipenv run pip install easygui pyinstaller
 
 - `project_name`：工程名称。
 - `music_path`：OGG 音频文件路径。
+- `music_offset`：第 $0$ 拍对应音乐第几秒。
 - `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍（从 $0$ 开始）起 BPM **瞬间变为** `v`。
 - `note_list`：note 列表。
   - `start`：判定节拍（`[a, b, c]`）。
