@@ -10,10 +10,11 @@ def read_json(json_path: str) -> list:
     """
     project_data = json.load(open(json_path, encoding='utf-8'))  # 读取 json 数据
     instructions = []  # 谱面指令列表
-    beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in project_data['bpm_list'])
+    beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in project_data['bpm_list'])  # 节拍、每拍秒数
     beat_time_spb = [(0, project_data['music_offset'], beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
     i = 1
     while i < len(beat_spb):
+        # 计算上一个 BPM 时间点后经过的秒数
         beat_time_spb.append((beat_spb[i][0], beat_time_spb[i-1][1]+(beat_spb[i][0]-beat_spb[i-1][0])*beat_spb[i-1][1], beat_spb[i][1]))
         i += 1
 
@@ -23,11 +24,12 @@ def read_json(json_path: str) -> list:
         """
         beat = beat[0]+beat[1]/beat[2]
         i = 0
+        # 找到上一个 BPM 时间点
         while i+1 < len(beat_time_spb) and beat_time_spb[i+1][0] <= beat:
             i += 1
         return beat_time_spb[i][1]+beat_time_spb[i][2]*(beat-beat_time_spb[i][0])
 
-    global_key_points = key_points = list((beat2sec(i), j) for i, j in project_data['global_speed_key_points'])
+    global_key_points = [(beat2sec(i), j) for i, j in project_data['global_speed_key_points']]  # 转换全局关键点列表
 
     def process_changes(initial_val: int, changes: list) -> dict:
         """
@@ -58,9 +60,9 @@ def read_json(json_path: str) -> list:
     for note_id, note in enumerate(project_data['note_list']):
         start_time = beat2sec(note['start'])  # 判定秒数
         end_time = beat2sec(note['end'])  # 结束秒数
-        key_points = list((beat2sec(i), j) for i, j in note['speed_key_points'])  # 转换关键点列表
-        if not note['free_from_global_speed']:
-            key_points += global_key_points
+        key_points = [(beat2sec(i), j) for i, j in note['speed_key_points']]  # 转换关键点列表
+        if not note['free_from_global_speed']:  # 受全局速度影响
+            key_points += global_key_points  # 合并两组关键点
         key_points.sort()
         key_points.append((math.inf, key_points[-1][1]))
         cur_point_pos = 0  # 当前关键点的 note 位置
