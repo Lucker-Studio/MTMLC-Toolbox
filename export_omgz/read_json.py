@@ -134,20 +134,20 @@ def read_json(json_path: str) -> list:
         instr_add[7] = float(start_time)  # 开始时间
         instr_add[8] = float(end_time)  # 结束时间
         instr_add[9] = float(end_pos-start_pos)  # 显示长度
-        instructions.append((-PREACTIVATING_TIME, ADD_NOTE, *instr_add))  # 添加 note 指令
+        instructions.append((-PREACTIVATING_TIME, ADD_NOTE, instr_add))  # 添加 note 指令
 
-        instructions.append((activate_time, ACTIVATE_NOTE, note_id))  # 激活 note 指令
+        instructions.append((activate_time, ACTIVATE_NOTE, (note_id,)))  # 激活 note 指令
 
         for t, a, b, c in key_points_abc:
-            instructions.append((float(t), CHANGE_NOTE_POS, note_id, float(a), float(b), float(c)))  # 改变 note 位置函数指令
+            instructions.append((float(t), CHANGE_NOTE_POS, (note_id, float(a), float(b), float(c))))  # 改变 note 位置函数指令
 
         showing_track_changes_processed = process_changes(note['initial_showing_track'], note['showing_track_changes'])
         for t in showing_track_changes_processed:
-            instructions.append((t, CHANGE_NOTE_TRACK, *showing_track_changes_processed[t]))  # 改变 note 轨道函数指令
+            instructions.append((t, CHANGE_NOTE_TRACK, showing_track_changes_processed[t]))  # 改变 note 轨道函数指令
 
-    instructions.append((-PREACTIVATING_TIME, CHANGE_LINE_POS, LINEAR_SLOW_MOVING, 0, project_data['line']['initial_position']))
+    instructions.append((-PREACTIVATING_TIME, CHANGE_LINE_POS, (LINEAR_SLOW_MOVING, 0, project_data['line']['initial_position'])))
     line_motions_processed = process_changes(project_data['line']['initial_position'], project_data['line']['motions'])
     for t in line_motions_processed:
-        instructions.append((t, CHANGE_LINE_POS, *line_motions_processed[t]))  # 改变判定线位置函数指令
+        instructions.append((t, CHANGE_LINE_POS, line_motions_processed[t]))  # 改变判定线位置函数指令
 
     return sorted(instructions)  # 将指令按时间排序

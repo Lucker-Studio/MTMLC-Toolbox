@@ -19,19 +19,18 @@ python Omegar-Toolbox.py
 
 ##### 注意事项
 
-- Windows 的 Python 版本为 3.8+3.10（Windows 7 仅支持 3.8），WSL 的 Python 版本为 3.10。
-- 必须先在 WSL 中创建虚拟环境，否则会因要求的 Python 版本与 `Pipfile` 中的不同而报错。
+- 所用的 Python 版本为 3.10。
 - 直接 `wsl pipenv` 会因 `pipenv` 可执行文件不在 `$PATH` 中而提示“未找到命令”，需借助 `python -m` 运行。
 
 ```shell
-wsl pip install -U pipenv
 pip install -U pipenv
+wsl pip install -U pipenv
 
+pipenv --python 3.10
 wsl python -m pipenv --python 3.10
-pipenv --python 3.8
 
-wsl python -m pipenv run pip install easygui pyinstaller
-pipenv run pip install easygui pyinstaller
+pipenv run pip install easygui pygame pyinstaller
+wsl python -m pipenv run pip install easygui pygame pyinstaller
 ```
 
 #### 编译
@@ -89,7 +88,7 @@ pipenv run pip install easygui pyinstaller
 
 该文件由一个整型数据 $n$ 和 $n$ 个指令构成。
 
-指令格式：时间（单位为 s，浮点型，若为负数则表示游戏开始前执行） + 类型 + 参数。
+指令格式：时间（单位为 s，浮点型，若为负数则表示游戏开始前执行） + 类型 + 参数数量 + 参数。
 
 指令列表如下：
 
@@ -148,6 +147,6 @@ pipenv run pip install easygui pyinstaller
 ### 4. 歌曲压缩包（`.omgz`，zip 格式）
 
 - 歌曲信息文件：`info.txt`
-- 歌曲音频：`music.ogg`
+- 歌曲音频：`music.mp3`
 - 曲绘：`illustration.png`
 - 谱面文件： `charts/(等级名称).omgc`

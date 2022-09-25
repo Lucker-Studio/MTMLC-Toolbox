@@ -11,7 +11,7 @@ def main() -> None:
     title = ''
     composer = ''
     illustrator = ''
-    music_path = '*.ogg'
+    music_path = '*.mp3'
     illustration_path = '*.png'
     charts_info = []
 

@@ -7,6 +7,8 @@ import zipfile
 import easygui
 import pygame
 
+from common_constants import *
+
 
 def main():
     omgz_path = easygui.fileopenbox('选择 OMGZ 文件', '谱面预览', '*.omgz')
@@ -44,6 +46,10 @@ def main():
         data_reader = data_reader_gen()
 
         def read_data(type_: type):
-            return struct.unpack({int: '>i', float: '>f'}[type_], next(data_reader))
+            return struct.unpack({int: '>i', float: '>f'}[type_], next(data_reader))[0]
 
-        
+        instr_list = []
+        for i in range(read_data(int)):
+            time = read_data(float)
+            instr_type = read_data(int)
+            param_cnt = read_data(int)

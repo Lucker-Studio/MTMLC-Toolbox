@@ -10,10 +10,10 @@ def write_omgc(instructions: list, omgc_path: str) -> None:
     if DEBUG_MODE:
         debug_log = open('debug.log', 'w')
     instructions_expanded = [len(instructions)]  # 首个数据为指令总数
-    for instruction in instructions:  # 此处指令已排序
-        instructions_expanded.extend(instruction)  # 将二维列表展开成一维
+    for time, instr_type, parameters in instructions:  # 此处指令已排序
+        instructions_expanded.extend((time, instr_type, len(parameters), *parameters))  # 将二维列表展开成一维并添加参数数量
         if DEBUG_MODE:
-            print('\t'.join((str(instruction[0]), INSTR_NAME[instruction[1]], str(instruction[2:]))), file=debug_log)  # 输出可读指令到调试日志
+            print('\t'.join((str(time), INSTR_NAME[instr_type], str(parameters))), file=debug_log)  # 输出可读指令到调试日志
     if DEBUG_MODE:
         debug_log.close()
 
