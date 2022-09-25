@@ -42,7 +42,7 @@ pipenv run pip install easygui pyinstaller
 
 ### Step 1：解压文件
 
-使用 [7-zip](https://www.7-zip.org/) 等工具将 `mcz`/`osz `等文件解压到某个文件夹中。
+使用 7-zip 等工具将 `mcz`/`osz `等文件解压到某个文件夹中。
 
 ### Step 2：转换谱面（Malody 谱面可跳过）
 

@@ -18,6 +18,8 @@ def main() -> None:
     using_template = False
     if easygui.ynbox('是否要使用已有的模板？', '导出 OMGZ 文件', ('是', '否')):
         pickle_path = easygui.fileopenbox('请选择模板文件', '导出 OMGZ 文件', '*.pkl')
+        if not pickle_path:
+            return
         try:
             music_path, illustration_path, title, composer, illustrator, charts_info = pickle.load(open(pickle_path, 'rb'))
             using_template = True
@@ -70,11 +72,8 @@ def main() -> None:
                     omgz_path = title+'.omgz'
                 omgz_path = easygui.filesavebox('保存 OMGZ 文件', default=omgz_path)
                 if omgz_path:
-                    try:
-                        write_omgz(music_path, illustration_path, title, composer, illustrator, charts_info, omgz_path)
-                        easygui.msgbox('导出成功！', '导出 OMGZ 文件', '好耶')
-                    except:
-                        easygui.exceptionbox('出错啦！', '导出 OMGZ 文件')
+                    write_omgz(music_path, illustration_path, title, composer, illustrator, charts_info, omgz_path)
+                    easygui.msgbox('导出成功！', '导出 OMGZ 文件', '好耶')
                     return
             if ch == '删除谱面':
                 charts_to_delete = easygui.multchoicebox('请选择要删除的谱面（支持多选）', '导出 OMGZ 文件', show_charts.keys())

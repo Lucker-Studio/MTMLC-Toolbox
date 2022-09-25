@@ -25,8 +25,8 @@ def write_omgz(music_path: str, illustration_path: str,
             print(chart_info['difficulty'], chart_info['diff_number'], chart_info['writer'], chart_info['md5'], sep='\n', file=f)  # 写入谱面信息
 
     with zipfile.ZipFile(omgz_path, 'w') as f:
-        f.write(info_path, 'info.txt')
-        f.write(music_path, 'music.ogg')
-        f.write(illustration_path, 'illustration.png')
+        f.write(info_path, 'info.txt', zipfile.ZIP_DEFLATED)
+        f.write(music_path, 'music.ogg', zipfile.ZIP_DEFLATED)
+        f.write(illustration_path, 'illustration.png', zipfile.ZIP_DEFLATED)
         for chart_info in charts_info:
-            f.write(chart_info['omgc_path'], 'charts/' + chart_info['difficulty']+'.omgc')
+            f.write(chart_info['omgc_path'], 'charts/' + chart_info['difficulty']+'.omgc', zipfile.ZIP_DEFLATED)

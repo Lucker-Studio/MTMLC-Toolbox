@@ -1,3 +1,5 @@
+from common_constants import *
+
 # 画面高度
 FRAME_HEIGHT = 1000
 
@@ -18,12 +20,6 @@ INSTR_NAME = {
     0x10: '判定线位置'
 }
 
-# note 属性
-NOTE_PROPERTIES = ['property_1', 'property_2', 'property_3']
-
 # 缓动类型
 LINEAR_SLOW_MOVING = 0x01
 SIN_SLOW_MOVING = 0x02
-
-# 调试模式
-DEBUG_MODE = True

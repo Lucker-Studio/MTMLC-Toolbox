@@ -43,7 +43,7 @@ def read_malody(mc_path: str) -> dict:
                 'showing_track_changes':    [],
                 'speed_key_points':         [],
                 'free_from_global_speed':   False,
-                'properties':               {}
+                'properties':               {i: DEFAULT_PROPERTIES.get(i, False) for i in NOTE_PROPERTIES}
             })
         elif 'sound' in i:
             project_data['music_path'] = i['sound']

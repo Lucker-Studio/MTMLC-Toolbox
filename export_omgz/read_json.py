@@ -125,7 +125,7 @@ def read_json(json_path: str) -> list:
 
         instr_add = [0]*10  # 初始化长度为 10 的数组
         instr_add[0] = note_id  # note 的 ID
-        instr_add[1] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j))  # 用 2 的整数次幂表示 note 的属性
+        instr_add[1] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False))  # 用 2 的整数次幂表示 note 的属性
         instr_add[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
         instr_add[5] = note['initial_showing_track']  # 初始显示轨道
         instr_add[6] = note['judging_track']  # 实际判定轨道
