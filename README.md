@@ -41,11 +41,11 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 ### Step 1：解压文件
 
-使用 7-zip 等工具将 `mcz`/`osz `等文件解压到某个文件夹中。
+使用 7-zip 等工具将 `mcz`/`osz` 等文件解压到某个文件夹中。
 
 ### Step 2：转换谱面（Malody 谱面可跳过）
 
-打开 `rmstZ_20220113_modified.html`，点击“选择文件”按钮，选择刚才解压出的谱面文件（如 `.osu`），待“reading”消失后点击“点击保存”，将得到的 `xxx[key].mc` 放入文件夹中。
+打开 [rmstZ](https://lrfasd.github.io/rmstZ/rmstZ_20221022.html)，点击“选择文件”按钮，选择刚才解压出的谱面文件（如 `.osu`），待“reading”消失后点击“点击保存”，将得到的 `xxx[key].mc` 放入文件夹中。
 
 ### Step 3：导入谱面
 
