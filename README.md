@@ -84,9 +84,9 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 ### 2. 谱面文件（`.omgc`，二进制格式）
 
-该文件中的数据全部采用小端型存储，无符号整型（int）和浮点型（float）均占 4 字节。
+该文件中的数据全部采用小端型存储，无符号整型（uint）和浮点型（float）均占 4 字节。
 
-该文件由一个整型数据 $n$ 和 $n$ 个指令构成。
+该文件共 $4(m+1)$ 个字节，由两个 uint 型数据 $m,n$ 和 $n$ 个指令构成。
 
 指令格式：时间（单位为 s，浮点型，若为负数则表示游戏开始前执行） + 类型 + 参数数量 + 参数。
 
@@ -94,21 +94,21 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 #### `0x01` 添加 note
 
-- 参数 1：note 的 ID（int）。
-- 参数 2：note 的属性（int）。
+- 参数 1：note 的 ID（uint）。
+- 参数 2：note 的属性（uint）。
   - `0b1` （属性 1）
   - `0b10` （属性 2）
   - `0b100` （属性 3）
 - 参数 3~5：初始位置函数（float）。
-- 参数 6：初始显示轨道（int）。
-- 参数 7：实际判定轨道（int）。
+- 参数 6：初始显示轨道（uint）。
+- 参数 7：实际判定轨道（uint）。
 - 参数 8：判定时间（float）。
 - 参数 9：结束时间（float）。
 - 参数 10：显示长度（float，倒打 note 为负）。
 
 #### `0x02` 更改 note 位置函数
 
-- 参数 1：note 的 ID（int）。
+- 参数 1：note 的 ID（uint）。
 - 参数 2：二次项系数（float）。
 - 参数 3：一次项系数（float）。
 - 参数 4：常数项（float）。
@@ -117,8 +117,8 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 #### `0x03` 更改 note 轨道函数
 
-- 参数 1：note 的 ID（int）。
-- 参数 2：函数类型（int）。
+- 参数 1：note 的 ID（uint）。
+- 参数 2：函数类型（uint）。
   - `0x01` 线性缓动（$val=kt+b$）
     - 参数 3~4：$k$ 和 $b$ 的值（float）。
   - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
@@ -126,13 +126,13 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 #### `0x04` 激活 note
 
-- 参数 1：note 的 ID（int）。
+- 参数 1：note 的 ID（uint）。
 
 注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。note 被打击或超时后，将 note 从活动 note 列表中移除。
 
 #### `0x10` 更改判定线位置函数
 
-- 参数 1：函数类型（int）。
+- 参数 1：函数类型（uint）。
   - `0x01` 线性缓动（$val=kt+b$）
     - 参数 2~3：$k$ 和 $b$ 的值（float）。
   - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
