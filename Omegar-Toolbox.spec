@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['Omegar-Toolbox.py'],
+    ['toolbox.py'],
     pathex=[],
     binaries=[],
     datas=[],
