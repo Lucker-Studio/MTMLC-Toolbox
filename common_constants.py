@@ -1,3 +1,6 @@
+# 对话框标题
+TITLE = 'Omegar Toolbox v0.1.220925'
+
 # 调试模式
 DEBUG_MODE = True
 

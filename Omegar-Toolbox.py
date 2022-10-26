@@ -2,8 +2,7 @@ import easygui
 
 import export_omgz
 import import_malody
-
-TITLE = 'Omegar Toolbox v0.1.220925'
+from common_constants import *
 
 builtin_functions = {
     '导入 Malody 谱面': import_malody.main,
