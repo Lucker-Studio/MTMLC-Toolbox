@@ -84,7 +84,7 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 ### 2. 谱面文件（`.omgc`，二进制格式）
 
-该文件中的数据全部采用大端型存储，整型（int）和浮点型（float）均占 4 字节。
+该文件中的数据全部采用小端型存储，无符号整型（int）和浮点型（float）均占 4 字节。
 
 该文件由一个整型数据 $n$ 和 $n$ 个指令构成。
 

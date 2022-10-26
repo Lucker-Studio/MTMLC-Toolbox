@@ -20,4 +20,4 @@ def write_omgc(instructions: list, omgc_path: str) -> None:
     with open(omgc_path, 'wb') as f:
         for data in instructions_expanded:
             # 将二进制数据写入文件
-            f.write(struct.pack({int: '>i', float: '>f'}[type(data)], data))
+            f.write(struct.pack({int: '<I', float: '<f'}[type(data)], data))
