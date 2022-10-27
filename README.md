@@ -115,28 +115,30 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 注：note 相对于判定线的位置关于时间的二次函数为 note 相对于判定线的速度关于时间的一次函数的不定积分。制谱器工程文件中存储了 $n$ 个形如 $(t_i,n_i)$ 的关键点，每相邻两点可确定该区间上的速度变化直线，对速度函数做不定积分即可计算出该区间上位置关于时间的二次函数。另外，需要取常数以使各段抛物线首尾顺次相接。
 
-#### `0x03` 更改 note 轨道函数
+#### `0x03` 更改 note 轨道函数_线性（$val=kt+b$）
 
 - 参数 1：note 的 ID（uint）。
-- 参数 2：函数类型（uint）。
-  - `0x01` 线性缓动（$val=kt+b$）
-    - 参数 3~4：$k$ 和 $b$ 的值（float）。
-  - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
-    - 参数 3~6：$A、\omega、\varphi、b$ 的值（float）。
+- 参数 2~3：$k$ 和 $b$ 的值（float）。
+    
 
-#### `0x04` 激活 note
+#### `0x04` 更改 note 轨道函数_正弦（$val=A\sin\omega{t+\phi}+b$）
+
+- 参数 1：note 的 ID（uint）。
+- 参数 2~5：$A、\omega、\varphi、b$ 的值（float）。
+
+#### `0x05` 激活 note
 
 - 参数 1：note 的 ID（uint）。
 
 注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。note 被打击或超时后，将 note 从活动 note 列表中移除。
 
-#### `0x10` 更改判定线位置函数
+#### `0x11` 更改判定线位置函数
 
-- 参数 1：函数类型（uint）。
-  - `0x01` 线性缓动（$val=kt+b$）
-    - 参数 2~3：$k$ 和 $b$ 的值（float）。
-  - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
-    - 参数 2~5：$A、\omega、\varphi、b$ 的值（float）。
+- 1~2：$k$ 和 $b$ 的值（float）。
+
+#### `0x12` 更改判定线位置函数
+
+- 1~4：$A、\omega、\varphi、b$ 的值（float）。
 
 ### 3. 歌曲信息文件（`.txt`，纯文本格式）
 
