@@ -14,8 +14,8 @@ def write_zip(music_path: str, illustration_path: str,
     """
     for chart_info in charts_info:
         chart_info['omgc_path'] = tempfile.mkstemp()[1]  # 获取临时 omgc 文件名
-        commands = read_json(chart_info['json_path'])
-        write_omgc(commands, chart_info['omgc_path'])
+        lines,notes,commands = read_json(chart_info['json_path'])
+        write_omgc(lines,notes,commands, chart_info['omgc_path'])
         chart_info['md5'] = hashlib.md5(open(chart_info['omgc_path'], 'rb').read()).hexdigest()  # 计算 omgc 文件 MD5
 
     info_path = tempfile.mkstemp()[1]  # 获取临时 info.txt 文件名

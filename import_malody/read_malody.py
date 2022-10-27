@@ -32,10 +32,10 @@ def read_malody(mc_path: str) -> dict:
         speed_key_points.append(speed[i+1])
     project_data['global_speed_key_points'] = speed_key_points
 
-    project_data['note_list'] = []
+    note_list = []
     for i in mc_data['note']:
         if 'column' in i:
-            project_data['note_list'].append({
+            note_list.append({
                 'start':                    i['beat'],
                 'end':                      i.get('endbeat', i['beat']),
                 'judging_track':            i['column'],
@@ -49,5 +49,5 @@ def read_malody(mc_path: str) -> dict:
             project_data['music_path'] = i['sound']
             project_data['music_offset'] = i.get('offset', 0)/1000
 
-    project_data['line'] = [{'initial_position': LINE_INITIAL_POSITION, 'motions': []}]
+    project_data['line_list'] = [{'initial_position': LINE_INITIAL_POSITION, 'initial_showing': True, 'show_hide': [], 'motions': [], 'note_list':note_list}]
     return project_data

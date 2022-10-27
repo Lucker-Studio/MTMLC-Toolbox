@@ -24,7 +24,8 @@ def main() -> None:
             return
         try:
             # 读取 pickle 数据
-            music_path, illustration_path, title, composer, illustrator, charts_info = pickle.load(open(pickle_path, 'rb'))
+            pickle_data = pickle.load(open(pickle_path, 'rb'))
+            music_path, illustration_path, title, composer, illustrator, charts_info = pickle_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出 OMGZ 文件', '好的')
             using_template = False
@@ -71,17 +72,18 @@ def main() -> None:
 
             elif ch == '完成添加':
                 # 保存或更新模板
+                new_data = music_path, illustration_path, title, composer, illustrator, charts_info
                 if using_template:
-                    if easygui.ynbox('是否更新模板？', '导出 OMGZ 文件', ('是', '否')):
+                    if new_data != pickle_data and easygui.ynbox('是否更新模板？', '导出 OMGZ 文件', ('是', '否')):
                         # 将信息保存到原有文件中
-                        pickle.dump((music_path, illustration_path, title, composer, illustrator, charts_info), open(pickle_path, 'wb'))
+                        pickle.dump(new_data, open(pickle_path, 'wb'))
                         easygui.msgbox('模板更新成功！', '导出 OMGZ 文件', '好耶')
                 else:
                     if easygui.ynbox('是否保存模板供以后使用？', '导出 OMGZ 文件', ('是', '否')):
                         pickle_path = easygui.filesavebox('保存模板', '导出 OMGZ 文件', title+'.pkl')
                         if pickle_path is None:  # 未选择文件
                             return
-                        pickle.dump((music_path, illustration_path, title, composer, illustrator, charts_info), open(pickle_path, 'wb'))
+                        pickle.dump(new_data, open(pickle_path, 'wb'))
                         easygui.msgbox('模板保存成功！', '导出 OMGZ 文件', '好耶')
 
                 # 保存 OMGZ 文件

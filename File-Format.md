@@ -3,28 +3,28 @@
 *Version 2，2022/10/27*
 
 - `project_name`：工程名称。
-- `music_path`：音频文件路径。`music_offset`：第 $$ 拍对应音乐第几秒。
-- `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍（从 $0$ 开始）起 BPM **瞬间变为** `v`。
+- `music_path`：音频文件路径。
+- `music_offset`：第 $0$ 拍对应音乐第几秒。
+- `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍起 BPM **瞬间变为** `v`。
 - `global_speed_key_points`：全局流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
-- `note_list`：note 列表。
-  - `start`：判定节拍（`[a, b, c]`）。
-  - `end`：结束节拍（瞬时 note 的 `start` 与  `end` 相等）。
-  - `judging_track`：判定轨道。
-  - `initial_showing_track`：初始显示轨道。
-  - `showing_track_changes`：变轨事件列表。
-    - `start`：起始节拍。
-    - `end`：终止节拍（瞬时事件的 `start` 与  `end` 相等）。
-    - `target`：目标轨道。
-    - `type`：缓动类型（$1$ 为线性缓动，$2$ 为正弦缓动；瞬时事件的缓动类型任意）。
-  - `speed_key_points`：流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
-  - `free_from_global_speed`：是否不受全局流速影响（当此项为 `true` 且 `speed_key_points` 不为空时，将两组关键点叠加）。
-  - `properties`：属性（`value` 的类型均为 `bool`）。
-    - `property_1`：属性 1。
-    - `property_2`：属性 2。
-    - `property_3`：属性 3。
 - `line_list`：判定线列表，每一项如下：
   - `initial_position`：判定线的初始位置。
-  - `motions`：判定线移动事件列表，详见 `note_list` 的 `showing_track_changes`。
+  - `initial_showing`：判定线初始是否显示。
+  - `show_hide`：判定线显示隐藏事件列表。
+  - `motions`：判定线移动事件列表。
+    - `start`：起始节拍（`[a, b, c]`）。
+    - `end`：终止节拍。
+    - `target`：目标位置。
+    - `type`：缓动类型（`linear` 表示线性缓动，`sine` 表示正弦缓动）。
+  - `note_list`：音符列表。
+    - `start`：判定节拍。
+    - `end`：结束节拍。
+    - `judging_track`：判定轨道。
+    - `initial_showing_track`：初始显示轨道。
+    - `showing_track_changes`：变轨事件列表，格式与 `motions` 相同。
+    - `speed_key_points`：流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
+    - `free_from_global_speed`：是否不受全局流速影响（当此项为 `true` 且 `speed_key_points` 不为空时，将两组关键点叠加）。
+    - `properties`：属性（`value` 的类型均为 `bool`）。
 
 ---
 
@@ -58,12 +58,14 @@ meta 区由以下 8 个数据组成：
 line 区中每条判定线的格式如下：
 
 - 初始位置（float）
+- 初始是否显示（uint，0/1）
 
 ## note 区
 
 note 区中每个音符的格式如下：
 
 - note 的属性（uint，每个二进制位表示一个属性）
+- note 对应的判定线 ID（uint）
 - 初始位置函数二次项系数（float）
 - 初始位置函数一次项系数（float）
 - 初始位置函数常数项（float）

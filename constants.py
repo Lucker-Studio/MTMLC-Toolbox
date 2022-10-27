@@ -1,44 +1,52 @@
 # 对话框标题
-TITLE = 'Omegar Toolbox v0.1.220925'
+TITLE = 'Omegar Toolbox v0.1.221027'
 
 # 调试模式
 DEBUG_MODE = True
 
 # note 属性
 NOTE_PROPERTIES = [
-    'visible',
-    'real',
-    '114514'
+    'is_fake'
 ]
 DEFAULT_PROPERTIES = {
-    'visible': True,
-    'real': True
+    'is_fake': False
 }
 
+# omgc 版本
+OMGC_VERSION = 2
+
 # 指令列表
-ADD_NOTE = 0x01
-CHANGE_NOTE_POS = 0x02
-CHANGE_NOTE_TRACK = 0x03
-ACTIVATE_NOTE = 0x04
-CHANGE_LINE_POS = 0x10
+PLAY_MUSIC = 0x0000
+ACTIVATE_NOTE = 0x0100
+CHANGE_NOTE_POS = 0x0110
+CHANGE_NOTE_TRACK_LINEAR = 0x0120
+CHANGE_NOTE_TRACK_SINE = 0x0121
+SHOW_LINE = 0x0200
+HIDE_LINE = 0x0201
+CHANGE_LINE_POS_LINEAR = 0x0210
+CHANGE_LINE_POS_SINE = 0x0211
 CMD_NAME = {
-    0x01: '添加 note',
-    0x02: 'note 位置',
-    0x03: 'note 轨道',
-    0x04: '激活 note',
-    0x10: '判定线位置'
+    PLAY_MUSIC: '播放音乐',
+    ACTIVATE_NOTE: '激活 note',
+    CHANGE_NOTE_POS: 'note 位置',
+    CHANGE_NOTE_TRACK_LINEAR: 'note 轨道-线性',
+    CHANGE_NOTE_TRACK_SINE: 'note 轨道-正弦',
+    SHOW_LINE: '显示 line',
+    HIDE_LINE: '隐藏 line',
+    CHANGE_LINE_POS_LINEAR: 'line 位置-线性',
+    CHANGE_LINE_POS_SINE: 'line 位置-正弦'
 }
 
 # 画面宽高
-FRAME_WIDTH = 800
-FRAME_HEIGHT = 450
+FRAME_WIDTH = 1600
+FRAME_HEIGHT = 900
 
 # 默认判定线初始位置
-LINE_INITIAL_POSITION = 400
+LINE_INITIAL_POSITION = 800
 
 # 在 note 出现前提前几秒将其激活
 PREACTIVATING_TIME = 0.1
 
 # 缓动类型
-LINEAR_SLOW_MOVING = 0x01
-SIN_SLOW_MOVING = 0x02
+LINEAR_SLOW_MOVING = 'linear'
+SINE_SLOW_MOVING = 'sine'
