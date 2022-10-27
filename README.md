@@ -41,11 +41,11 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 ### Step 1：解压文件
 
-使用 7-zip 等工具将 `mcz`/`osz` 等文件解压到某个文件夹中。
+使用 7-zip 等工具将 `mcz`/`osz `等文件解压到某个文件夹中。
 
 ### Step 2：转换谱面（Malody 谱面可跳过）
 
-打开 [rmstZ](https://lrfasd.github.io/rmstZ/rmstZ_20221022.html)，点击“选择文件”按钮，选择刚才解压出的谱面文件（如 `.osu`），待“reading”消失后点击“点击保存”，将得到的 `xxx[key].mc` 放入文件夹中。
+打开 `rmstZ_20220113_modified.html`，点击“选择文件”按钮，选择刚才解压出的谱面文件（如 `.osu`），待“reading”消失后点击“点击保存”，将得到的 `xxx[key].mc` 放入文件夹中。
 
 ### Step 3：导入谱面
 
@@ -115,28 +115,30 @@ wsl python -m pipenv run pip install easygui pygame pyinstaller
 
 注：note 相对于判定线的位置关于时间的二次函数为 note 相对于判定线的速度关于时间的一次函数的不定积分。制谱器工程文件中存储了 $n$ 个形如 $(t_i,n_i)$ 的关键点，每相邻两点可确定该区间上的速度变化直线，对速度函数做不定积分即可计算出该区间上位置关于时间的二次函数。另外，需要取常数以使各段抛物线首尾顺次相接。
 
-#### `0x03` 更改 note 轨道函数
+#### `0x03` 更改 note 轨道函数_线性（$val=kt+b$）
 
 - 参数 1：note 的 ID（uint）。
-- 参数 2：函数类型（uint）。
-  - `0x01` 线性缓动（$val=kt+b$）
-    - 参数 3~4：$k$ 和 $b$ 的值（float）。
-  - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
-    - 参数 3~6：$A、\omega、\varphi、b$ 的值（float）。
+- 参数 2~3：$k$ 和 $b$ 的值（float）。
+    
 
-#### `0x04` 激活 note
+#### `0x04` 更改 note 轨道函数_正弦（$val=A\sin\omega{t+\phi}+b$）
+
+- 参数 1：note 的 ID（uint）。
+- 参数 2~5：$A、\omega、\varphi、b$ 的值（float）。
+
+#### `0x05` 激活 note
 
 - 参数 1：note 的 ID（uint）。
 
 注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。note 被打击或超时后，将 note 从活动 note 列表中移除。
 
-#### `0x10` 更改判定线位置函数
+#### `0x11` 更改判定线位置函数
 
-- 参数 1：函数类型（uint）。
-  - `0x01` 线性缓动（$val=kt+b$）
-    - 参数 2~3：$k$ 和 $b$ 的值（float）。
-  - `0x02` 正弦缓动（$val=Asin(\omega x+\varphi)+b$）
-    - 参数 2~5：$A、\omega、\varphi、b$ 的值（float）。
+- 1~2：$k$ 和 $b$ 的值（float）。
+
+#### `0x12` 更改判定线位置函数
+
+- 1~4：$A、\omega、\varphi、b$ 的值（float）。
 
 ### 3. 歌曲信息文件（`.txt`，纯文本格式）
 
