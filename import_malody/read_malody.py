@@ -1,6 +1,6 @@
 import json
 
-from .constants import *
+from constants import *
 
 
 def read_malody(mc_path: str) -> dict:
@@ -49,5 +49,5 @@ def read_malody(mc_path: str) -> dict:
             project_data['music_path'] = i['sound']
             project_data['music_offset'] = i.get('offset', 0)/1000
 
-    project_data['line'] = {'initial_position': LINE_INITIAL_POSITION, 'motions': []}
+    project_data['line'] = [{'initial_position': LINE_INITIAL_POSITION, 'motions': []}]
     return project_data

@@ -7,15 +7,15 @@ import zipfile
 import easygui
 import pygame
 
-from common_constants import *
+from constants import *
 
 
 def main():
-    omgz_path = easygui.fileopenbox('选择 OMGZ 文件', '谱面预览', '*.omgz')
-    if omgz_path is None:  # 关闭对话框
+    zip_path = easygui.fileopenbox('选择 ZIP 文件', '谱面预览', '*.zip')
+    if zip_path is None:  # 关闭对话框
         return
     song_folder = tempfile.mkdtemp()
-    zipfile.ZipFile(omgz_path).extractall(song_folder)  # 解压文件到临时文件夹
+    zipfile.ZipFile(zip_path).extractall(song_folder)  # 解压文件到临时文件夹
 
     charts = {}  # 该歌曲谱面列表
     with open(os.path.join(song_folder, 'info.txt'), encoding='utf-8') as f:
@@ -48,10 +48,10 @@ def main():
         def read_data(type_: type):  # 读取数据并解包为指定类型
             return struct.unpack({int: '>i', float: '>f'}[type_], next(data_reader))[0]
 
-        instr_list = []  # 谱面指令列表
+        cmd_list = []  # 谱面指令列表
         for i in range(read_data(int)):
             time = read_data(float)  # 指令执行时间（s）
-            instr_type = read_data(int)  # 指令类型
+            cmd_type = read_data(int)  # 指令类型
             param_cnt = read_data(int)  # 参数数量
             param_type = {
                 ADD_NOTE: (int, int, float, float, float, int, int, float, float, float),
@@ -59,10 +59,10 @@ def main():
                 CHANGE_NOTE_TRACK: (int, int, *((param_cnt-2)*(float,))),
                 ACTIVATE_NOTE: (int,),
                 CHANGE_LINE_POS: (int, *((param_cnt-1)*(float,)))
-            }.get(instr_type)  # 指令参数类型
+            }.get(cmd_type)  # 指令参数类型
             if param_type is None:  # 未知指令
                 for i in range(param_cnt):  # 跳过一定数量的参数
                     next(data_reader)
                 continue
             params = map(read_data, param_type)  # 批量读取参数
-            instr_list.append((time, instr_type, params))
+            cmd_list.append((time, cmd_type, params))
