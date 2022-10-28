@@ -119,7 +119,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         """
         读取多个指定类型的数据。
         """
-        return map(read_data, args)
+        return list(map(read_data, args))
 
     omgc_version = read_data(int)
     if omgc_version not in SUPPORTED_OMGC_VERSIONS:
