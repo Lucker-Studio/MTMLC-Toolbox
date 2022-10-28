@@ -25,9 +25,9 @@ def write_zip(music_path: str, illustration_path: str,
         for chart_info in charts_info:
             print(chart_info['difficulty'], chart_info['diff_number'], chart_info['writer'], chart_info['md5'], sep='\n', file=f)  # 写入谱面信息
 
-    with zipfile.ZipFile(zip_path, 'w') as f:
-        f.write(info_path, 'info.txt', zipfile.ZIP_DEFLATED)
-        f.write(music_path, 'music.mp3', zipfile.ZIP_DEFLATED)
-        f.write(illustration_path, 'illustration.png', zipfile.ZIP_DEFLATED)
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as f:
+        f.write(info_path, 'info.txt')
+        f.write(music_path, 'music.mp3')
+        f.write(illustration_path, 'illustration.png')
         for chart_info in charts_info:
-            f.write(chart_info['omgc_path'], 'charts/' + chart_info['difficulty']+'.omgc', zipfile.ZIP_DEFLATED)
+            f.write(chart_info['omgc_path'], 'charts/' + chart_info['difficulty']+'.omgc')
