@@ -13,6 +13,7 @@ def write_zip(music_path: str, illustration_path: str,
     """
     打包成 zip 文件。
     """
+
     for chart_info in charts_info:
         chart_info['omgc_path'] = tempfile.mkstemp()[1]  # 获取临时 omgc 文件名
         lines, notes, commands = json2omgc(*read_json(chart_info['json_path']))

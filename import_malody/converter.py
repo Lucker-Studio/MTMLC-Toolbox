@@ -5,6 +5,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
     """
     将 Malody 谱面数据转换为 Omegar 工程文件数据。
     """
+
     project_data = {}
     project_data['project_name'] = meta['song']['title']+' '+meta['version']
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in time)

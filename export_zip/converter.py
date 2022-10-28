@@ -7,6 +7,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
     """
     将工程文件数据转换为 omgc 谱面文件数据。
     """
+
     lines = []  # 判定线列表
     notes = []  # 音符列表
     commands = []  # 指令列表
@@ -61,6 +62,8 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                 SINE_SLOW_MOVING: sine_cmd_type
             }[change[0]]
             commands.append((time, change_type, (id, *change[1:])))
+
+    commands.append((0, PLAY_MUSIC, ()))
 
     note_id = 0
     for line_id, line in enumerate(line_list):

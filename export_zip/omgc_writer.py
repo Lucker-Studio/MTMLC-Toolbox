@@ -7,6 +7,7 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
     """
     将指令列表写入 omgc 谱面文件。
     """
+
     if DEBUG_MODE:
         debug_log = open('debug.log', 'w', encoding='utf-8')
 
