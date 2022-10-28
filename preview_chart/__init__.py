@@ -9,4 +9,5 @@ def main() -> None:
     if zip_path is None:
         return
     zip_dir = tempfile.mkdtemp()
-    zipfile.ZipFile(zip_path).extractall(zip_path)
+    zipfile.ZipFile(zip_path).extractall(zip_dir)
+    
