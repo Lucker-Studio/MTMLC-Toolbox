@@ -21,11 +21,11 @@ def main() -> None:
             if ch is None:
                 break
             chart_info = chart_choices[ch]
-        else:
+        else:  # 只有一个选项可用不了 choicebox 哦~
             chart_info = charts_info[0]
         omgc_data = read_omgc(os.path.join(zip_dir, 'charts', chart_info[0]+'.omgc'), chart_info[3])
         if omgc_data is None:
             if len(chart_choices) > 1:
                 continue
-            else:
+            else:  # 这里要是不 break 就死循环了
                 break

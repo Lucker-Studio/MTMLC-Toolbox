@@ -68,8 +68,8 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
     note_id = 0
     for line_id, line in enumerate(line_list):
         lines.append((float(line['initial_position']), float(line['initial_alpha'])))
-        process_changes(line['initial_position'], line['motions'], line_id, CHANGE_LINE_POS_LINEAR, CHANGE_LINE_POS_SINE)
-        process_changes(line['initial_alpha'], line['alpha_changes'], line_id, CHANGE_LINE_ALPHA_LINEAR, CHANGE_LINE_ALPHA_SINE)
+        process_changes(line['initial_position'], line['motions'], line_id, LINE_POS_LINEAR, LINE_POS_SINE)
+        process_changes(line['initial_alpha'], line['alpha_changes'], line_id, LINE_ALPHA_LINEAR, LINE_ALPHA_SINE)
 
         for note in line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
@@ -147,7 +147,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             note_data[0] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False))  # 用 2 的整数次幂表示 note 的属性
             note_data[1] = line_id
             note_data[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
-            note_data[5] = int(note['initial_showing_track'])  # 初始显示轨道
+            note_data[5] = float(note['initial_showing_track'])  # 初始显示轨道
             note_data[6] = int(note['judging_track'])  # 实际判定轨道
             note_data[7] = float(start_time)  # 开始时间
             note_data[8] = float(end_time)  # 结束时间
@@ -161,9 +161,9 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             for t, a, b, c in key_points_abc:
                 if t >= remove_time:
                     break
-                commands.append((float(t), CHANGE_NOTE_POS, (note_id, float(a), float(b), float(c))))  # 改变 note 位置函数指令
+                commands.append((float(t), NOTE_POS, (note_id, float(a), float(b), float(c))))  # 改变 note 位置函数指令
 
-            process_changes(note['initial_showing_track'], note['showing_track_changes'], note_id, CHANGE_NOTE_TRACK_LINEAR, CHANGE_NOTE_TRACK_SINE)
+            process_changes(note['initial_showing_track'], note['showing_track_changes'], note_id, NOTE_TRACK_LINEAR, NOTE_TRACK_SINE)
 
             note_id += 1
 

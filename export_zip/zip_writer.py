@@ -7,9 +7,7 @@ from .json_reader import read_json
 from .omgc_writer import write_omgc
 
 
-def write_zip(music_path: str, illustration_path: str,
-              title: str, composer: str, illustrator: str,
-              charts_info: list, zip_path: str) -> None:
+def write_zip(music_path: str, illustration_path: str, title: str, composer: str, illustrator: str, charts_info: list, zip_path: str) -> None:
     """
     打包成 zip 文件。
     """

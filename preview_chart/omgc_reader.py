@@ -8,20 +8,20 @@ from constants import *
 
 class Linear_func:
     """
-    线性缓动函数（val=kt+b)。
+    线性函数（val=kt+b）。
     """
 
     def __init__(self, k: float, b: float) -> None:
         self.k = k
         self.b = b
 
-    def value(self, t: float) -> float:
+    def __call__(self, t: float) -> float:
         return self.k*t+self.b
 
 
 class Sine_func:
     """
-    正弦缓动函数（val=Asin(wt+φ)+b）。
+    正弦函数（val=Asin(wt+φ)+b）。
     """
 
     def __init__(self, A: float, o: float, p: float, b: float) -> None:
@@ -30,8 +30,23 @@ class Sine_func:
         self.p = p
         self.b = b
 
-    def value(self, t: float) -> float:
+    def __call__(self, t: float) -> float:
         return self.A*math.sin(self.o*t+self.p)+self.b
+
+
+class Quadratic_func:
+    """
+    二次函数（val=at^2+bt+c）。
+    """
+
+    def __init__(self, a: float, b: float, c: float) -> None:
+        self.a = a
+        self.b = b
+        self.c = c
+
+    def __call__(self, t: float) -> float:
+        # 不会有人不知道秦九韶算法吧
+        return (self.a*t+self.b)*t+self.c
 
 
 class Line:
@@ -40,11 +55,37 @@ class Line:
     """
 
     def __init__(self, initial_position: float, initial_alpha: float) -> None:
-        self.position_func = Linear_func(0, initial_position)
-        self.alpha_func = Linear_func(0, initial_alpha)
+        # 线性函数，但是斜率为 0，那不就是常数吗~
+        self.get_position = Linear_func(0, initial_position)
+        self.get_alpha = Linear_func(0, initial_alpha)
 
 
-def read_omgc(omgc_path: str, omgc_md5) -> tuple:
+class Note:
+    """
+    音符。
+    """
+
+    def __init__(self, properties: int, line: Line, initial_a: float, initial_b: float, initial_c: float, initial_showing_track: float, judging_track: int, start_time: float, end_time: float, showing_length: float) -> None:
+        for i, property in enumerate(NOTE_PROPERTIES):
+            # 把 note 的“属性”当作类的属性直接用
+            self.__dict__[property] = bool(properties & 1 << i)
+        self.line = line  # Python 对象作为引用参数传递，相当于指针
+        self.get_position = Quadratic_func(initial_a, initial_b, initial_c)
+        self.get_showing_track = Linear_func(0, initial_showing_track)
+        self.judging_track = judging_track
+        self.start_time = start_time
+        self.end_time = end_time
+        self.showing_length = showing_length
+
+    def get_absolute_position(self, t: float) -> float:
+        """
+        获取 note 的绝对位置。
+        """
+        # 绝对位置=判定线位置+相对位置
+        return self.line.get_position(t)+self.get_position(t)
+
+
+def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
     """
     读取 omgc 谱面文件。
     """
@@ -54,27 +95,55 @@ def read_omgc(omgc_path: str, omgc_md5) -> tuple:
         easygui.msgbox('谱面文件 MD5 不匹配，可能已被篡改！', '无法打开谱面', '返回')
 
     def read_4byte():
+        """
+        从 omgc 文件读取 4 字节（一个数据）。
+        """
         index = 0
         while True:
             yield chart_data[index:index+4]
             index += 4
     read_4byte = read_4byte()
 
+    # 文件开头 4 字节必须是“omgc”的 ASCII 码
     if next(read_4byte).decode('ascii') != 'omgc':
         easygui.msgbox('谱面文件头不符合 omgc 格式！', '无法打开谱面', '返回')
         return None
 
     def read_data(data_type):
+        """
+        读取一个指定类型的数据。
+        """
         return struct.unpack(STRUCT_FORMAT[data_type], next(read_4byte))[0]
+
+    def read_multi_data(*args):
+        """
+        读取多个指定类型的数据。
+        """
+        return map(read_data, args)
 
     omgc_version = read_data(int)
     if omgc_version not in SUPPORTED_OMGC_VERSIONS:
-        easygui.msgbox(f'不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{SUPPORTED_OMGC_VERSIONS}', '无法打开谱面', '返回')
-        return None
+        if not easygui.ynbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{SUPPORTED_OMGC_VERSIONS}\n是否强行打开谱面？', '打开谱面受阻', ('继续', '返回')):
+            return None
 
-    line_size = read_data(int)
-    line_count = read_data(int)
-    note_size = read_data(int)
-    note_count = read_data(int)
-    cmd_size = read_data(int)
-    cmd_count = read_data(int)
+    line_size, line_count, note_size, note_count, cmd_size, cmd_count = read_multi_data(*(int,)*6)
+
+    lines = []
+    for i in range(line_count):
+        lines.append(Line(*read_multi_data(float, float)))
+
+    notes = []
+    for i in range(note_count):
+        notes.append(Note(read_data(int), lines[read_data(int)], *read_multi_data(float, float, float, float, int, float, float, float)))
+
+    commands = []
+    for i in range(cmd_count):
+        cmd_time, cmd_type, cmd_param_count = read_multi_data(float, int, int)
+        if cmd_type in CMD_PARAM_TYPE:
+            cmd_params = read_multi_data(*CMD_PARAM_TYPE[cmd_type])
+            commands.append((cmd_time, cmd_type, cmd_params))
+        else:
+            for j in range(cmd_param_count):
+                next(read_4byte)
+
+    return lines, notes, commands
