@@ -8,7 +8,7 @@ from constants import *
 builtin_modules = {
     '导入 Malody 谱面': import_malody,
     '导出 ZIP 文件': export_zip,
-    '谱面预览': preview_chart
+    '谱面预览（开发中）': preview_chart
 }
 
 if __name__ == '__main__':
