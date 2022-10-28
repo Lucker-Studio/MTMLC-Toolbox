@@ -2,8 +2,9 @@ import os
 
 import easygui
 
-from .mc_reader import read_mc
+from .converter import malody2omegar
 from .json_writer import write_json
+from .mc_reader import read_mc
 
 
 def main() -> None:
@@ -23,7 +24,7 @@ def main() -> None:
         return
     charts_data = {}
     for mc_path in charts_path:
-        data = read_mc(mc_path)
+        data = malody2omegar(*read_mc(mc_path))
         charts_data[data['project_name']] = data
 
     if len(charts_data) > 1:

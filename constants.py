@@ -1,5 +1,5 @@
 # 对话框标题
-TITLE = 'Omegar Toolbox v0.1.221028'
+TITLE = 'Omegar Toolbox v0.2.221028'
 
 # 调试模式
 DEBUG_MODE = True
