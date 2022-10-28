@@ -2,8 +2,8 @@ import hashlib
 import tempfile
 import zipfile
 
-from .read_json import read_json
-from .write_omgc import write_omgc
+from .json_reader import read_json
+from .omgc_writer import write_omgc
 
 
 def write_zip(music_path: str, illustration_path: str,

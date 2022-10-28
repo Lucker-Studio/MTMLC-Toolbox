@@ -12,6 +12,6 @@ builtin_functions = {
 if __name__ == '__main__':
     while ch := easygui.choicebox('请选择要使用的功能', TITLE, builtin_functions.keys()):
         try:
-            builtin_functions[str(ch)]()
+            builtin_functions[ch]()
         except:
             easygui.exceptionbox(f'使用功能“{ch}”时出错！', TITLE)

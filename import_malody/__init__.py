@@ -2,8 +2,8 @@ import os
 
 import easygui
 
-from .read_malody import read_malody
-from .write_omegar import write_omegar
+from .mc_reader import read_mc
+from .json_writer import write_json
 
 
 def main() -> None:
@@ -23,7 +23,7 @@ def main() -> None:
         return
     charts_data = {}
     for mc_path in charts_path:
-        data = read_malody(mc_path)
+        data = read_mc(mc_path)
         charts_data[data['project_name']] = data
 
     if len(charts_data) > 1:
@@ -38,7 +38,7 @@ def main() -> None:
     for name in charts_data.keys():
         if name in charts_name:
             try:
-                write_omegar(charts_data[name], os.path.join(project_folder, name+'.json'))
+                write_json(charts_data[name], os.path.join(project_folder, name+'.json'))
                 ok_list.append(name)
             except:
                 not_ok_list.append(name)

@@ -3,7 +3,7 @@ import pickle
 
 import easygui
 
-from .write_zip import write_zip
+from .zip_writer import write_zip
 
 
 def main() -> None:
@@ -19,7 +19,7 @@ def main() -> None:
     if using_template is None:  # 关闭对话框
         return
     elif using_template:  # 选择“是”
-        pickle_path = easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.pkl')
+        pickle_path = str(easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.pkl'))
         if pickle_path is None:  # 未选择文件
             return
         try:
