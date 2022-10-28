@@ -17,14 +17,14 @@ python Omegar-Toolbox.py
 
 #### 初始化虚拟环境（只需执行一次）
 
-- 所用的 Python 版本为 3.10。
+- Windows 所用的 Python 版本为 3.8，WSL 所用的 Python 版本为 3.10。
 - 直接 `wsl pipenv` 会因 `pipenv` 可执行文件不在 `$PATH` 中而提示“未找到命令”，需借助 `python -m` 运行。
 
 ```shell
 pip install -U pipenv
 wsl pip install -U pipenv
 
-pipenv --python 3.10
+pipenv --python 3.8
 wsl python -m pipenv --python 3.10
 
 pipenv run pip install easygui pygame pyinstaller

@@ -114,7 +114,7 @@ def read_json(json_path: str) -> tuple:
                 key_points_abc[i][-1] -= start_pos
 
             if 0 <= key_points_abc[0][-1] <= FRAME_HEIGHT:  # note 开始就可见
-                activate_time = -PREACTIVATING_TIME  # 提前激活 note
+                activate_time = -BUFFER_TIME  # 提前激活 note
             else:
                 for i in range(len(key_points_abc)):
                     t_0, a, b, c = key_points_abc[i]
@@ -141,7 +141,7 @@ def read_json(json_path: str) -> tuple:
 
                     t = min(solve(0), solve(FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
                     if t != math.inf:
-                        activate_time = t-PREACTIVATING_TIME
+                        activate_time = t-BUFFER_TIME
                         break
 
             note_data = [0]*10  # 初始化长度为 10 的数组

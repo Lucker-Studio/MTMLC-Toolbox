@@ -1,5 +1,5 @@
 # 对话框标题
-TITLE = 'Omegar Toolbox v0.1.221027'
+TITLE = 'Omegar Toolbox v0.1.221028'
 
 # 调试模式
 DEBUG_MODE = True
@@ -44,8 +44,8 @@ FRAME_HEIGHT = 900
 # 默认判定线初始位置
 LINE_INITIAL_POSITION = 800
 
-# 在 note 出现前提前几秒将其激活
-PREACTIVATING_TIME = 0.1
+# 缓冲时间（提前激活与推迟消失）
+BUFFER_TIME = 0.5
 
 # 缓动类型
 LINEAR_SLOW_MOVING = 'linear'
