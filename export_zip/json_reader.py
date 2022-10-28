@@ -33,7 +33,7 @@ def read_json(json_path: str) -> tuple:
 
     global_key_points = [(beat2sec(i), j) for i, j in project_data['global_speed_key_points']]  # 转换全局关键点列表
 
-    def process_changes(initial_val: int, changes: list) -> dict:
+    def process_changes(initial_val: int, changes: list, id: int, linear_cmd_type: int, sine_cmd_type: int) -> None:
         """
         处理缓动。
         """
@@ -57,24 +57,18 @@ def read_json(json_path: str) -> tuple:
                     b = (val_0+val_1)/2
                     changes_processed[t_0] = (moving_type, A, o, p, b)
             changes_processed[t_1] = (LINEAR_SLOW_MOVING, 0, val_1)
-        return changes_processed
+        for time, change in sorted(changes_processed.values()):
+            change_type = {
+                LINEAR_SLOW_MOVING: linear_cmd_type,
+                SINE_SLOW_MOVING: sine_cmd_type
+            }[change[0]]
+            commands.append((time, change_type, (id, *change[1:])))
 
     note_id = 0
     for line_id, line in enumerate(project_data['line_list']):
-        lines.append((line['initial_position'], int(line['initial_showing'])))
-
-        showing = line['initial_showing']
-        for beat in line['show_hide']:
-            showing = not showing
-            commands.append((beat2sec(beat), SHOW_LINE if showing else HIDE_LINE, (line_id,)))
-
-        line_motions_processed = process_changes(line['initial_position'], line['motions'])
-        for time, motion in line_motions_processed.values():
-            change_type = {
-                LINEAR_SLOW_MOVING: CHANGE_LINE_POS_LINEAR,
-                SINE_SLOW_MOVING: CHANGE_LINE_POS_SINE
-            }[motion[0]]
-            commands.append((time, change_type, (line_id, *motion[1:])))
+        lines.append((float(line['initial_position']), float(line['initial_alpha'])))
+        process_changes(line['initial_position'], line['motions'], line_id, CHANGE_LINE_POS_LINEAR, CHANGE_LINE_POS_SINE)
+        process_changes(line['initial_alpha'], line['alpha_changes'], line_id, CHANGE_LINE_ALPHA_LINEAR, CHANGE_LINE_ALPHA_SINE)
 
         for note in line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
@@ -144,28 +138,30 @@ def read_json(json_path: str) -> tuple:
                         activate_time = t-BUFFER_TIME
                         break
 
-            note_data = [0]*10  # 初始化长度为 10 的数组
+            while len(key_points_abc) > 1 and key_points_abc[1][0] < activate_time:
+                key_points_abc.pop(0)  # 只保留 note 激活前的最后一个位置函数
+
+            note_data = [None]*10  # 初始化长度为 10 的数组
             note_data[0] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False))  # 用 2 的整数次幂表示 note 的属性
             note_data[1] = line_id
             note_data[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
-            note_data[5] = note['initial_showing_track']  # 初始显示轨道
-            note_data[6] = note['judging_track']  # 实际判定轨道
+            note_data[5] = int(note['initial_showing_track'])  # 初始显示轨道
+            note_data[6] = int(note['judging_track'])  # 实际判定轨道
             note_data[7] = float(start_time)  # 开始时间
             note_data[8] = float(end_time)  # 结束时间
             note_data[9] = float(end_pos-start_pos)  # 显示长度
             notes.append(note_data)
             commands.append((activate_time, ACTIVATE_NOTE, (note_id,)))  # 激活 note 指令
 
+            remove_time = end_time+BUFFER_TIME
+            commands.append((remove_time, REMOVE_NOTE, (note_id,)))  # 移除 note 指令
+
             for t, a, b, c in key_points_abc:
+                if t >= remove_time:
+                    break
                 commands.append((float(t), CHANGE_NOTE_POS, (note_id, float(a), float(b), float(c))))  # 改变 note 位置函数指令
 
-            showing_track_changes_processed = process_changes(note['initial_showing_track'], note['showing_track_changes'])
-            for time, change in showing_track_changes_processed.values():
-                change_type = {
-                    LINEAR_SLOW_MOVING: CHANGE_NOTE_TRACK_LINEAR,
-                    SINE_SLOW_MOVING: CHANGE_NOTE_TRACK_SINE
-                }[change[0]]
-                commands.append((time, change_type, (line_id, *change[1:])))
+            process_changes(note['initial_showing_track'], note['showing_track_changes'], note_id, CHANGE_NOTE_TRACK_LINEAR, CHANGE_NOTE_TRACK_SINE)
 
             note_id += 1
 

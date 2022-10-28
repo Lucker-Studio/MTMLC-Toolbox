@@ -1,6 +1,6 @@
 # json 工程文件
 
-*Version 2，2022/10/27*
+*Version 3，2022/10/28*
 
 - `project_name`：工程名称。
 - `music_path`：音频文件路径。
@@ -8,14 +8,14 @@
 - `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍起 BPM **瞬间变为** `v`。
 - `global_speed_key_points`：全局流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
 - `line_list`：判定线列表，每一项如下：
-  - `initial_position`：判定线的初始位置。
-  - `initial_showing`：判定线初始是否显示。
-  - `show_hide`：判定线显示隐藏事件列表。
-  - `motions`：判定线移动事件列表。
+  - `initial_position`：初始位置。
+  - `initial_alpha`：初始透明度。
+  - `motions`：移动事件列表。
     - `start`：起始节拍（`[a, b, c]`）。
     - `end`：终止节拍。
     - `target`：目标位置。
     - `type`：缓动类型（`linear` 表示线性缓动，`sine` 表示正弦缓动）。
+  - `alpha_changes`：透明度变化事件列表，格式与 `motions` 相同。
   - `note_list`：音符列表。
     - `start`：判定节拍。
     - `end`：结束节拍。
@@ -30,7 +30,7 @@
 
 # omgc 谱面文件
 
-*Version 2，2022/10/27*
+*Version 3，2022/10/28*
 
 omgc 文件中无符号整型（uint）和浮点型（float）均占 4 字节，采用小端型存储。
 
@@ -58,7 +58,7 @@ meta 区由以下 8 个数据组成：
 line 区中每条判定线的格式如下：
 
 - 初始位置（float）
-- 初始是否显示（uint，0/1）
+- 初始透明度（float）
 
 ## note 区
 
@@ -91,7 +91,11 @@ cmd 区中每条指令的格式如下：
 
 - 参数 1：note 的 ID（uint）。
 
-注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。note 被打击或超时后，将 note 从活动 note 列表中移除。
+注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。
+
+### `0x0101` 移除 note
+
+- 参数 1：note 的 ID（uint）。
 
 ### `0x0110` 更改 note 位置函数
 
@@ -116,13 +120,19 @@ cmd 区中每条指令的格式如下：
 - 参数 4：$\varphi$ 的值（float）。
 - 参数 5：$b$ 的值（float）。
 
-### `0x0200` 显示 line
+### `0x0200` 将 line 透明度函数改为 $val=kt+b$
 
 - 参数 1：line 的 ID（uint）。
+- 参数 2：$k$ 的值（float）。
+- 参数 3：$b$ 的值（float）。
 
-### `0x0201` 隐藏 line
+### `0x0201` 将 line 透明度函数改为 $val=Asin(\omega x+\varphi)+b$
 
 - 参数 1：line 的 ID（uint）。
+- 参数 2：$A$ 的值（float）。
+- 参数 3：$\omega$ 的值（float）。
+- 参数 4：$\varphi$ 的值（float）。
+- 参数 5：$b$ 的值（float）。
 
 ### `0x0210` 将 line 位置函数改为 $val=kt+b$
 
@@ -130,7 +140,7 @@ cmd 区中每条指令的格式如下：
 - 参数 2：$k$ 的值（float）。
 - 参数 3：$b$ 的值（float）。
 
-### `0x0211` 将判定线位置函数改为 $val=Asin(\omega x+\varphi)+b$
+### `0x0211` 将 line 位置函数改为 $val=Asin(\omega x+\varphi)+b$
 
 - 参数 1：line 的 ID（uint）。
 - 参数 2：$A$ 的值（float）。
