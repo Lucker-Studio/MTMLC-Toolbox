@@ -143,6 +143,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
             cmd_params = read_multi_data(*CMD_PARAM_TYPE[cmd_type])
             commands.append((cmd_time, cmd_type, cmd_params))
         else:
+            # 跳过未知类型的指令
             for j in range(cmd_param_count):
                 next(read_4byte)
 
