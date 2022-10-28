@@ -12,8 +12,12 @@ DEFAULT_PROPERTIES = {
     'is_fake': False
 }
 
-# omgc 版本
-OMGC_VERSION = 3
+# 写入的 omgc 版本及支持读取的 omgc 版本
+WRITING_OMGC_VERSION = 3
+SUPPORTED_OMGC_VERSIONS = {3}
+
+# omgc 数据存储格式
+STRUCT_FORMAT = {int: '<I', float: '<f'}
 
 # 指令列表
 PLAY_MUSIC = 0x0000

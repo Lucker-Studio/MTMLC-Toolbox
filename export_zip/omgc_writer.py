@@ -33,7 +33,7 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
         print_log(time, CMD_NAME[cmd_type]+f'({cmd_type})', len(parameters), parameters)
 
     print_log('META:')
-    meta = [OMGC_VERSION]
+    meta = [WRITING_OMGC_VERSION]
     meta.extend(map(len, (lines_expanded, lines, notes_expanded, notes, commands_expanded, commands)))
     print_log(*meta)
 
@@ -41,7 +41,7 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
         f.write('omgc'.encode('ascii'))
         for data in meta+lines_expanded+notes_expanded+commands_expanded:
             # 将二进制数据写入文件
-            f.write(struct.pack({int: '<I', float: '<f'}[type(data)], data))
+            f.write(struct.pack(STRUCT_FORMAT[type(data)], data))
 
     if DEBUG_MODE:
         debug_log.close()
