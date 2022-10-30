@@ -59,12 +59,17 @@ CMD_PARAM_TYPE = {
     LINE_POS_SINE: (int, float, float, float, float)
 }
 
-# 画面宽高
-FRAME_WIDTH = 1600
-FRAME_HEIGHT = 900
+# 画面高度
+FRAME_HEIGHT = 1000
 
 # 默认判定线初始位置
 LINE_INITIAL_POSITION = 800
+
+# 窗口高度
+WINDOW_HEIGHT = 600
+
+# 轨道宽度
+TRACK_WIDTH = 100
 
 # 缓冲时间（提前激活与推迟消失）
 BUFFER_TIME = 0.5
