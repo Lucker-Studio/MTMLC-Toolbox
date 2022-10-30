@@ -76,14 +76,14 @@ def main() -> None:
                 if using_template:
                     if new_data != json_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
                         # 将信息保存到原有文件中
-                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'))
+                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'), indent=4)
                         easygui.msgbox('模板更新成功！', '导出 ZIP 文件', '好耶')
                 else:
                     if easygui.ynbox('是否保存模板供以后使用？', '导出 ZIP 文件', ('是', '否')):
                         json_path = easygui.filesavebox('保存模板', '导出 ZIP 文件', title+'.json')
                         if json_path is None:  # 未选择文件
                             return
-                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'))
+                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'), indent=4)
                         easygui.msgbox('模板保存成功！', '导出 ZIP 文件', '好耶')
 
                 # 保存 ZIP 文件
