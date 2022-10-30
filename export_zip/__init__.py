@@ -1,5 +1,5 @@
 import os
-import pickle
+import json
 
 import easygui
 
@@ -19,13 +19,13 @@ def main() -> None:
     if using_template is None:  # 关闭对话框
         return
     elif using_template:  # 选择“是”
-        pickle_path = str(easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.pkl'))
-        if pickle_path is None:  # 未选择文件
+        json_path = str(easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.json'))
+        if json_path is None:  # 未选择文件
             return
         try:
-            # 读取 pickle 数据
-            pickle_data = pickle.load(open(pickle_path, 'rb'))
-            music_path, illustration_path, title, composer, illustrator, charts_info = pickle_data
+            # 读取 json 数据
+            json_data = tuple(json.load(open(json_path, encoding='utf-8')))  # 为了比较数据是否改变，需要转为不可变类型
+            music_path, illustration_path, title, composer, illustrator, charts_info = json_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出 ZIP 文件', '好的')
             using_template = False
@@ -74,16 +74,16 @@ def main() -> None:
                 # 保存或更新模板
                 new_data = music_path, illustration_path, title, composer, illustrator, charts_info
                 if using_template:
-                    if new_data != pickle_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
+                    if new_data != json_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
                         # 将信息保存到原有文件中
-                        pickle.dump(new_data, open(pickle_path, 'wb'))
+                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'))
                         easygui.msgbox('模板更新成功！', '导出 ZIP 文件', '好耶')
                 else:
                     if easygui.ynbox('是否保存模板供以后使用？', '导出 ZIP 文件', ('是', '否')):
-                        pickle_path = easygui.filesavebox('保存模板', '导出 ZIP 文件', title+'.pkl')
-                        if pickle_path is None:  # 未选择文件
+                        json_path = easygui.filesavebox('保存模板', '导出 ZIP 文件', title+'.json')
+                        if json_path is None:  # 未选择文件
                             return
-                        pickle.dump(new_data, open(pickle_path, 'wb'))
+                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'))
                         easygui.msgbox('模板保存成功！', '导出 ZIP 文件', '好耶')
 
                 # 保存 ZIP 文件
