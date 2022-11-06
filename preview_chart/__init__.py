@@ -3,7 +3,9 @@ import tempfile
 import zipfile
 
 import easygui
+from .music_player import Player
 from .omgc_reader import read_omgc
+from .window_controller import Window
 
 
 def main() -> None:
@@ -17,15 +19,22 @@ def main() -> None:
     chart_choices = {i[0]+' '+i[1]+' By '+i[2]: i for i in charts_info}
     while True:
         if len(chart_choices) > 1:
-            ch = easygui.choicebox('请选择谱面', title+' 谱面预览', chart_choices.keys())
+            ch = easygui.choicebox('请选择谱面', f'{title} - 谱面预览', chart_choices.keys())
             if ch is None:
                 break
             chart_info = chart_choices[ch]
         else:  # 只有一个选项可用不了 choicebox 哦~
             chart_info = charts_info[0]
-        omgc_data = read_omgc(os.path.join(zip_dir, 'charts', chart_info[0]+'.omgc'), chart_info[3])
+        difficulty, diff_number, chart_writer, omgc_md5 = chart_info
+        omgc_data = read_omgc(os.path.join(zip_dir, 'charts', difficulty+'.omgc'), omgc_md5)
         if omgc_data is None:
             if len(chart_choices) > 1:
                 continue
             else:  # 这里要是不 break 就死循环了
+                break
+        game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(zip_dir, 'background.png'))
+        music_player = Player()
+        while True:
+            game_window.start_drawing()
+            if game_window.end_drawing():
                 break

@@ -162,9 +162,10 @@ cmd 区中每条指令的格式如下：
 
 # zip 歌曲压缩包
 
-*Version 1，2022/9/23*
+*Version 2，2022/11/6*
 
 - 歌曲信息文件：`info.txt`
 - 歌曲音频：`music.mp3`
 - 曲绘：`illustration.png`
+- 背景图片：`background.png`
 - 谱面文件： `charts/(等级名称).omgc`
