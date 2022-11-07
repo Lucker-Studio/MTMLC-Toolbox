@@ -22,7 +22,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
             cur_base = i[2]
         elif i[1] == 'rate':
             cur_rate = i[2]
-        speed[tuple(i[0])] = cur_base*cur_rate
+        speed[tuple(i[0])] = cur_base*cur_rate*NOTE_SPEED_RATE
     speed = sorted(speed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
     speed_key_points = [speed[0]]
     for i in range(1, len(speed)):

@@ -17,15 +17,10 @@ class Window:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption(title)
 
-        self.key_binding = {}
-        self.key_release_binding = {}
-        self.add_key_binding = self.key_binding.__setitem__
-        self.add_key_release_binding = self.key_release_binding.__setitem__
-
         bgimg_original = Image.open(bgimg_path)
-        bgimg_resized = bgimg_original.resize(self.size)
-        bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)
-        bgimg_blur = bgimg_dark.filter(ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))
+        bgimg_resized = bgimg_original.resize(self.size)  # 缩放大小
+        bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)  # 降低亮度
+        bgimg_blur = bgimg_dark.filter(ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))  # 高斯模糊
         self.bgimg = pygame.image.frombuffer(bgimg_blur.tobytes(), self.size, bgimg_blur.mode)
 
     def start_drawing(self) -> None:
@@ -54,19 +49,8 @@ class Window:
         rect_note.center = (real_pos_x, real_pos_y)
         pygame.draw.rect(self.screen, PREVIEW_NOTE_COLOR, rect_note, border_radius=PREVIEW_NOTE_BORDER_RADIUS)
 
-    def end_drawing(self) -> bool:
+    def end_drawing(self) -> None:
         """
-        完成绘制帧时调用此函数，返回值表示是否退出游戏界面
+        完成绘制帧时调用此函数
         """
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return True
-            elif event.type == pygame.KEYDOWN:
-                if event.key in self.key_binding:
-                    self.key_binding[event.key]()
-            elif event.type == pygame.KEYUP:
-                if event.key in self.key_release_binding:
-                    self.key_release_binding[event.key]()
-        return False
+        pygame.display.update()  # 更新画面

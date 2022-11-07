@@ -11,6 +11,14 @@ DIALOG_TITLE = 'Omegar Toolbox v0.3.221107'+' [Debug Mode]'*DEBUG_MODE
 
 
 """
+mc 转换
+"""
+
+# 音符流速倍率
+NOTE_SPEED_RATE = 5
+
+
+"""
 json 写入
 """
 
@@ -117,8 +125,11 @@ PREVIEW_BACKGROUND_BRIGHTNESS = 0.5
 # 背景模糊度
 PREVIEW_BACKGROUND_BLUR = 10
 
+# 键位映射
+PREVIEW_KEY_MAP = 'dfjk'
+
 # 轨道数量
-PREVIEW_TRACK_NUMBER = 4
+PREVIEW_TRACK_NUMBER = len(PREVIEW_KEY_MAP)
 
 # 轨道宽度
 PREVIEW_TRACK_WIDTH = 100
@@ -143,6 +154,3 @@ PREVIEW_NOTE_BORDER_RADIUS = 10
 
 # 音符颜色
 PREVIEW_NOTE_COLOR = (200, 200, 255)
-
-# 音符流速倍率
-PREVIEW_NOTE_SPEED_RATE = 5

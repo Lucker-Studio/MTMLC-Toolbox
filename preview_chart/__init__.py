@@ -34,5 +34,5 @@ def main() -> None:
             else:  # 这里要是不 break 就死循环了
                 break
         game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(zip_dir, 'illustration.png'))
-        game = Game(omgc_data, game_window)
+        game = Game(omgc_data, os.path.join(zip_dir, 'music.mp3'), game_window)
         game.main_loop()
