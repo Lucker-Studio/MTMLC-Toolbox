@@ -33,6 +33,6 @@ def main() -> None:
                 continue
             else:  # 这里要是不 break 就死循环了
                 break
-        game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(zip_dir, 'background.png'))
+        game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(zip_dir, 'illustration.png'))
         game = Game(omgc_data, game_window)
         game.main_loop()

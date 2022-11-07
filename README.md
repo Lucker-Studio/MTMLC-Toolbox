@@ -11,7 +11,11 @@ pip install easygui
 python Omegar-Toolbox.py
 ```
 
-若以上命令无法运行，请检查 `git` 是否安装、`pip` 和 `python` 版本是否为 Python 3、Linux 下是否已安装 `python3-tk`。
+若无法正常运行，请检查：
+
+- `python` 版本是否为 Python 3
+- 所需的第三方 Python 包是否已安装（若未安装请按照错误信息提示使用 `pip` 安装）
+- Linux 下是否已安装 `python3-tk`
 
 ### 编译运行（Windows+WSL）
 
@@ -27,8 +31,8 @@ wsl pip install -U pipenv
 pipenv --python 3.8
 wsl python -m pipenv --python 3.10
 
-pipenv run pip install easygui pygame pyinstaller
-wsl python -m pipenv run pip install easygui pygame pyinstaller
+pipenv run pip install -U -i https://mirrors.aliyun.com/pypi/simple/ easygui pillow pygame pyinstaller
+wsl python -m pipenv run pip install -U -i https://mirrors.aliyun.com/pypi/simple/ easygui pillow pygame pyinstaller
 ```
 
 #### 编译

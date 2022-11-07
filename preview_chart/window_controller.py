@@ -1,4 +1,5 @@
 import pygame
+from PIL import Image, ImageFilter, ImageEnhance
 
 from constants import *
 
@@ -12,13 +13,20 @@ class Window:
         pygame.init()
         self.width = PREVIEW_TRACK_WIDTH*PREVIEW_TRACK_NUMBER+PREVIEW_SPLIT_WIDTH*(PREVIEW_TRACK_NUMBER+1)
         self.height = PREVIEW_WINDOW_HEIGHT
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.size = self.width, self.height
+        self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption(title)
-        self.bgimg = pygame.transform.scale(pygame.image.load(bgimg_path), (self.width, self.height))
+
         self.key_binding = {}
         self.key_release_binding = {}
         self.add_key_binding = self.key_binding.__setitem__
         self.add_key_release_binding = self.key_release_binding.__setitem__
+
+        bgimg_original = Image.open(bgimg_path)
+        bgimg_resized = bgimg_original.resize(self.size)
+        bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)
+        bgimg_blur = bgimg_dark.filter(ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))
+        self.bgimg = pygame.image.frombuffer(bgimg_blur.tobytes(), self.size, bgimg_blur.mode)
 
     def start_drawing(self) -> None:
         """
