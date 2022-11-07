@@ -1,12 +1,13 @@
-"""
-Toolbox 主程序
-"""
-
-# 对话框标题
-TOOLBOX_TITLE = 'Omegar Toolbox v0.2.221028'
+import sys
 
 # 调试模式
-TOOLBOX_DEBUG_MODE = True
+if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
+    DEBUG_MODE = False
+else:
+    DEBUG_MODE = True
+
+# 对话框标题
+DIALOG_TITLE = 'Omegar Toolbox v0.3.221107'+' [Debug Mode]'*DEBUG_MODE
 
 
 """

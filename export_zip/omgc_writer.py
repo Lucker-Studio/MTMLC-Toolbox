@@ -8,11 +8,11 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
     将指令列表写入 omgc 谱面文件。
     """
 
-    if TOOLBOX_DEBUG_MODE:
+    if DEBUG_MODE:
         debug_log = open('debug.log', 'w', encoding='utf-8')
 
     def print_log(*data):
-        if TOOLBOX_DEBUG_MODE:
+        if DEBUG_MODE:
             print(*map(lambda x: round(x, 3) if type(x) == float else x, data), sep='\t', file=debug_log)
 
     print_log('LINE:')
@@ -44,5 +44,5 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
             # 将二进制数据写入文件
             f.write(struct.pack(OMGC_STRUCT_FORMAT[type(data)], data))
 
-    if TOOLBOX_DEBUG_MODE:
+    if DEBUG_MODE:
         debug_log.close()

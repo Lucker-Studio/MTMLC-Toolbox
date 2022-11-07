@@ -12,8 +12,8 @@ builtin_modules = {
 }
 
 if __name__ == '__main__':
-    while ch := easygui.choicebox('请选择要使用的功能', TOOLBOX_TITLE, builtin_modules.keys()):
+    while ch := easygui.choicebox('请选择要使用的功能', DIALOG_TITLE, builtin_modules.keys()):
         try:
             builtin_modules[ch].main()
         except:
-            easygui.exceptionbox(f'使用功能“{ch}”时出错！', TOOLBOX_TITLE)
+            easygui.exceptionbox(f'使用功能“{ch}”时出错！', DIALOG_TITLE)
