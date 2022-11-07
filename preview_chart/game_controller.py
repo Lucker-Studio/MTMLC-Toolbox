@@ -13,16 +13,16 @@ class Game:
         self.start_time = time.time()+1  # 游戏时间从 -1 开始
         self.current_notes = []
         self.event_processor = {
-            PLAY_MUSIC:         self.play_music,
-            ACTIVATE_NOTE:      self.activate_note,
-            REMOVE_NOTE:        self.remove_note,
-            NOTE_POS:           self.note_pos,
-            NOTE_TRACK_LINEAR:  self.note_track_linear,
-            NOTE_TRACK_SINE:    self.note_track_sine,
-            LINE_ALPHA_LINEAR:  self.line_alpha_linear,
-            LINE_ALPHA_SINE:    self.line_alpha_sine,
-            LINE_POS_LINEAR:    self.line_pos_linear,
-            LINE_POS_SINE:      self.line_pos_sine
+            CMD_PLAY_MUSIC:         self.play_music,
+            CMD_ACTIVATE_NOTE:      self.activate_note,
+            CMD_REMOVE_NOTE:        self.remove_note,
+            CMD_NOTE_POS:           self.note_pos,
+            CMD_NOTE_TRACK_LINEAR:  self.note_track_linear,
+            CMD_NOTE_TRACK_SINE:    self.note_track_sine,
+            CMD_LINE_ALPHA_LINEAR:  self.line_alpha_linear,
+            CMD_LINE_ALPHA_SINE:    self.line_alpha_sine,
+            CMD_LINE_POS_LINEAR:    self.line_pos_linear,
+            CMD_LINE_POS_SINE:      self.line_pos_sine
         }
 
     def main_loop(self) -> None:

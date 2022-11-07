@@ -113,7 +113,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         """
         读取一个指定类型的数据。
         """
-        return struct.unpack(STRUCT_FORMAT[data_type], next(read_4byte))[0]
+        return struct.unpack(OMGC_STRUCT_FORMAT[data_type], next(read_4byte))[0]
 
     def read_multi_data(*args):
         """
@@ -122,8 +122,8 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         return list(map(read_data, args))
 
     omgc_version = read_data(int)
-    if omgc_version not in SUPPORTED_OMGC_VERSIONS:
-        if not easygui.ynbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{SUPPORTED_OMGC_VERSIONS}\n是否强行打开谱面？', '打开谱面受阻', ('继续', '返回')):
+    if omgc_version not in OMGC_SUPPORTED_VERSIONS:
+        if not easygui.ynbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{OMGC_SUPPORTED_VERSIONS}\n是否强行打开谱面？', '打开谱面受阻', ('继续', '返回')):
             return None
 
     line_size, line_count, note_size, note_count, cmd_size, cmd_count = read_multi_data(*(int,)*6)

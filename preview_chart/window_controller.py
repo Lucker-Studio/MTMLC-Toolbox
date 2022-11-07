@@ -10,8 +10,8 @@ class Window:
 
     def __init__(self, title: str, bgimg_path: str) -> None:
         pygame.init()
-        self.width = TRACK_WIDTH*TRACK_NUMBER+LINE_WIDTH*(TRACK_NUMBER+1)
-        self.height = WINDOW_HEIGHT
+        self.width = PREVIEW_TRACK_WIDTH*PREVIEW_TRACK_NUMBER+PREVIEW_LINE_WIDTH*(PREVIEW_TRACK_NUMBER+1)
+        self.height = PREVIEW_WINDOW_HEIGHT
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption(title)
         self.bgimg = pygame.transform.scale(pygame.image.load(bgimg_path), (self.width, self.height))
@@ -27,9 +27,15 @@ class Window:
         开始绘制帧时调用此函数
         """
         self.screen.blit(self.bgimg, (0, 0))
-        for i in range(TRACK_NUMBER+1):  # 绘制分割线
-            split_line = pygame.Rect(i*(TRACK_WIDTH+LINE_WIDTH), 0, LINE_WIDTH, self.height)
+        for i in range(PREVIEW_TRACK_NUMBER+1):  # 绘制分割线
+            split_line = pygame.Rect(i*(PREVIEW_TRACK_WIDTH+PREVIEW_LINE_WIDTH), 0, PREVIEW_LINE_WIDTH, self.height)
             pygame.draw.rect(self.screen, self.line_color, split_line)
+
+    def draw_line(self, pos: float, alpha: float) -> None:
+        """
+        绘制判定线
+        """
+        pygame.draw.line(self.screen, (*self.line_color, int(alpha*255)), (0, pos), (self.width, pos), PREVIEW_LINE_WIDTH)
 
     def end_drawing(self) -> bool:
         """

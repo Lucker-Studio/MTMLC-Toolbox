@@ -47,5 +47,5 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
             project_data['music_path'] = i['sound']
             project_data['music_offset'] = i.get('offset', 0)/1000
 
-    project_data['line_list'] = [{'initial_position': LINE_INITIAL_POSITION, 'initial_alpha': 1, 'motions': [], 'alpha_changes': [], 'note_list':note_list}]
+    project_data['line_list'] = [{'initial_position': CHART_LINE_INITIAL_POSITION, 'initial_alpha': 1, 'motions': [], 'alpha_changes': [], 'note_list':note_list}]
     return project_data
