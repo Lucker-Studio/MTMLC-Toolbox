@@ -68,8 +68,14 @@ LINE_INITIAL_POSITION = 800
 # 窗口高度
 WINDOW_HEIGHT = 600
 
+# 轨道数量
+TRACK_NUMBER = 4
+
 # 轨道宽度
 TRACK_WIDTH = 100
+
+# 分隔线、判定线宽度
+LINE_WIDTH = 5
 
 # 缓冲时间（提前激活与推迟消失）
 BUFFER_TIME = 0.5

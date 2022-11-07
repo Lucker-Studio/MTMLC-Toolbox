@@ -3,7 +3,8 @@ import tempfile
 import zipfile
 
 import easygui
-from .music_player import Player
+
+from .game_controller import Game
 from .omgc_reader import read_omgc
 from .window_controller import Window
 
@@ -33,8 +34,5 @@ def main() -> None:
             else:  # 这里要是不 break 就死循环了
                 break
         game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(zip_dir, 'background.png'))
-        music_player = Player()
-        while True:
-            game_window.start_drawing()
-            if game_window.end_drawing():
-                break
+        game = Game(omgc_data, game_window)
+        game.main_loop()
