@@ -17,6 +17,8 @@ json 写入
 NOTE_PROPERTIES = [
     'is_fake'
 ]
+
+# note 默认属性
 DEFAULT_PROPERTIES = {
     'is_fake': False
 }
@@ -35,8 +37,10 @@ CHART_LINE_INITIAL_POSITION = 800
 # 缓冲时间（提前激活与推迟消失）
 CHART_BUFFER_TIME = 0.5
 
-# 缓动类型
+# 线性缓动
 SLOW_MOVING_LINEAR = 'linear'
+
+# 正弦缓动
 SLOW_MOVING_SINE = 'sine'
 
 
@@ -89,8 +93,10 @@ CMD_PARAM_TYPE = {
 omgc 写入
 """
 
-# 写入的 omgc 版本及支持读取的 omgc 版本
+# 写入的 omgc 版本
 OMGC_WRITING_VERSION = 3
+
+# 支持读取的 omgc 版本
 OMGC_SUPPORTED_VERSIONS = {3}
 
 # omgc 数据存储格式
@@ -110,5 +116,26 @@ PREVIEW_TRACK_NUMBER = 4
 # 轨道宽度
 PREVIEW_TRACK_WIDTH = 100
 
-# 分隔线、判定线宽度
+# 分隔线宽度
+PREVIEW_SPLIT_WIDTH = 3
+
+# 分隔线颜色
+PREVIEW_SPLIT_COLOR = (200, 200, 200)
+
+# 判定线宽度
 PREVIEW_LINE_WIDTH = 5
+
+# 判定线颜色
+PREVIEW_LINE_COLOR = (100, 255, 100)
+
+# 音符大小
+PREVIEW_NOTE_SIZE = (80, 20)
+
+# 音符圆角大小
+PREVIEW_NOTE_BORDER_RADIUS = 10
+
+# 音符颜色
+PREVIEW_NOTE_COLOR = (100, 100, 255)
+
+# 音符流速倍率
+PREVIEW_NOTE_SPEED_RATE = 5

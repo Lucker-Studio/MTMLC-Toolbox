@@ -1,8 +1,7 @@
 import time
 
-import pygame
-
 from constants import *
+from .func import *
 from .window_controller import Window
 
 
@@ -12,7 +11,7 @@ class Game:
         self.game_window = game_window
         self.start_time = time.time()+1  # 游戏时间从 -1 开始
         self.current_notes = []
-        self.event_processor = {
+        self.cmd_processor = {
             CMD_PLAY_MUSIC:         self.play_music,
             CMD_ACTIVATE_NOTE:      self.activate_note,
             CMD_REMOVE_NOTE:        self.remove_note,
@@ -29,10 +28,16 @@ class Game:
         while True:
             game_time = time.time()-self.start_time
             while len(self.commands) >= 1 and self.commands[0][0] < game_time:
-                event = self.commands.pop(0)
-                self.event_processor[event[1]](*event[2])
+                cmd = self.commands.pop(0)
+                self.cmd_processor[cmd[1]](*cmd[2])
 
             self.game_window.start_drawing()
+
+            for line in self.lines:
+                self.game_window.draw_line(line.get_position(game_time), line.get_alpha(game_time))
+
+            for note in self.notes:
+                self.game_window.draw_note(note.get_position(game_time), note.get_showing_track(game_time))
 
             if self.game_window.end_drawing():
                 break
