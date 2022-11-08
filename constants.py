@@ -1,5 +1,8 @@
 import sys
 
+# 版本号
+VERSION = 'v0.3.221108'
+
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
     DEBUG_MODE = False
@@ -7,7 +10,7 @@ else:
     DEBUG_MODE = True
 
 # 对话框标题
-DIALOG_TITLE = 'Omegar Toolbox v0.3.221107'+' [Debug Mode]'*DEBUG_MODE
+DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
 
 
 """
@@ -151,4 +154,4 @@ PREVIEW_NOTE_BORDER_RADIUS = 10
 PREVIEW_NOTE_COLOR = (200, 200, 255)
 
 # 音符流速倍率
-PREVIEW_NOTE_SPEED_RATE = 5
+PREVIEW_NOTE_SPEED_RATE = 10
