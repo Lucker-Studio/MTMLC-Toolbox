@@ -1,1 +1,1 @@
-@pipenv run pyinstaller Omegar-Toolbox.spec --distpath building --workpath building
+@pipenv run pyinstaller Omegar-Toolbox.spec --distpath build-windows --workpath build-windows\temp

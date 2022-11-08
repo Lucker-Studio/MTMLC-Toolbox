@@ -1,0 +1,4 @@
+easygui
+pillow
+pygame
+pyinstaller

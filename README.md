@@ -1,32 +1,15 @@
-# Omegar-Toolbox：Omega 制谱工具箱
+# Omegar-Toolbox: Omega 官方制谱工具箱
 
-## 运行方式
+## 如何导入谱面
 
-### 源代码运行
+### Step 1：解压文件
 
-```shell
-git clone https://github.com/OmegaRhythmLab/Omegar-Toolbox
-cd Omegar-Toolbox
-pip install easygui
-python Omegar-Toolbox.py
-```
+使用 7-zip 等工具将 `mcz`/`osz `等文件解压到某个文件夹中。
 
-若无法正常运行，请检查：
+### Step 2：转换谱面（Malody 谱面可跳过）
 
-- `python` 版本是否为 Python 3
-- 所需的第三方 Python 包是否已安装（若未安装请按照错误信息提示使用 `pip` 安装）
-- Linux 下是否已安装 `python3-tk`
+打开 `rmstZ_20220113_modified.html`，点击“选择文件”按钮，选择刚才解压出的谱面文件（如 `.osu`），待“reading”消失后点击“点击保存”，将得到的 `xxx[key].mc` 放入文件夹中。Step 3：导入谱面
 
-### 编译运行
+打开 Omegar-Toolbox，进入“导入 Malody 谱面”功能，选择刚才解压的文件夹。
 
-#### 初始化虚拟环境（只需执行一次）
-
-```shell
-pip install -U pipenv
-pipenv --python 3.8
-pipenv run pip install -U -i https://mirrors.aliyun.com/pypi/simple/ easygui pillow pygame pyinstaller
-```
-
-#### 编译
-
-运行 `build.bat`，可执行文件将在 `building/{系统名称}` 目录下生成。
+完成以上操作后，文件夹中将出现 `json` 工程文件，可使用 Omegar-Toolbox 中的其他功能对其进行操作。

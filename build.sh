@@ -1,0 +1,1 @@
+pipenv run pyinstaller Omegar-Toolbox.spec --distpath build-linux --workpath build-linux/temp
