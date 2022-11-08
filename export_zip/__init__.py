@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 import easygui
 
@@ -25,7 +25,7 @@ def main() -> None:
         try:
             # 读取 json 数据
             template_data = tuple(json.load(open(template_path, encoding='utf-8')))  # 为了比较数据是否改变，需要转为不可变类型
-            music_path, illustration_path,  title, composer, illustrator, charts_info = template_data
+            music_path, illustration_path, title, composer, illustrator, charts_info = template_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出 ZIP 文件', '好的')
             using_template = False
@@ -74,7 +74,7 @@ def main() -> None:
                 # 保存或更新模板
                 new_data = music_path, illustration_path, title, composer, illustrator, charts_info
                 if using_template:
-                    if new_data != template_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
+                    if easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
                         # 将信息保存到原有文件中
                         json.dump(new_data, open(template_path, 'w', encoding='utf-8'), indent=4)
                         easygui.msgbox('模板更新成功！', '导出 ZIP 文件', '好耶')

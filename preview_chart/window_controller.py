@@ -1,6 +1,8 @@
-import pygame
+import time
+
 import PIL.Image
 import PIL.ImageFilter
+import pygame
 
 from constants import *
 
@@ -17,6 +19,7 @@ class Window:
         self.rate = self.height/CHART_FRAME_HEIGHT
         self.size = self.width, self.height
         self.screen = pygame.display.set_mode(self.size)
+        self.font = pygame.font.SysFont(pygame.font.get_default_font(), PREVIEW_FONT_SIZE)
         pygame.display.set_caption(title)
 
         bgimg_original = PIL.Image.open(bgimg_path)
@@ -24,6 +27,9 @@ class Window:
         bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)  # 降低亮度
         bgimg_blur = bgimg_dark.filter(PIL.ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))  # 高斯模糊
         self.bgimg = pygame.image.frombuffer(bgimg_blur.tobytes(), self.size, bgimg_blur.mode)
+
+        if DEBUG_MODE:
+            self.last_time = time.time()
 
     def start_drawing(self) -> None:
         """
@@ -60,4 +66,16 @@ class Window:
         """
         完成绘制帧时调用此函数
         """
+        if DEBUG_MODE:
+            now_time = time.time()
+            if now_time == self.last_time:
+                fps = 'inf'
+            else:
+                fps = str(round(1/(now_time-self.last_time)))
+                self.last_time = now_time
+            text_fps = self.font.render(fps, True, PREVIEW_FONT_COLOR)
+            rect_fps = text_fps.get_rect()
+            rect_fps.bottomright = self.size
+            self.screen.blit(text_fps, rect_fps)
+
         pygame.display.update()  # 更新画面

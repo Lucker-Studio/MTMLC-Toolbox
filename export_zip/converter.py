@@ -45,6 +45,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             val_0 = cur_val  # 初值
             val_1 = cur_val = change['target']  # 末值
             moving_type = change['type']
+            # 必须保证缓动参数为 float 类型，而 Python 3 中 “/” 运算符返回 float 类型
             if t_0 != t_1:  # 若相等则为瞬时事件
                 if moving_type == SLOW_MOVING_LINEAR:  # 线性缓动
                     k = (val_1-val_0)/(t_1-t_0)
@@ -56,16 +57,16 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                     p = o*(t_0+t_1)/2
                     b = (val_0+val_1)/2
                     changes_processed[t_0] = (moving_type, A, o, p, b)
-            changes_processed[t_1] = (SLOW_MOVING_LINEAR, 0, val_1)
+            changes_processed[t_1] = (SLOW_MOVING_LINEAR, float(0), val_1)
         for time, change in sorted(changes_processed.values()):
             change_type = {
                 SLOW_MOVING_LINEAR: linear_cmd_type,
                 SLOW_MOVING_SINE: sine_cmd_type
             }[change[0]]
-            ret.append((time, change_type, (*id, *change[1:])))
+            ret.append((float(time), change_type, (*id, *change[1:])))
         return ret
 
-    commands.append((0, CMD_PLAY_MUSIC, ()))
+    commands.append((float(0), CMD_PLAY_MUSIC, ()))
 
     for line_id, line in enumerate(line_list):
         lines.append((float(line['initial_position']), float(line['initial_alpha'])))
@@ -112,7 +113,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
             # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
             if -CHART_FRAME_HEIGHT <= key_points_abc[0][-1] <= CHART_FRAME_HEIGHT:  # note 开始就可见
-                activate_time = -CHART_BUFFER_TIME  # 提前激活 note
+                activate_time = -BUFFER_TIME  # 提前激活 note
             else:
                 for i in range(len(key_points_abc)):
                     t_0, a, b, c = key_points_abc[i]
@@ -139,15 +140,15 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
                     t = min(solve(-CHART_FRAME_HEIGHT), solve(CHART_FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
                     if t != math.inf:
-                        activate_time = t-CHART_BUFFER_TIME
+                        activate_time = t-BUFFER_TIME
                         break
 
             while len(key_points_abc) > 1 and key_points_abc[1][0] < activate_time:
                 key_points_abc.pop(0)  # 只保留 note 激活前的最后一个位置函数
 
             note_data = [None]*11  # 初始化长度为 11 的数组（最后一个用于临时存储指令）
-            note_data[0] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False))  # 用 2 的整数次幂表示 note 的属性
-            note_data[1] = line_id
+            note_data[0] = int(sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False)))  # 用 2 的整数次幂表示 note 的属性
+            note_data[1] = int(line_id)
             note_data[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
             note_data[5] = float(note['initial_showing_track'])  # 初始显示轨道
             note_data[6] = int(note['judging_track'])  # 实际判定轨道
@@ -156,10 +157,10 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             note_data[9] = float(end_pos-start_pos)  # 显示长度
             note_data[10] = []
 
-            note_data[10].append((activate_time, CMD_ACTIVATE_NOTE, ()))  # 激活 note 指令
+            note_data[10].append((float(activate_time), CMD_ACTIVATE_NOTE, ()))  # 激活 note 指令
 
-            remove_time = end_time+CHART_BUFFER_TIME
-            note_data[10].append((remove_time, CMD_REMOVE_NOTE, ()))  # 移除 note 指令
+            remove_time = end_time+BUFFER_TIME
+            note_data[10].append((float(remove_time), CMD_REMOVE_NOTE, ()))  # 移除 note 指令
 
             for t, a, b, c in key_points_abc:
                 if t >= remove_time:
@@ -172,7 +173,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
     notes.sort(key=lambda x: x[7])  # 按开始时间排序
     for note_id, note in enumerate(notes):
-        commands.extend(map(lambda x: (x[0], x[1], (note_id, *x[2])), note.pop()))
+        commands.extend(map(lambda x: (x[0], x[1], (int(note_id), *x[2])), note.pop()))
 
     commands.sort()  # 按执行时间排序
 

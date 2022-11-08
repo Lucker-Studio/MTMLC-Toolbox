@@ -2,6 +2,7 @@ import hashlib
 import struct
 
 import easygui
+
 from constants import *
 
 from .func import *
@@ -14,8 +15,8 @@ class Line:
 
     def __init__(self, initial_position: float, initial_alpha: float) -> None:
         # 线性函数，但是斜率为 0，那不就是常数吗~
-        self.get_position = Linear_func(0, initial_position)
         self.get_alpha = Linear_func(0, initial_alpha)
+        self.get_position = Linear_func(0, initial_position)
 
 
 class Note:
