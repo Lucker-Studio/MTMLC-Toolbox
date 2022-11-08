@@ -22,7 +22,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
             cur_base = i[2]
         elif i[1] == 'rate':
             cur_rate = i[2]
-        speed[tuple(i[0])] = cur_base*cur_rate*NOTE_SPEED_RATE
+        speed[tuple(i[0])] = cur_base*cur_rate
     speed = sorted(speed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
     speed_key_points = [speed[0]]
     for i in range(1, len(speed)):
@@ -45,7 +45,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
             })
         elif 'sound' in i:
             project_data['music_path'] = i['sound']
-            project_data['music_offset'] = i.get('offset', 0)/1000
+            project_data['music_offset'] = -i.get('offset', 0)/1000
 
     project_data['line_list'] = [{'initial_position': CHART_LINE_INITIAL_POSITION, 'initial_alpha': 1, 'motions': [], 'alpha_changes': [], 'note_list':note_list}]
     return project_data

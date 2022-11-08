@@ -11,14 +11,6 @@ DIALOG_TITLE = 'Omegar Toolbox v0.3.221107'+' [Debug Mode]'*DEBUG_MODE
 
 
 """
-mc 转换
-"""
-
-# 音符流速倍率
-NOTE_SPEED_RATE = 10
-
-
-"""
 json 写入
 """
 
@@ -147,13 +139,16 @@ PREVIEW_LINE_WIDTH = 5
 PREVIEW_LINE_COLOR = (100, 255, 100)
 
 # 音符宽度
-PREVIEW_NOTE_WIDTH = 80
+PREVIEW_NOTE_WIDTH = 90
 
 # 音符高度
-PREVIEW_NOTE_HEIGHT = 20
+PREVIEW_NOTE_HEIGHT = 15
 
 # 音符圆角大小
 PREVIEW_NOTE_BORDER_RADIUS = 10
 
 # 音符颜色
 PREVIEW_NOTE_COLOR = (200, 200, 255)
+
+# 音符流速倍率
+PREVIEW_NOTE_SPEED_RATE = 5

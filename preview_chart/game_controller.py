@@ -12,15 +12,15 @@ class Game:
         self.lines, self.notes, self.commands = omgc_data
         self.game_window = game_window
         self.game_time = -1  # 游戏时间从 -1 开始
-        self.start_time = time.time()-self.game_time  # 游戏开始的绝对时间
+        self.start_time = 0  # 游戏开始的绝对时间
         self.combo = 0
         pygame.mixer.init()
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
         pygame.mixer.music.load(mp3_path)
-        self.activated_notes_id = []
+        self.activated_notes_id = [[]]*PREVIEW_TRACK_NUMBER
         self.cmd_processor = {
             CMD_PLAY_MUSIC:         pygame.mixer.music.play,
-            CMD_ACTIVATE_NOTE:      self.activated_notes_id.append,
+            CMD_ACTIVATE_NOTE:      self.activate_node,
             CMD_REMOVE_NOTE:        self.remove_note,
             CMD_NOTE_POS:           self.note_pos,
             CMD_NOTE_TRACK_LINEAR:  self.note_track_linear,
@@ -35,6 +35,7 @@ class Game:
         """
         游戏主循环
         """
+        self.start_time = time.time()-self.game_time
         while True:
             self.game_time = time.time()-self.start_time
             while len(self.commands) >= 1 and self.commands[0][0] < self.game_time:
@@ -46,9 +47,10 @@ class Game:
             for line in self.lines:
                 self.game_window.draw_line(line.get_position(self.game_time), line.get_alpha(self.game_time))
 
-            for note_id in self.activated_notes_id:
-                note = self.notes[note_id]
-                self.game_window.draw_note(note.get_position(self.game_time), note.showing_length, note.get_showing_track(self.game_time))
+            for track_notes in self.activated_notes_id:
+                for note_id in track_notes:
+                    note = self.notes[note_id]
+                    self.game_window.draw_note(note.get_position(self.game_time), note.showing_length, note.get_showing_track(self.game_time))
 
             self.game_window.end_drawing()
 
@@ -58,8 +60,6 @@ class Game:
                     pygame.mixer.music.unload()
                     pygame.quit()
                     return
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    print(self.game_time)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.pause()
@@ -99,7 +99,7 @@ class Game:
         """
         击打 note
         """
-        self.remove_note(note_id)
+        pass
 
     def show_score(self) -> None:
         """
@@ -107,13 +107,19 @@ class Game:
         """
         pass
 
+    def activate_node(self, note_id: int) -> None:
+        """
+        激活 note
+        """
+        self.activated_notes_id[self.notes[note_id].judging_track].append(note_id)
+
     def remove_note(self, note_id: int) -> None:
         """
         移除 note
         """
-        if note_id in self.activated_notes_id:
+        if note_id in self.activated_notes_id[self.notes[note_id].judging_track]:
             self.combo = 0
-            self.activated_notes_id.remove(note_id)
+            self.activated_notes_id[self.notes[note_id].judging_track].remove(note_id)
 
     def note_pos(self, note_id: int, a: float, b: float, c: float) -> None:
         pass

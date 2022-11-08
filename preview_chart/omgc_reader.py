@@ -39,8 +39,8 @@ class Note:
         """
         获取 note 的绝对位置。
         """
-        # 绝对位置=判定线位置+相对位置
-        return self.line.get_position(t)+self.get_relative_position(t)
+        # 绝对位置=判定线位置+相对位置*流速倍率
+        return self.line.get_position(t)+self.get_relative_position(t)*PREVIEW_NOTE_SPEED_RATE
 
 
 def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
