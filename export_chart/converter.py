@@ -2,6 +2,9 @@ import math
 
 from constants import *
 
+if DEBUG_MODE:
+    from tqdm import tqdm
+
 
 def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list, line_list: list) -> tuple:
     """
@@ -73,7 +76,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
         commands.extend(process_changes(line['initial_position'], line['motions'], CMD_LINE_POS_LINEAR, CMD_LINE_POS_SINE, line_id))
         commands.extend(process_changes(line['initial_alpha'], line['alpha_changes'],  CMD_LINE_ALPHA_LINEAR, CMD_LINE_ALPHA_SINE, line_id))
 
-        for note in line['note_list']:
+        for note in tqdm(line['note_list']) if DEBUG_MODE else line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
             end_time = beat2sec(note['end'])  # 结束秒数
             key_points = [(beat2sec(i), j) for i, j in note['speed_key_points']]  # 转换关键点列表
