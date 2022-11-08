@@ -44,8 +44,11 @@ class Window:
         """
         绘制判定线
         """
-        real_pos = pos*self.rate
-        pygame.draw.line(self.screen, (*PREVIEW_LINE_COLOR, int(alpha*255)), (0, real_pos), (self.width, real_pos), PREVIEW_LINE_WIDTH)
+        surf_line = pygame.Surface((self.width, PREVIEW_LINE_WIDTH), pygame.SRCALPHA)
+        surf_line.fill((*PREVIEW_LINE_COLOR, int(alpha*255)))
+        rect_line = surf_line.get_rect()
+        rect_line.centery = pos*self.rate
+        self.screen.blit(surf_line, rect_line)
 
     def draw_note(self, pos: float, length: float, track: float) -> None:
         """
@@ -53,7 +56,7 @@ class Window:
         """
         real_pos_x = (PREVIEW_TRACK_WIDTH+PREVIEW_SPLIT_WIDTH)*track+PREVIEW_SPLIT_WIDTH+PREVIEW_TRACK_WIDTH/2
         real_pos_y = pos*self.rate
-        rect_note = pygame.Rect((0, 0), (PREVIEW_NOTE_WIDTH, length*self.rate))
+        rect_note = pygame.Rect((0, 0), (PREVIEW_NOTE_WIDTH, length*self.rate*PREVIEW_NOTE_SPEED_RATE))
         rect_note.midbottom = (real_pos_x, real_pos_y)
         if rect_note.height < 0:
             rect_note.height *= -1

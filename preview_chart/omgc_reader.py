@@ -10,7 +10,7 @@ from .func import *
 
 class Line:
     """
-    判定线。
+    判定线
     """
 
     def __init__(self, initial_position: float, initial_alpha: float) -> None:
@@ -21,7 +21,7 @@ class Line:
 
 class Note:
     """
-    音符。
+    音符
     """
 
     def __init__(self, properties: int, line: Line, initial_a: float, initial_b: float, initial_c: float, initial_showing_track: float, judging_track: int, start_time: float, end_time: float, showing_length: float) -> None:
@@ -38,7 +38,7 @@ class Note:
 
     def get_position(self, t: float) -> float:
         """
-        获取 note 的绝对位置。
+        获取 note 的绝对位置
         """
         # 绝对位置=判定线位置+相对位置*流速倍率
         return self.line.get_position(t)+self.get_relative_position(t)*PREVIEW_NOTE_SPEED_RATE
@@ -46,7 +46,7 @@ class Note:
 
 def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
     """
-    读取 omgc 谱面文件。
+    读取 omgc 谱面文件
     """
 
     chart_data = open(omgc_path, 'rb').read()
@@ -55,7 +55,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     def read_4byte():
         """
-        从 omgc 文件读取 4 字节（一个数据）。
+        从 omgc 文件读取 4 字节（一个数据）
         """
         index = 0
         while True:
@@ -70,13 +70,13 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     def read_data(data_type):
         """
-        读取一个指定类型的数据。
+        读取一个指定类型的数据
         """
         return struct.unpack(OMGC_STRUCT_FORMAT[data_type], next(read_4byte))[0]
 
     def read_multi_data(*args):
         """
-        读取多个指定类型的数据。
+        读取多个指定类型的数据
         """
         return list(map(read_data, args))
 

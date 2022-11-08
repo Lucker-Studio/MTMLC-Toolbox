@@ -3,7 +3,7 @@ import json
 
 def read_mc(mc_path: str) -> tuple:
     """
-    读取 mc 谱面。
+    读取 mc 谱面
     """
 
     mc_data = json.load(open(mc_path, encoding='utf-8'))

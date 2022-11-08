@@ -5,7 +5,7 @@ from constants import *
 
 def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list, line_list: list) -> tuple:
     """
-    将工程文件数据转换为 omgc 谱面文件数据。
+    将工程文件数据转换为 omgc 谱面文件数据
     """
 
     lines = []  # 判定线列表
@@ -21,7 +21,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
     def beat2sec(beat: list) -> float:
         """
-        将拍数转换为秒数。
+        将拍数转换为秒数
         """
         beat = beat[0]+beat[1]/beat[2]
         i = 0
@@ -34,7 +34,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
     def process_changes(initial_val: int, changes: list, linear_cmd_type: int, sine_cmd_type: int, *id) -> None:
         """
-        处理缓动。
+        处理缓动
         """
         ret = []
         changes_processed = {}
@@ -52,13 +52,13 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                     b = (t_1*val_0-t_0*val_1)/(t_1-t_0)
                     changes_processed[t_0] = (moving_type, k, b)
                 elif moving_type == SLOW_MOVING_SINE:  # 正弦缓动
-                    A = (val_0-val_1)/2
-                    o = math.pi/(t_0-t_1)
-                    p = o*(t_0+t_1)/2
+                    A = (val_1-val_0)/2
+                    o = math.pi/(t_1-t_0)
+                    p = -o*(t_0+t_1)/2
                     b = (val_0+val_1)/2
                     changes_processed[t_0] = (moving_type, A, o, p, b)
-            changes_processed[t_1] = (SLOW_MOVING_LINEAR, float(0), val_1)
-        for time, change in sorted(changes_processed.values()):
+            changes_processed[t_1] = (SLOW_MOVING_LINEAR, float(0), float(val_1))
+        for time, change in sorted(changes_processed.items()):
             change_type = {
                 SLOW_MOVING_LINEAR: linear_cmd_type,
                 SLOW_MOVING_SINE: sine_cmd_type
@@ -92,7 +92,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
                     def first_two(x: float) -> float:
                         """
-                        计算二次函数前两项之和。
+                        计算二次函数前两项之和
                         """
                         return a*x**2+b*x
 
@@ -121,7 +121,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
                     def solve(pos):
                         """
-                        解方程，返回区间内的最小解，若无解则返回 inf。
+                        解方程，返回区间内的最小解，若无解则返回 inf
                         """
                         if a != 0:  # 一元二次方程
                             d = b**2-4*a*(c-pos)  # 求根判别式
@@ -163,7 +163,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             note_data[10].append((float(remove_time), CMD_REMOVE_NOTE, ()))  # 移除 note 指令
 
             for t, a, b, c in key_points_abc:
-                if t >= remove_time:
+                if t >= end_time:
                     break
                 note_data[10].append((float(t), CMD_NOTE_POS, (float(a), float(b), float(c))))  # 改变 note 位置函数指令
 

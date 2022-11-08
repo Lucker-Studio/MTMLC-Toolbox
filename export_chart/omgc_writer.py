@@ -5,7 +5,7 @@ from constants import *
 
 def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None:
     """
-    将指令列表写入 omgc 谱面文件。
+    将指令列表写入 omgc 谱面文件
     """
 
     if DEBUG_MODE:

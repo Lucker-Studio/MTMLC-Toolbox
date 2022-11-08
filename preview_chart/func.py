@@ -3,7 +3,7 @@ import math
 
 class Linear_func:
     """
-    线性函数（val=kt+b）。
+    线性函数（val=kt+b）
     """
 
     def __init__(self, k: float, b: float) -> None:
@@ -16,7 +16,7 @@ class Linear_func:
 
 class Sine_func:
     """
-    正弦函数（val=Asin(wt+φ)+b）。
+    正弦函数（val=Asin(wt+φ)+b）
     """
 
     def __init__(self, A: float, o: float, p: float, b: float) -> None:
@@ -31,7 +31,7 @@ class Sine_func:
 
 class Quadratic_func:
     """
-    二次函数（val=at^2+bt+c）。
+    二次函数（val=at^2+bt+c）
     """
 
     def __init__(self, a: float, b: float, c: float) -> None:
