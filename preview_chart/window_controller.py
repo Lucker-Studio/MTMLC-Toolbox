@@ -1,5 +1,6 @@
 import pygame
-from PIL import Image, ImageFilter, ImageEnhance
+import PIL.Image
+import PIL.ImageFilter
 
 from constants import *
 
@@ -17,10 +18,10 @@ class Window:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption(title)
 
-        bgimg_original = Image.open(bgimg_path)
+        bgimg_original = PIL.Image.open(bgimg_path)
         bgimg_resized = bgimg_original.resize(self.size)  # 缩放大小
         bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)  # 降低亮度
-        bgimg_blur = bgimg_dark.filter(ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))  # 高斯模糊
+        bgimg_blur = bgimg_dark.filter(PIL.ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))  # 高斯模糊
         self.bgimg = pygame.image.frombuffer(bgimg_blur.tobytes(), self.size, bgimg_blur.mode)
 
     def start_drawing(self) -> None:

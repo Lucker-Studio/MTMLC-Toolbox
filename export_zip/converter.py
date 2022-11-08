@@ -32,10 +32,11 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
 
     global_key_points = [(beat2sec(i), j) for i, j in global_speed_key_points]  # 转换全局关键点列表
 
-    def process_changes(initial_val: int, changes: list, id: int, linear_cmd_type: int, sine_cmd_type: int) -> None:
+    def process_changes(initial_val: int, changes: list, linear_cmd_type: int, sine_cmd_type: int, *id) -> None:
         """
         处理缓动。
         """
+        ret = []
         changes_processed = {}
         cur_val = initial_val
         for change in changes:
@@ -61,15 +62,15 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                 SLOW_MOVING_LINEAR: linear_cmd_type,
                 SLOW_MOVING_SINE: sine_cmd_type
             }[change[0]]
-            commands.append((time, change_type, (id, *change[1:])))
+            ret.append((time, change_type, (*id, *change[1:])))
+        return ret
 
     commands.append((0, CMD_PLAY_MUSIC, ()))
 
-    note_id = 0
     for line_id, line in enumerate(line_list):
         lines.append((float(line['initial_position']), float(line['initial_alpha'])))
-        process_changes(line['initial_position'], line['motions'], line_id, CMD_LINE_POS_LINEAR, CMD_LINE_POS_SINE)
-        process_changes(line['initial_alpha'], line['alpha_changes'], line_id, CMD_LINE_ALPHA_LINEAR, CMD_LINE_ALPHA_SINE)
+        commands.extend(process_changes(line['initial_position'], line['motions'], CMD_LINE_POS_LINEAR, CMD_LINE_POS_SINE, line_id))
+        commands.extend(process_changes(line['initial_alpha'], line['alpha_changes'],  CMD_LINE_ALPHA_LINEAR, CMD_LINE_ALPHA_SINE, line_id))
 
         for note in line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
@@ -109,7 +110,8 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                 # 使 note 判定时的位置为 0，即与判定线重合
                 key_points_abc[i][-1] -= start_pos
 
-            if 0 <= key_points_abc[0][-1] <= CHART_FRAME_HEIGHT:  # note 开始就可见
+            # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
+            if -CHART_FRAME_HEIGHT <= key_points_abc[0][-1] <= CHART_FRAME_HEIGHT:  # note 开始就可见
                 activate_time = -CHART_BUFFER_TIME  # 提前激活 note
             else:
                 for i in range(len(key_points_abc)):
@@ -135,7 +137,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                                 return x
                         return math.inf
 
-                    t = min(solve(0), solve(CHART_FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
+                    t = min(solve(-CHART_FRAME_HEIGHT), solve(CHART_FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
                     if t != math.inf:
                         activate_time = t-CHART_BUFFER_TIME
                         break
@@ -143,7 +145,7 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             while len(key_points_abc) > 1 and key_points_abc[1][0] < activate_time:
                 key_points_abc.pop(0)  # 只保留 note 激活前的最后一个位置函数
 
-            note_data = [None]*10  # 初始化长度为 10 的数组
+            note_data = [None]*11  # 初始化长度为 11 的数组（最后一个用于临时存储指令）
             note_data[0] = sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False))  # 用 2 的整数次幂表示 note 的属性
             note_data[1] = line_id
             note_data[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
@@ -152,19 +154,26 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             note_data[7] = float(start_time)  # 开始时间
             note_data[8] = float(end_time)  # 结束时间
             note_data[9] = float(end_pos-start_pos)  # 显示长度
-            notes.append(note_data)
-            commands.append((activate_time, CMD_ACTIVATE_NOTE, (note_id,)))  # 激活 note 指令
+            note_data[10] = []
+
+            note_data[10].append((activate_time, CMD_ACTIVATE_NOTE, ()))  # 激活 note 指令
 
             remove_time = end_time+CHART_BUFFER_TIME
-            commands.append((remove_time, CMD_REMOVE_NOTE, (note_id,)))  # 移除 note 指令
+            note_data[10].append((remove_time, CMD_REMOVE_NOTE, ()))  # 移除 note 指令
 
             for t, a, b, c in key_points_abc:
                 if t >= remove_time:
                     break
-                commands.append((float(t), CMD_NOTE_POS, (note_id, float(a), float(b), float(c))))  # 改变 note 位置函数指令
+                note_data[10].append((float(t), CMD_NOTE_POS, (float(a), float(b), float(c))))  # 改变 note 位置函数指令
 
-            process_changes(note['initial_showing_track'], note['showing_track_changes'], note_id, CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE)
+            note_data[10].extend(process_changes(note['initial_showing_track'], note['showing_track_changes'], CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE))
 
-            note_id += 1
+            notes.append(note_data)
 
-    return lines, notes, sorted(commands)
+    notes.sort(key=lambda x: x[7])  # 按开始时间排序
+    for note_id, note in enumerate(notes):
+        commands.extend(map(lambda x: (x[0], x[1], (note_id, *x[2])), note.pop()))
+
+    commands.sort()  # 按执行时间排序
+
+    return lines, notes, commands

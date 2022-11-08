@@ -50,6 +50,10 @@ class Game:
                 note = self.notes[note_id]
                 self.game_window.draw_note(note.get_position(self.game_time), note.get_showing_track(self.game_time))
 
+                if PREVIEW_AUTOPLAY:
+                    if note.start_time < self.game_time:
+                        self.beat_note(note_id)
+
             self.game_window.end_drawing()
 
             for event in pygame.event.get():
@@ -64,12 +68,12 @@ class Game:
                     else:
                         for track, key in enumerate(PREVIEW_KEY_MAP):
                             if event == key:
-                                self.beat(track)
+                                self.beat_track(track)
                                 break
                 elif event.type == pygame.KEYUP:
                     for track, key in enumerate(PREVIEW_KEY_MAP):
                         if event == key:
-                            self.release(track)
+                            self.release_track(track)
                             break
                 elif event.type == pygame.USEREVENT:  # 音乐结束
                     self.show_score()
@@ -81,17 +85,23 @@ class Game:
         """
         pass
 
-    def beat(self, track: int) -> None:
+    def beat_track(self, track: int) -> None:
         """
         击打判定
         """
         pass
 
-    def release(self, track: int) -> None:
+    def release_track(self, track: int) -> None:
         """
         松开判定
         """
         pass
+
+    def beat_note(self, note_id: int) -> None:
+        """
+        击打 note
+        """
+        self.remove_note(note_id)
 
     def show_score(self) -> None:
         """

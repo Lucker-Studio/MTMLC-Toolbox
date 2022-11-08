@@ -15,7 +15,7 @@ mc 转换
 """
 
 # 音符流速倍率
-NOTE_SPEED_RATE = 5
+NOTE_SPEED_RATE = 10
 
 
 """
@@ -154,3 +154,6 @@ PREVIEW_NOTE_BORDER_RADIUS = 10
 
 # 音符颜色
 PREVIEW_NOTE_COLOR = (200, 200, 255)
+
+# 自动播放
+PREVIEW_AUTOPLAY = True

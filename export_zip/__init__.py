@@ -13,20 +13,19 @@ def main() -> None:
     illustrator = ''
     music_path = '*.mp3'
     illustration_path = '*.png'
-    background_path = '*.png'
     charts_info = []
 
     using_template = easygui.ynbox('是否要使用已有的模板？', '导出 ZIP 文件', ('是', '否'))
     if using_template is None:  # 关闭对话框
         return
     elif using_template:  # 选择“是”
-        json_path = str(easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.json'))
-        if json_path is None:  # 未选择文件
+        template_path = str(easygui.fileopenbox('请选择模板文件', '导出 ZIP 文件', '*.tpl'))
+        if template_path is None:  # 未选择文件
             return
         try:
             # 读取 json 数据
-            json_data = tuple(json.load(open(json_path, encoding='utf-8')))  # 为了比较数据是否改变，需要转为不可变类型
-            music_path, illustration_path, background_path, title, composer, illustrator, charts_info = json_data
+            template_data = tuple(json.load(open(template_path, encoding='utf-8')))  # 为了比较数据是否改变，需要转为不可变类型
+            music_path, illustration_path,  title, composer, illustrator, charts_info = template_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出 ZIP 文件', '好的')
             using_template = False
@@ -35,8 +34,8 @@ def main() -> None:
 
     skip = False
     if using_template:
-        if os.path.isfile(music_path) and os.path.isfile(illustration_path) and os.path.isfile(background_path):  # 歌曲音频和曲绘图片有效
-            ch = easygui.ynbox(f'是否确认以下信息？\n\n曲名：{title}\n曲师：{composer}\n画师：{illustrator}\n歌曲音频：{music_path}\n曲绘图片：{illustration_path}\n背景图片：{background_path}', '导出 ZIP 文件', ('确认', '更改'))
+        if os.path.isfile(music_path) and os.path.isfile(illustration_path):  # 歌曲音频和曲绘图片有效
+            ch = easygui.ynbox(f'是否确认以下信息？\n\n曲名：{title}\n曲师：{composer}\n画师：{illustrator}\n歌曲音频：{music_path}\n曲绘图片：{illustration_path}', '导出 ZIP 文件', ('确认', '更改'))
             if ch is None:  # 关闭对话框
                 return
             elif ch:  # 选择“是”
@@ -62,9 +61,6 @@ def main() -> None:
         illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出 ZIP 文件', illustration_path)
         if illustration_path is None:
             return
-        background_path = easygui.fileopenbox('请选择背景图片', '导出 ZIP 文件', background_path)
-        if background_path is None:
-            return
 
     while True:
         if len(charts_info) >= 1:  # 至少添加一张谱面
@@ -76,25 +72,25 @@ def main() -> None:
 
             elif ch == '完成添加':
                 # 保存或更新模板
-                new_data = music_path, illustration_path, background_path, title, composer, illustrator, charts_info
+                new_data = music_path, illustration_path, title, composer, illustrator, charts_info
                 if using_template:
-                    if new_data != json_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
+                    if new_data != template_data and easygui.ynbox('是否更新模板？', '导出 ZIP 文件', ('是', '否')):
                         # 将信息保存到原有文件中
-                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'), indent=4)
+                        json.dump(new_data, open(template_path, 'w', encoding='utf-8'), indent=4)
                         easygui.msgbox('模板更新成功！', '导出 ZIP 文件', '好耶')
                 else:
                     if easygui.ynbox('是否保存模板供以后使用？', '导出 ZIP 文件', ('是', '否')):
-                        json_path = easygui.filesavebox('保存模板', '导出 ZIP 文件', title+'.json')
-                        if json_path is None:  # 未选择文件
+                        template_path = easygui.filesavebox('保存模板', '导出 ZIP 文件', title+'.tpl')
+                        if template_path is None:  # 未选择文件
                             return
-                        json.dump(new_data, open(json_path, 'w', encoding='utf-8'), indent=4)
+                        json.dump(new_data, open(template_path, 'w', encoding='utf-8'), indent=4)
                         easygui.msgbox('模板保存成功！', '导出 ZIP 文件', '好耶')
 
                 # 保存 ZIP 文件
                 zip_path = easygui.filesavebox('保存 ZIP 文件', default=title+'.zip')
                 if zip_path is None:  # 未保存文件
                     return
-                write_zip(music_path, illustration_path, background_path, title, composer, illustrator, charts_info, zip_path)
+                write_zip(music_path, illustration_path, title, composer, illustrator, charts_info, zip_path)
                 easygui.msgbox('导出成功！', '导出 ZIP 文件', '好耶')
                 return
 
