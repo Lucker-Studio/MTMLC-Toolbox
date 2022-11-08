@@ -14,6 +14,7 @@ class Window:
         pygame.init()
         self.width = PREVIEW_TRACK_WIDTH*PREVIEW_TRACK_NUMBER+PREVIEW_SPLIT_WIDTH*(PREVIEW_TRACK_NUMBER+1)
         self.height = PREVIEW_WINDOW_HEIGHT
+        self.rate = self.height/CHART_FRAME_HEIGHT
         self.size = self.width, self.height
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption(title)
@@ -37,17 +38,22 @@ class Window:
         """
         绘制判定线
         """
-        real_pos = int(pos/CHART_FRAME_HEIGHT*self.height)
+        real_pos = pos*self.rate
         pygame.draw.line(self.screen, (*PREVIEW_LINE_COLOR, int(alpha*255)), (0, real_pos), (self.width, real_pos), PREVIEW_LINE_WIDTH)
 
-    def draw_note(self, pos: float, track: float) -> None:
+    def draw_note(self, pos: float, length: float, track: float) -> None:
         """
         绘制音符
         """
-        real_pos_x = int((PREVIEW_TRACK_WIDTH+PREVIEW_SPLIT_WIDTH)*track+PREVIEW_SPLIT_WIDTH+PREVIEW_TRACK_WIDTH/2)
-        real_pos_y = int(pos/CHART_FRAME_HEIGHT*self.height)
-        rect_note = pygame.Rect((0, 0), PREVIEW_NOTE_SIZE)
-        rect_note.center = (real_pos_x, real_pos_y)
+        real_pos_x = (PREVIEW_TRACK_WIDTH+PREVIEW_SPLIT_WIDTH)*track+PREVIEW_SPLIT_WIDTH+PREVIEW_TRACK_WIDTH/2
+        real_pos_y = pos*self.rate
+        rect_note = pygame.Rect((0, 0), (PREVIEW_NOTE_WIDTH, length*self.rate))
+        rect_note.midbottom = (real_pos_x, real_pos_y)
+        if rect_note.height < 0:
+            rect_note.height *= -1
+            rect_note.top -= rect_note.height
+        rect_note.top -= PREVIEW_NOTE_HEIGHT/2
+        rect_note.height += PREVIEW_NOTE_HEIGHT
         pygame.draw.rect(self.screen, PREVIEW_NOTE_COLOR, rect_note, border_radius=PREVIEW_NOTE_BORDER_RADIUS)
 
     def end_drawing(self) -> None:

@@ -31,7 +31,7 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
     commands_expanded = []
     for time, cmd_type, parameters in commands:
         commands_expanded.extend((time, cmd_type, len(parameters), *parameters))  # 将二维列表展开成一维并添加参数数量
-        print_log(time, CMD_NAME[cmd_type]+f'({cmd_type})', len(parameters), parameters)
+        print_log(time, COMMAND_NAME[cmd_type]+f'({cmd_type})', len(parameters), parameters)
 
     print_log('META:')
     meta = [OMGC_WRITING_VERSION]

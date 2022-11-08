@@ -70,7 +70,7 @@ CMD_LINE_POS_LINEAR = 0x0210
 CMD_LINE_POS_SINE = 0x0211
 
 # 指令名称
-CMD_NAME = {
+COMMAND_NAME = {
     CMD_PLAY_MUSIC: '播放音乐',
     CMD_ACTIVATE_NOTE: '激活 note',
     CMD_REMOVE_NOTE: '移除 note',
@@ -84,7 +84,7 @@ CMD_NAME = {
 }
 
 # 指令参数类型
-CMD_PARAM_TYPE = {
+COMMAND_PARAM_TYPE = {
     CMD_PLAY_MUSIC: (),
     CMD_ACTIVATE_NOTE: (int,),
     CMD_REMOVE_NOTE: (int,),
@@ -146,14 +146,14 @@ PREVIEW_LINE_WIDTH = 5
 # 判定线颜色
 PREVIEW_LINE_COLOR = (100, 255, 100)
 
-# 音符大小
-PREVIEW_NOTE_SIZE = (80, 20)
+# 音符宽度
+PREVIEW_NOTE_WIDTH = 80
+
+# 音符高度
+PREVIEW_NOTE_HEIGHT = 20
 
 # 音符圆角大小
 PREVIEW_NOTE_BORDER_RADIUS = 10
 
 # 音符颜色
 PREVIEW_NOTE_COLOR = (200, 200, 255)
-
-# 自动播放
-PREVIEW_AUTOPLAY = True

@@ -48,11 +48,7 @@ class Game:
 
             for note_id in self.activated_notes_id:
                 note = self.notes[note_id]
-                self.game_window.draw_note(note.get_position(self.game_time), note.get_showing_track(self.game_time))
-
-                if PREVIEW_AUTOPLAY:
-                    if note.start_time < self.game_time:
-                        self.beat_note(note_id)
+                self.game_window.draw_note(note.get_position(self.game_time), note.showing_length, note.get_showing_track(self.game_time))
 
             self.game_window.end_drawing()
 
@@ -62,6 +58,8 @@ class Game:
                     pygame.mixer.music.unload()
                     pygame.quit()
                     return
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    print(self.game_time)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.pause()

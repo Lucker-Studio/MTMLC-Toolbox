@@ -97,8 +97,8 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
     commands = []
     for i in range(cmd_count):
         cmd_time, cmd_type, cmd_param_count = read_multi_data(float, int, int)
-        if cmd_type in CMD_PARAM_TYPE:
-            cmd_params = read_multi_data(*CMD_PARAM_TYPE[cmd_type])
+        if cmd_type in COMMAND_PARAM_TYPE:
+            cmd_params = read_multi_data(*COMMAND_PARAM_TYPE[cmd_type])
             commands.append((cmd_time, cmd_type, cmd_params))
         else:
             # 跳过未知类型的指令
