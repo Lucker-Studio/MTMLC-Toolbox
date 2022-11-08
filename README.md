@@ -2,7 +2,7 @@
 
 ## 运行方式
 
-### 源代码运行（各系统均可）
+### 源代码运行
 
 ```shell
 git clone https://github.com/OmegaRhythmLab/Omegar-Toolbox
@@ -17,22 +17,14 @@ python Omegar-Toolbox.py
 - 所需的第三方 Python 包是否已安装（若未安装请按照错误信息提示使用 `pip` 安装）
 - Linux 下是否已安装 `python3-tk`
 
-### 编译运行（Windows+WSL）
+### 编译运行
 
 #### 初始化虚拟环境（只需执行一次）
 
-- Windows 所用的 Python 版本为 3.8，WSL 所用的 Python 版本为 3.10。
-- 直接 `wsl pipenv` 会因 `pipenv` 可执行文件不在 `$PATH` 中而提示“未找到命令”，需借助 `python -m` 运行。
-
 ```shell
 pip install -U pipenv
-wsl pip install -U pipenv
-
 pipenv --python 3.8
-wsl python -m pipenv --python 3.10
-
 pipenv run pip install -U -i https://mirrors.aliyun.com/pypi/simple/ easygui pillow pygame pyinstaller
-wsl python -m pipenv run pip install -U -i https://mirrors.aliyun.com/pypi/simple/ easygui pillow pygame pyinstaller
 ```
 
 #### 编译
