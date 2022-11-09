@@ -9,22 +9,23 @@ from .window_controller import Window
 
 
 class Game:
-    def __init__(self, omgc_data: tuple, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
+    def __init__(self, omgc_data: tuple, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float, chart_offset: float) -> None:
         self.lines, self.notes, self.commands = omgc_data
         self.game_window = game_window
         self.note_speed_rate = note_speed_rate
+        self.chart_offset = chart_offset
         self.game_time = -BUFFER_TIME
         self.start_time = 0  # 游戏开始的绝对时间
+        self.music_started = False  # 已播放音乐
         pygame.mixer.init()
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
         pygame.mixer.music.set_volume(music_volume**2.5)  # Pygame 的速度曲线有点离谱
         pygame.mixer.music.load(mp3_path)
         self.activated_notes_id = [[]]*PREVIEW_TRACK_NUMBER
         self.cmd_processor = {
-            CMD_PLAY_MUSIC:         self.play_music,
             CMD_ACTIVATE_NOTE:      self.activate_node,
             CMD_REMOVE_NOTE:        self.remove_note,
-            CMD_NOTE_POS:           self.note_pos,
+            CMD_NOTE_POS_LINEAR:    self.note_pos_linear,
             CMD_NOTE_TRACK_LINEAR:  self.note_track_linear,
             CMD_NOTE_TRACK_SINE:    self.note_track_sine,
             CMD_LINE_ALPHA_LINEAR:  self.line_alpha_linear,
@@ -40,6 +41,11 @@ class Game:
         self.start_time = time.time()-self.game_time
         while True:
             self.game_time = time.time()-self.start_time
+
+            if not self.music_started and self.game_time >= self.chart_offset:
+                pygame.mixer.music.play()
+                self.music_started = True
+
             while len(self.commands) >= 1 and self.commands[0][0] < self.game_time:
                 cmd = self.commands.pop(0)
                 self.cmd_processor[cmd[1]](*cmd[2])
@@ -131,11 +137,11 @@ class Game:
             self.combo = 0
             self.activated_notes_id[self.notes[note_id].judging_track].remove(note_id)
 
-    def note_pos(self, note_id: int, a: float, b: float, c: float) -> None:
+    def note_pos_linear(self, note_id: int, k: float, b: float) -> None:
         """
-        note 位置
+        note 位置-线性
         """
-        self.notes[note_id].get_relative_position = Quadratic_func(a, b, c)
+        self.notes[note_id].get_relative_position = Linear_func(k, b)
 
     def note_track_linear(self, note_id: int, k: float, b: float) -> None:
         """

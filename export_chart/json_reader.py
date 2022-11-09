@@ -9,4 +9,4 @@ def read_json(json_path: str) -> tuple:
     """
 
     json_data = json.load(open(json_path, encoding='utf-8'))  # 读取 json 数据
-    return json_data['music_offset'], json_data['bpm_list'], json_data['global_speed_key_points'], json_data['line_list']
+    return json_data['music_offset'], json_data['bpm_list'], json_data['line_list']

@@ -1,7 +1,7 @@
 import sys
 
 # 版本号
-VERSION = 'v0.4.221109'
+VERSION = 'v0.5.221109'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
@@ -53,10 +53,9 @@ omgc 指令
 """
 
 # 指令代码
-CMD_PLAY_MUSIC = 0x0000
 CMD_ACTIVATE_NOTE = 0x0100
 CMD_REMOVE_NOTE = 0x0101
-CMD_NOTE_POS = 0x0110
+CMD_NOTE_POS_LINEAR = 0x0111
 CMD_NOTE_TRACK_LINEAR = 0x0120
 CMD_NOTE_TRACK_SINE = 0x0121
 CMD_LINE_ALPHA_LINEAR = 0x0200
@@ -66,10 +65,9 @@ CMD_LINE_POS_SINE = 0x0211
 
 # 指令名称
 COMMAND_NAME = {
-    CMD_PLAY_MUSIC: '播放音乐',
     CMD_ACTIVATE_NOTE: '激活 note',
     CMD_REMOVE_NOTE: '移除 note',
-    CMD_NOTE_POS: 'note 位置',
+    CMD_NOTE_POS_LINEAR: 'note 位置-线性',
     CMD_NOTE_TRACK_LINEAR: 'note 轨道-线性',
     CMD_NOTE_TRACK_SINE: 'note 轨道-正弦',
     CMD_LINE_ALPHA_LINEAR: 'line 透明度-线性',
@@ -80,10 +78,9 @@ COMMAND_NAME = {
 
 # 指令参数类型
 COMMAND_PARAM_TYPE = {
-    CMD_PLAY_MUSIC: (),
     CMD_ACTIVATE_NOTE: (int,),
     CMD_REMOVE_NOTE: (int,),
-    CMD_NOTE_POS: (int, float, float, float),
+    CMD_NOTE_POS_LINEAR: (int, float, float),
     CMD_NOTE_TRACK_LINEAR: (int, float, float),
     CMD_NOTE_TRACK_SINE: (int, float, float, float, float),
     CMD_LINE_ALPHA_LINEAR: (int, float, float),
@@ -98,10 +95,7 @@ omgc 写入
 """
 
 # 写入的 omgc 版本
-OMGC_WRITING_VERSION = 3
-
-# 支持读取的 omgc 版本
-OMGC_SUPPORTED_VERSIONS = {3}
+OMGC_WRITING_VERSION = 4
 
 # omgc 数据存储格式
 OMGC_STRUCT_FORMAT = {int: '<I', float: '<f'}
@@ -110,6 +104,9 @@ OMGC_STRUCT_FORMAT = {int: '<I', float: '<f'}
 """
 谱面预览
 """
+
+# 支持读取的 omgc 版本
+PREVIEW_SUPPORTED_OMGC_VERSIONS = {3, 4}
 
 # 窗口高度
 PREVIEW_WINDOW_HEIGHT = 600
@@ -164,3 +161,6 @@ PREVIEW_DEFAULT_NOTE_SPEED_RATE = 8
 
 # 默认音乐音量
 PREVIEW_DEFAULT_MUSIC_VOLUME = 0.5
+
+# 默认谱面偏移
+PREVIEW_DEFAULT_CHART_OFFSET = 0

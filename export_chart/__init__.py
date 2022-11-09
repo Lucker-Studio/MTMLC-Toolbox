@@ -97,9 +97,13 @@ def main() -> None:
                 return
 
             elif ch == '删除谱面':
-                charts_to_delete = easygui.multchoicebox('请选择要删除的谱面（支持多选）', '导出谱面', show_charts.keys())
-                for chart in charts_to_delete:
-                    charts_info.remove(show_charts[chart])
+                if len(show_charts) == 1:
+                    if easygui.ynbox(f'确认删除 {list(show_charts.keys())[0]}？', '导出谱面', ('确认', '取消')):
+                        charts_info = []
+                else:
+                    charts_to_delete = easygui.multchoicebox('请选择要删除的谱面（支持多选）', '导出谱面', show_charts.keys())
+                    for chart in charts_to_delete:
+                        charts_info.remove(show_charts[chart])
                 continue
 
         data = ('', '', '')

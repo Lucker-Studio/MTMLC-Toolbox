@@ -6,7 +6,7 @@ if DEBUG_MODE:
     from tqdm import tqdm
 
 
-def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list, line_list: list) -> tuple:
+def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
     """
     将工程文件数据转换为 omgc 谱面文件数据
     """
@@ -32,8 +32,6 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
         while i+1 < len(beat_time_spb) and beat_time_spb[i+1][0] <= beat:
             i += 1
         return beat_time_spb[i][1]+beat_time_spb[i][2]*(beat-beat_time_spb[i][0])
-
-    global_key_points = [(beat2sec(i), j) for i, j in global_speed_key_points]  # 转换全局关键点列表
 
     def process_changes(initial_val: int, changes: list, linear_cmd_type: int, sine_cmd_type: int, *id) -> None:
         """
@@ -69,74 +67,45 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
             ret.append((float(time), change_type, (*id, *change[1:])))
         return ret
 
-    commands.append((float(0), CMD_PLAY_MUSIC, ()))
-
     for line_id, line in enumerate(line_list):
         lines.append((float(line['initial_position']), float(line['initial_alpha'])))
         commands.extend(process_changes(line['initial_position'], line['motions'], CMD_LINE_POS_LINEAR, CMD_LINE_POS_SINE, line_id))
         commands.extend(process_changes(line['initial_alpha'], line['alpha_changes'],  CMD_LINE_ALPHA_LINEAR, CMD_LINE_ALPHA_SINE, line_id))
+        global_speed_changes = sorted([(beat2sec(i), j) for i, j in line['global_speed_changes']], key=lambda x: x[0])
 
         for note in tqdm(line['note_list']) if DEBUG_MODE else line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
             end_time = beat2sec(note['end'])  # 结束秒数
-            key_points = [(beat2sec(i), j) for i, j in note['speed_key_points']]  # 转换关键点列表
-            if not note['free_from_global_speed']:  # 受全局速度影响
-                key_points += global_key_points  # 合并两组关键点
-            key_points.sort(key=lambda x: x[0])
-            key_points.append((math.inf, key_points[-1][1]))
-            cur_point_pos = 0  # 当前关键点的 note 位置
-            key_points_abc = []  # 位置函数列表
+            speed_changes = sorted([(beat2sec(i), j) for i, j in note['speed_changes']], key=lambda x: x[0]) if note['speed_changes'] else global_speed_changes
+            cur_pos = 0  # 当前 note 位置
+            speed_changes_kb = []
 
-            for i in range(len(key_points)-1):  # 通过关键点计算二次函数
-                if key_points[i][0] != key_points[i+1][0]:  # 若相等则为瞬时变速事件，无需处理
-                    k = (key_points[i+1][1]-key_points[i][1]) / (key_points[i+1][0]-key_points[i][0])  # 速度函数斜率
-                    a = k/2  # 对速度函数做不定积分
-                    b = key_points[i][1]-k*key_points[i][0]  # 将当前关键点代入速度函数求解 b
+            for i in range(len(speed_changes)-1):  # 通过关键点计算二次函数
+                speed_changes_kb.append([*speed_changes[i], cur_pos])
+                if speed_changes[i][0] <= start_time < speed_changes[i+1][0]:  # 开始时间处于当前区间
+                    # 计算 note 开始时的位置以便应用位置偏移
+                    start_pos = speed_changes[i][0]*start_time+cur_pos
+                if speed_changes[i][0] <= end_time < speed_changes[i+1][0]:  # 结束时间处于当前区间
+                    # 计算 note 结束时的位置以便计算显示长度
+                    end_pos = speed_changes[i][0]*start_time+cur_pos
+                cur_pos += speed_changes[i][1]*(speed_changes[i+1][0]-speed_changes[i][0])
+            speed_changes_kb.append([*speed_changes[-1], cur_pos])
 
-                    def first_two(x: float) -> float:
-                        """
-                        计算二次函数前两项之和
-                        """
-                        return a*x**2+b*x
-
-                    # 将当前关键点代入二次函数求解 c
-                    c = cur_point_pos-first_two(key_points[i][0])
-                    key_points_abc.append([key_points[i][0], a, b, c])
-                    if key_points[i][0] <= start_time < key_points[i+1][0]:  # 开始时间处于当前区间
-                        # 计算 note 开始时的位置以便应用位置偏移
-                        start_pos = first_two(start_time)+c
-                    if key_points[i][0] <= end_time < key_points[i+1][0]:  # 结束时间处于当前区间
-                        # 计算 note 结束时的位置以便计算显示长度
-                        end_pos = first_two(end_time)+c
-                    cur_point_pos = first_two(key_points[i+1][0])+c  # 将下一个关键点代入二次函数
-
-            for i in range(len(key_points_abc)):
+            for change in speed_changes_kb:
                 # 使 note 判定时的位置为 0，即与判定线重合
-                key_points_abc[i][-1] -= start_pos
+                change[2] -= start_pos
 
             # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
-            if -CHART_FRAME_HEIGHT <= key_points_abc[0][-1] <= CHART_FRAME_HEIGHT:  # note 开始就可见
+            if -CHART_FRAME_HEIGHT <= speed_changes_kb[0][2] <= CHART_FRAME_HEIGHT:  # note 开始就可见
                 activate_time = -BUFFER_TIME  # 提前激活 note
             else:
-                for i in range(len(key_points_abc)):
-                    t_0, a, b, c = key_points_abc[i]
-                    t_1 = key_points_abc[i+1][0] if i+1 < len(key_points_abc) else math.inf
+                for i in range(len(speed_changes_kb)):
+                    t_0, k, b = speed_changes_kb[i]
+                    t_1 = speed_changes_kb[i+1][0] if i+1 < len(speed_changes_kb) else math.inf
 
                     def solve(pos):
-                        """
-                        解方程，返回区间内的最小解，若无解则返回 inf
-                        """
-                        if a != 0:  # 一元二次方程
-                            d = b**2-4*a*(c-pos)  # 求根判别式
-                            if d >= 0:  # 在实数范围内有解
-                                x_1 = (-b-math.sqrt(d))/(2*a)  # 较小的根
-                                x_2 = (-b+math.sqrt(d))/(2*a)  # 较大的根
-                                if t_0 <= x_1 <= t_1:
-                                    return x_1
-                                elif t_0 <= x_2 <= t_1:
-                                    return x_2
-                        elif b != 0:  # 一元一次方程
-                            x = (pos-c)/b
+                        if k != 0:
+                            x = (pos-b)/k
                             if t_0 <= x <= t_1:
                                 return x
                         return math.inf
@@ -146,31 +115,31 @@ def json2omgc(music_offset: float, bpm_list: list, global_speed_key_points: list
                         activate_time = t-BUFFER_TIME
                         break
 
-            while len(key_points_abc) > 1 and key_points_abc[1][0] < activate_time:
-                key_points_abc.pop(0)  # 只保留 note 激活前的最后一个位置函数
+            while len(speed_changes_kb) > 1 and speed_changes_kb[1][0] < activate_time:
+                speed_changes_kb.pop(0)  # 只保留 note 激活前的最后一个位置函数
 
-            note_data = [None]*11  # 初始化长度为 11 的数组（最后一个用于临时存储指令）
+            note_data = [None]*10  # 初始化长度为 10 的数组（最后一个用于临时存储指令）
             note_data[0] = int(sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False)))  # 用 2 的整数次幂表示 note 的属性
             note_data[1] = int(line_id)
-            note_data[2:5] = map(float, key_points_abc.pop(0)[1:])  # 初始位置函数
-            note_data[5] = float(note['initial_showing_track'])  # 初始显示轨道
-            note_data[6] = int(note['judging_track'])  # 实际判定轨道
-            note_data[7] = float(start_time)  # 开始时间
-            note_data[8] = float(end_time)  # 结束时间
-            note_data[9] = float(end_pos-start_pos)  # 显示长度
-            note_data[10] = []
+            note_data[2:4] = map(float, speed_changes_kb.pop(0)[1:])  # 初始位置函数
+            note_data[4] = float(note['initial_showing_track'])  # 初始显示轨道
+            note_data[5] = int(note['judging_track'])  # 实际判定轨道
+            note_data[6] = float(start_time)  # 开始时间
+            note_data[7] = float(end_time)  # 结束时间
+            note_data[8] = float(end_pos-start_pos)  # 显示长度
+            note_data[9] = []
 
-            note_data[10].append((float(activate_time), CMD_ACTIVATE_NOTE, ()))  # 激活 note 指令
+            note_data[9].append((float(activate_time), CMD_ACTIVATE_NOTE, ()))  # 激活 note 指令
 
             remove_time = end_time+BUFFER_TIME
-            note_data[10].append((float(remove_time), CMD_REMOVE_NOTE, ()))  # 移除 note 指令
+            note_data[9].append((float(remove_time), CMD_REMOVE_NOTE, ()))  # 移除 note 指令
 
-            for t, a, b, c in key_points_abc:
-                if t >= end_time:
+            for t, k, b in speed_changes_kb:
+                if t > end_time:
                     break
-                note_data[10].append((float(t), CMD_NOTE_POS, (float(a), float(b), float(c))))  # 改变 note 位置函数指令
+                note_data[9].append((float(t), CMD_NOTE_POS_LINEAR, (float(k), float(b))))  # 改变 note 位置函数指令
 
-            note_data[10].extend(process_changes(note['initial_showing_track'], note['showing_track_changes'], CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE))
+            note_data[9].extend(process_changes(note['initial_showing_track'], note['showing_track_changes'], CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE))
 
             notes.append(note_data)
 

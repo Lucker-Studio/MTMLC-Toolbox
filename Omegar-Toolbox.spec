@@ -9,7 +9,12 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=[
+        'export_chart',
+        'import_chart',
+        'preview_chart',
+        'quick_preview'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

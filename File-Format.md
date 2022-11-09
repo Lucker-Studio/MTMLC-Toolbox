@@ -1,36 +1,37 @@
 # json 工程文件
 
-*Version 3，2022/10/28*
+*Version 4，2022/11/9*
 
 - `project_name`：工程名称。
 - `music_path`：音频文件路径。
 - `music_offset`：第 $0$ 拍对应音乐第几秒。
-- `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍起 BPM **瞬间变为** `v`。
-- `global_speed_key_points`：全局流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍（从 $0$ 开始）时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
+- `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍时 BPM 变为 `v`。
 - `line_list`：判定线列表，每一项如下：
   - `initial_position`：初始位置。
   - `initial_alpha`：初始透明度。
   - `motions`：移动事件列表。
-    - `start`：起始节拍（`[a, b, c]`）。
+
+    - `start`：起始节拍。
     - `end`：终止节拍。
     - `target`：目标位置。
     - `type`：缓动类型（`linear` 表示线性缓动，`sine` 表示正弦缓动）。
+  - `global_speed_changes`：全局流速列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍时流速变为 `v`。
   - `alpha_changes`：透明度变化事件列表，格式与 `motions` 相同。
   - `note_list`：音符列表。
+
     - `start`：判定节拍。
     - `end`：结束节拍。
     - `judging_track`：判定轨道。
     - `initial_showing_track`：初始显示轨道。
     - `showing_track_changes`：变轨事件列表，格式与 `motions` 相同。
-    - `speed_key_points`：流速关键点列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍时流速为 `v`（瞬时变速事件需在同一拍记录两个关键点）。
-    - `free_from_global_speed`：是否不受全局流速影响（当此项为 `true` 且 `speed_key_points` 不为空时，将两组关键点叠加）。
+    - `speed_changes`：流速列表，格式与 `global_speed_changes` 相同，若为空则使用全局流速。
     - `properties`：属性（`value` 的类型均为 `bool`）。
 
 ---
 
 # omgc 谱面文件
 
-*Version 3，2022/10/28*
+*Version 4，2022/11/9*
 
 omgc 文件中无符号整型（uint）和浮点型（float）均占 4 字节，采用小端型存储。
 
@@ -66,9 +67,8 @@ note 区中每个音符的格式如下：
 
 - note 的属性（uint，每个二进制位表示一个属性）
 - note 对应的判定线 ID（uint）
-- 初始位置函数二次项系数（float）
-- 初始位置函数一次项系数（float）
-- 初始位置函数常数项（float）
+- 初始位置函数 $k$ 的值（float）
+- 初始位置函数 $b$ 的值（float）
 - 初始显示轨道（float）
 - 实际判定轨道（uint）
 - 判定时间（float）
@@ -83,10 +83,6 @@ cmd 区中每条指令的格式如下：
 
 指令类型列表如下：
 
-### `0x0000` 播放音乐
-
-该指令无参数。
-
 ### `0x0100` 激活 note
 
 - 参数 1：note 的 ID（uint）。
@@ -97,14 +93,13 @@ cmd 区中每条指令的格式如下：
 
 - 参数 1：note 的 ID（uint）。
 
-### `0x0110` 更改 note 位置函数
+### `0x0111` 将 note 位置函数改为 $val=kt+b$
 
 - 参数 1：note 的 ID（uint）。
-- 参数 2：二次项系数（float）。
-- 参数 3：一次项系数（float）。
-- 参数 4：常数项（float）。
+- 参数 2：$k$ 的值（float）。
+- 参数 3：$b$ 的值（float）。
 
-注：note 相对于判定线的位置关于时间的二次函数为 note 相对于判定线的速度关于时间的一次函数的不定积分。制谱器工程文件中存储了 $n$ 个形如 $(t_i,n_i)$ 的关键点，每相邻两点可确定该区间上的速度变化直线，对速度函数做不定积分即可计算出该区间上位置关于时间的二次函数。另外，需要取常数以使各段抛物线首尾顺次相接
+注：omgc v3 中 `0x0110` 命令为将 note 位置函数改为 $val=ax^2+bx+c$，为兼容 omgc v3，暂不占用该指令，但该指令在新版本“谱面预览”功能中会被忽略。
 
 ### `0x0120` 将 note 轨道函数改为 $val=kt+b$
 
