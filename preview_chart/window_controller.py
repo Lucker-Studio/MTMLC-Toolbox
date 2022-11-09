@@ -56,7 +56,7 @@ class Window:
         """
         real_pos_x = (PREVIEW_TRACK_WIDTH+PREVIEW_SPLIT_WIDTH)*track+PREVIEW_SPLIT_WIDTH+PREVIEW_TRACK_WIDTH/2
         real_pos_y = pos*self.rate
-        rect_note = pygame.Rect((0, 0), (PREVIEW_NOTE_WIDTH, length*self.rate*PREVIEW_NOTE_SPEED_RATE))
+        rect_note = pygame.Rect((0, 0), (PREVIEW_NOTE_WIDTH, length*self.rate))
         rect_note.midbottom = (real_pos_x, real_pos_y)
         if rect_note.height < 0:
             rect_note.height *= -1

@@ -1,6 +1,0 @@
-easygui
-pillow
-pipenv
-pygame
-pyinstaller
-tqdm

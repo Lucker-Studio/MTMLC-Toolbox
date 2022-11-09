@@ -1,7 +1,7 @@
 import sys
 
 # 版本号
-VERSION = 'v0.4.221108'
+VERSION = 'v0.4.221109'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
@@ -159,5 +159,8 @@ PREVIEW_FONT_SIZE = 30
 # 字体颜色
 PREVIEW_FONT_COLOR = (255, 100, 100)
 
-# 音符流速倍率
-PREVIEW_NOTE_SPEED_RATE = 8
+# 默认音符流速倍率
+PREVIEW_DEFAULT_NOTE_SPEED_RATE = 8
+
+# 默认音乐音量
+PREVIEW_DEFAULT_MUSIC_VOLUME = 0.5

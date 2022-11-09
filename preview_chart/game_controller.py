@@ -9,13 +9,15 @@ from .window_controller import Window
 
 
 class Game:
-    def __init__(self, omgc_data: tuple, mp3_path: str, game_window: Window) -> None:
+    def __init__(self, omgc_data: tuple, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
         self.lines, self.notes, self.commands = omgc_data
         self.game_window = game_window
+        self.note_speed_rate = note_speed_rate
         self.game_time = -BUFFER_TIME
         self.start_time = 0  # 游戏开始的绝对时间
         pygame.mixer.init()
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
+        pygame.mixer.music.set_volume(music_volume**2.5)  # Pygame 的速度曲线有点离谱
         pygame.mixer.music.load(mp3_path)
         self.activated_notes_id = [[]]*PREVIEW_TRACK_NUMBER
         self.cmd_processor = {
@@ -50,7 +52,7 @@ class Game:
             for track_notes in self.activated_notes_id:
                 for note_id in track_notes:
                     note = self.notes[note_id]
-                    self.game_window.draw_note(note.get_position(self.game_time), note.showing_length, note.get_showing_track(self.game_time))
+                    self.game_window.draw_note(note.line.get_position(self.game_time)+self.note_speed_rate*note.get_position(self.game_time), self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time))
 
             self.game_window.end_drawing()
 

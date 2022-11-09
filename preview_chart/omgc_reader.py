@@ -29,19 +29,12 @@ class Note:
             # 把 note 的“属性”当作类的属性直接用
             self.__dict__[property] = bool(properties & 1 << i)
         self.line = line  # Python 对象作为引用参数传递，相当于指针
-        self.get_relative_position = Quadratic_func(initial_a, initial_b, initial_c)
+        self.get_position = Quadratic_func(initial_a, initial_b, initial_c)
         self.get_showing_track = Linear_func(0, initial_showing_track)
         self.judging_track = judging_track
         self.start_time = start_time
         self.end_time = end_time
         self.showing_length = showing_length
-
-    def get_position(self, t: float) -> float:
-        """
-        获取 note 的绝对位置
-        """
-        # 绝对位置=判定线位置+相对位置*流速倍率
-        return self.line.get_position(t)+self.get_relative_position(t)*PREVIEW_NOTE_SPEED_RATE
 
 
 def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
