@@ -1,5 +1,5 @@
 __pycache__/
-.vscode
+.vscode/
 build/
 debug.log
 Pipfile
