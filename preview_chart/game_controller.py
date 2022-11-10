@@ -58,7 +58,8 @@ class Game:
             for track_notes in self.activated_notes_id:
                 for note_id in track_notes:
                     note = self.notes[note_id]
-                    self.game_window.draw_note(note.line.get_position(self.game_time)+self.note_speed_rate*note.get_position(self.game_time), self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time))
+                    if note.start_time > self.game_time:  # DEBUG
+                        self.game_window.draw_note(note.line.get_position(self.game_time)+self.note_speed_rate*note.get_position(self.game_time), self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time))
 
             self.game_window.end_drawing()
 

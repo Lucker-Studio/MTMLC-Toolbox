@@ -9,7 +9,7 @@ from preview_chart.game_launcher import launch
 
 
 def main() -> None:
-    template_path = str(easygui.fileopenbox('请选择模板文件', '快速预览', '*.tpl'))
+    template_path = easygui.fileopenbox('请选择模板文件', '快速预览', '*.tpl')
     if template_path is None:  # 未选择文件
         return
     # 读取 json 数据

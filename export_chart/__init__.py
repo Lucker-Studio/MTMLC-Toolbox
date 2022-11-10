@@ -20,7 +20,7 @@ def main() -> None:
     if using_template is None:  # 关闭对话框
         return
     elif using_template:  # 选择“是”
-        template_path = str(easygui.fileopenbox('请选择模板文件', '导出谱面', '*.tpl'))
+        template_path = easygui.fileopenbox('请选择模板文件', '导出谱面', '*.tpl')
         if template_path is None:  # 未选择文件
             return
         try:

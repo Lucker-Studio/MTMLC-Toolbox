@@ -78,50 +78,55 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
             end_time = beat2sec(note['end'])  # 结束秒数
             speed_changes = sorted([(beat2sec(i), j) for i, j in note['speed_changes']], key=lambda x: x[0]) if note['speed_changes'] else global_speed_changes
             cur_pos = 0  # 当前 note 位置
-            speed_changes_kb = []
+            pos_changes = []
 
-            for i in range(len(speed_changes)-1):  # 通过关键点计算二次函数
-                speed_changes_kb.append([*speed_changes[i], cur_pos])
-                if speed_changes[i][0] <= start_time < speed_changes[i+1][0]:  # 开始时间处于当前区间
+            def in_period(t, t_0, t_1): return t_0 <= t <= t_1
+
+            for i in range(len(speed_changes)-1):  # 通过关键点计算函数
+                pos_changes.append([*speed_changes[i], cur_pos-speed_changes[i][0]*speed_changes[i][1]])
+                if in_period(start_time, speed_changes[i][0], speed_changes[i+1][0]):  # 开始时间处于当前区间
                     # 计算 note 开始时的位置以便应用位置偏移
-                    start_pos = speed_changes[i][0]*start_time+cur_pos
-                if speed_changes[i][0] <= end_time < speed_changes[i+1][0]:  # 结束时间处于当前区间
+                    start_pos = pos_changes[-1][1]*start_time+pos_changes[-1][2]
+                if in_period(end_time, speed_changes[i][0], speed_changes[i+1][0]):  # 结束时间处于当前区间
                     # 计算 note 结束时的位置以便计算显示长度
-                    end_pos = speed_changes[i][0]*start_time+cur_pos
-                cur_pos += speed_changes[i][1]*(speed_changes[i+1][0]-speed_changes[i][0])
-            speed_changes_kb.append([*speed_changes[-1], cur_pos])
+                    end_pos = pos_changes[-1][1]*end_time+pos_changes[-1][2]
+                cur_pos = pos_changes[-1][1]*speed_changes[i+1][0]+pos_changes[-1][2]
+            pos_changes.append([*speed_changes[-1], cur_pos-speed_changes[-1][0]*speed_changes[-1][1]])
 
-            for change in speed_changes_kb:
+            for change in pos_changes:
                 # 使 note 判定时的位置为 0，即与判定线重合
                 change[2] -= start_pos
 
             # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
-            if -CHART_FRAME_HEIGHT <= speed_changes_kb[0][2] <= CHART_FRAME_HEIGHT:  # note 开始就可见
-                activate_time = -BUFFER_TIME  # 提前激活 note
+            def solve(pos, t_0, t_1, k, b):
+                if k != 0:
+                    x = (pos-b)/k
+                    if in_period(x, t_0, t_1):
+                        return x
+                return math.inf
+
+            if abs(pos_changes[0][2]) <= CHART_FRAME_HEIGHT:  # note 在第一个时间点时可见
+                activate_time = -BUFFER_TIME
             else:
-                for i in range(len(speed_changes_kb)):
-                    t_0, k, b = speed_changes_kb[i]
-                    t_1 = speed_changes_kb[i+1][0] if i+1 < len(speed_changes_kb) else math.inf
+                t = min(solve(CHART_FRAME_HEIGHT, -math.inf, *pos_changes[0]), solve(-CHART_FRAME_HEIGHT, -math.inf, *pos_changes[0]))
+                if t != math.inf:  # note 在第一个时间点前可见
+                    activate_time = t
+                else:
+                    for i in range(len(pos_changes)):
+                        t_0, k, b = pos_changes[i]
+                        t_1 = pos_changes[i+1][0] if i+1 < len(pos_changes) else math.inf
+                        t = min(solve(CHART_FRAME_HEIGHT, t_0, t_1, k, b), solve(-CHART_FRAME_HEIGHT, t_0, t_1, k, b))  # 更早经过哪边就是从哪边出现
+                        if t != math.inf:
+                            activate_time = t
+                            break
 
-                    def solve(pos):
-                        if k != 0:
-                            x = (pos-b)/k
-                            if t_0 <= x <= t_1:
-                                return x
-                        return math.inf
-
-                    t = min(solve(-CHART_FRAME_HEIGHT), solve(CHART_FRAME_HEIGHT))  # 更早经过哪边就是从哪边出现
-                    if t != math.inf:
-                        activate_time = t-BUFFER_TIME
-                        break
-
-            while len(speed_changes_kb) > 1 and speed_changes_kb[1][0] < activate_time:
-                speed_changes_kb.pop(0)  # 只保留 note 激活前的最后一个位置函数
+            while len(pos_changes) > 1 and pos_changes[1][0] < activate_time:
+                pos_changes.pop(0)  # 只保留 note 激活前的最后一个位置函数
 
             note_data = [None]*10  # 初始化长度为 10 的数组（最后一个用于临时存储指令）
             note_data[0] = int(sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note['properties'].get(j, False)))  # 用 2 的整数次幂表示 note 的属性
             note_data[1] = int(line_id)
-            note_data[2:4] = map(float, speed_changes_kb.pop(0)[1:])  # 初始位置函数
+            note_data[2:4] = map(float, pos_changes.pop(0)[1:])  # 初始位置函数
             note_data[4] = float(note['initial_showing_track'])  # 初始显示轨道
             note_data[5] = int(note['judging_track'])  # 实际判定轨道
             note_data[6] = float(start_time)  # 开始时间
@@ -134,7 +139,7 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
             remove_time = end_time+BUFFER_TIME
             note_data[9].append((float(remove_time), CMD_REMOVE_NOTE, ()))  # 移除 note 指令
 
-            for t, k, b in speed_changes_kb:
+            for t, k, b in pos_changes:
                 if t > end_time:
                     break
                 note_data[9].append((float(t), CMD_NOTE_POS_LINEAR, (float(k), float(b))))  # 改变 note 位置函数指令
@@ -143,7 +148,7 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
 
             notes.append(note_data)
 
-    notes.sort(key=lambda x: x[7])  # 按开始时间排序
+    notes.sort(key=lambda x: x[6])  # 按开始时间排序
     for note_id, note in enumerate(notes):
         commands.extend(map(lambda x: (x[0], x[1], (int(note_id), *x[2])), note.pop()))
 

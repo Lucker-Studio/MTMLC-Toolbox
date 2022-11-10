@@ -93,13 +93,11 @@ cmd 区中每条指令的格式如下：
 
 - 参数 1：note 的 ID（uint）。
 
-### `0x0111` 将 note 位置函数改为 $val=kt+b$
+### `0x0110` 将 note 位置函数改为 $val=kt+b$
 
 - 参数 1：note 的 ID（uint）。
 - 参数 2：$k$ 的值（float）。
 - 参数 3：$b$ 的值（float）。
-
-注：omgc v3 中 `0x0110` 命令为将 note 位置函数改为 $val=ax^2+bx+c$，为兼容 omgc v3，暂不占用该指令，但该指令在新版本“谱面预览”功能中会被忽略。
 
 ### `0x0120` 将 note 轨道函数改为 $val=kt+b$
 
