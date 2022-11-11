@@ -13,9 +13,9 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
     commands = []  # 指令列表
 
     if music_offset < 0:
-        commands.append((-music_offset, CMD_PLAY_MUSIC, (0.0,)))
+        commands.append((0.0, CMD_PLAY_MUSIC, (-float(music_offset),)))
     else:
-        commands.append((0.0, CMD_PLAY_MUSIC, (float(music_offset),)))
+        commands.append((music_offset, CMD_PLAY_MUSIC, (0.0,)))
 
     beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in bpm_list)  # 节拍、每拍秒数
     beat_time_spb = [(0, 0, beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
@@ -79,9 +79,9 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
         lines.append((initial_position, initial_alpha, speed_changes[0][1]))
         cur_play_pos = 0  # 当前 line 播放位置
         play_pos_changes = [(0, speed_changes[0][1], 0)]
-        for i in range(len(speed_changes)-1):
-            t, k = speed_changes[i+1]
-            cur_play_pos += speed_changes[i][1]*t
+        for i in range(1, len(speed_changes)):
+            t, k = speed_changes[i]
+            cur_play_pos += play_pos_changes[-1][1]*(t-play_pos_changes[-1][0])
             b = float(cur_play_pos-t*k)
             play_pos_changes.append((t, k, b))
             commands.append((t, CMD_LINE_PLAY_POS, (line_id, k, b)))
