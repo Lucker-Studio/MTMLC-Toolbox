@@ -68,8 +68,8 @@ note 区中每个音符的格式如下：
 - 显示位置偏移（float）
 - 显示长度（float）
 - note 对应的判定线 ID（uint）
-- 初始是否激活（uint）
 - note 的属性（uint，每个二进制位表示一个属性）
+- 初始是否激活（uint）
 
 ## cmd 区
 

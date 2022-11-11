@@ -25,8 +25,10 @@ def batch_charts(title: str, composer: str, illustrator: str, music_path: str, i
     info = {'title': title, 'composer': composer, 'illustrator': illustrator}
     info['music_file'] = 'music'+os.path.splitext(music_path)[1]
     info['illustration_file'] = 'illustration'+os.path.splitext(illustration_path)[1]
-    info['charts'] = chart_info
+    info['charts'] = charts_info
     files['info.json'] = tempfile.mkstemp()[1]  # 获取临时 info.json 文件名
+    files[info['music_file']] = music_path
+    files[info['illustration_file']] = illustration_path
     json.dump(info, open(files['info.json'], 'w', encoding='utf-8'))
 
     return files

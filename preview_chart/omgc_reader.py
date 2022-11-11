@@ -5,36 +5,7 @@ import easygui
 
 from constants import *
 
-from .func import *
-
-
-class Line:
-    """
-    判定线
-    """
-
-    def __init__(self, initial_position: float, initial_alpha: float) -> None:
-        # 线性函数，但是斜率为 0，那不就是常数吗~
-        self.get_alpha = Linear_func(0, initial_alpha)
-        self.get_position = Linear_func(0, initial_position)
-
-
-class Note:
-    """
-    音符
-    """
-
-    def __init__(self, properties: int, line: Line, initial_k: float, initial_b: float, initial_showing_track: float, judging_track: int, start_time: float, end_time: float, showing_length: float) -> None:
-        for i, property in enumerate(NOTE_PROPERTIES):
-            # 把 note 的“属性”当作类的属性直接用
-            self.__dict__[property] = bool(properties & 1 << i)
-        self.line = line  # Python 对象作为引用参数传递，相当于指针
-        self.get_position = Linear_func(initial_k, initial_b)
-        self.get_showing_track = Linear_func(0, initial_showing_track)
-        self.judging_track = judging_track
-        self.start_time = start_time
-        self.end_time = end_time
-        self.showing_length = showing_length
+from .common import *
 
 
 def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
@@ -78,15 +49,19 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         if not easygui.ynbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{PREVIEW_SUPPORTED_OMGC_VERSIONS}\n是否强行打开谱面？', '打开谱面受阻', ('继续', '返回')):
             return None
 
-    line_size, line_count, note_size, note_count, cmd_size, cmd_count = read_multi_data(*(int,)*6)
+    line_count, note_count, cmd_count = read_multi_data(int, int, int)
 
     lines = []
     for i in range(line_count):
-        lines.append(Line(*read_multi_data(float, float)))
+        lines.append(Line(*read_multi_data(float, float, float)))
 
     notes = []
+    activated_notes = [[]]*PREVIEW_TRACK_NUMBER
     for i in range(note_count):
-        notes.append(Note(read_data(int), lines[read_data(int)], *read_multi_data(float, float, float, int, float, float, float)))
+        note_data = read_multi_data(float, float, int, float, float, float, int, int, int)
+        if note_data.pop():
+            activated_notes[note_data[2]].append(i)
+        notes.append(Note(*note_data))
 
     commands = []
     for i in range(cmd_count):
@@ -99,4 +74,4 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
             for j in range(cmd_param_count):
                 next(read_4byte)
 
-    return lines, notes, commands
+    return lines, notes, commands, activated_notes

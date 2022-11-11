@@ -80,9 +80,11 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
         cur_play_pos = 0  # 当前 line 播放位置
         play_pos_changes = [(0, speed_changes[0][1], 0)]
         for i in range(len(speed_changes)-1):
-            cur_play_pos += speed_changes[i][1]*speed_changes[i+1][0]
-            play_pos_changes.append((speed_changes[i+1][1], float(cur_play_pos-speed_changes[i+1][0]*speed_changes[i+1][1])))
-            commands.append((float(speed_changes[i+1][0], CMD_LINE_PLAY_POS, (line_id, *play_pos_changes[-1]))))
+            t, k = speed_changes[i+1]
+            cur_play_pos += speed_changes[i][1]*t
+            b = float(cur_play_pos-t*k)
+            play_pos_changes.append((t, k, b))
+            commands.append((t, CMD_LINE_PLAY_POS, (line_id, k, b)))
 
         for note in line['note_list']:
             start_time = beat2sec(note['start'])  # 判定秒数
@@ -104,8 +106,8 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
             note_data[4] = float(showing_pos_offset)  # 显示位置偏移
             note_data[5] = float(showing_length)  # 显示长度
             note_data[6] = line_id
-            note_data[7] = int(initial_activated)  # 初始是否激活
-            note_data[8] = int(sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note.get('properties', {}).get(j, False)))  # 用 2 的整数次幂表示 note 的属性
+            note_data[7] = int(sum(1 << i for i, j in enumerate(NOTE_PROPERTIES) if note.get('properties', {}).get(j, False)))  # 用 2 的整数次幂表示 note 的属性
+            note_data[8] = int(initial_activated)  # 初始是否激活
             note_data[9] = process_changes(initial_showing_track, note.get('showing_track_changes', []), CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE)
 
             # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
