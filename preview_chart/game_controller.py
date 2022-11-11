@@ -9,19 +9,18 @@ from .window_controller import Window
 
 
 class Game:
-    def __init__(self, lines: list, notes: list, commands: list, activated_notes: list, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float, chart_offset: float) -> None:
+    def __init__(self, lines: list, notes: list, commands: list, activated_notes: list, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
         self.lines = lines
         self.notes = notes
         self.commands = commands
         self.activated_notes = activated_notes
         self.game_window = game_window
         self.note_speed_rate = note_speed_rate
-        self.chart_offset = chart_offset
         self.game_time = -PREVIEW_WAIT_TIME
         self.start_time = 0  # 游戏开始的绝对时间
         pygame.mixer.init()
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
-        pygame.mixer.music.set_volume(music_volume**3)  # Pygame 的速度曲线有点离谱
+        pygame.mixer.music.set_volume(music_volume**2.5)  # Pygame 的速度曲线有点离谱
         pygame.mixer.music.load(mp3_path)
         self.cmd_processor = {
             CMD_PLAY_MUSIC:         self.play_music,
@@ -59,6 +58,8 @@ class Game:
             for track_notes in self.activated_notes:
                 for note_id in track_notes:
                     note = self.notes[note_id]
+                    if self.game_time-note.end_time > PREVIEW_MISS_TIME:
+                        track_notes.remove(note_id)
                     note_pos = line_pos[note.line_id]+self.note_speed_rate*(line_play_pos[note.line_id]-note.showing_position_offset)
                     self.game_window.draw_note(note_pos, self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time))
 
