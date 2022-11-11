@@ -4,7 +4,6 @@ import os
 import tempfile
 
 from .converter import json2omgc
-from .json_reader import read_json
 from .omgc_writer import write_omgc
 
 
@@ -16,8 +15,7 @@ def batch_charts(title: str, composer: str, illustrator: str, music_path: str, i
     files = {}
     for chart_info in charts_info:
         omgc_path = tempfile.mkstemp()[1]  # 获取临时 omgc 文件名
-        music_offset, bpm_list, line_list = read_json(chart_info.pop('json_path'))
-        lines, notes, commands = json2omgc(music_offset, bpm_list, line_list)
+        lines, notes, commands = json2omgc(json.load(open(chart_info.pop('json_path'), encoding='utf-8')))
         write_omgc(lines, notes, commands, omgc_path)
         files[chart_info['difficulty']+'.omgc'] = omgc_path
         chart_info['md5'] = hashlib.md5(open(omgc_path, 'rb').read()).hexdigest()  # 计算 omgc 文件 MD5

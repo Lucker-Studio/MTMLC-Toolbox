@@ -3,9 +3,9 @@ import shutil
 import zipfile
 
 
-def pack_to_zip(files: dict, zip_path: str) -> None:
+def pack_to_omgz(files: dict, zip_path: str) -> None:
     """
-    打包到 zip 文件
+    打包到 omgz 文件
     """
 
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as f:

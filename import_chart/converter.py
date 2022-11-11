@@ -1,15 +1,15 @@
-def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
+def malody2omegar(mc_data: dict) -> dict:
     """
     将 Malody 谱面数据转换为 Omegar 工程文件数据
     """
 
     project_data = {}
-    project_data['project_name'] = meta['song']['title']+' '+meta['version']
-    project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in time)
+    project_data['project_name'] = mc_data['meta']['song']['title']+' '+mc_data['meta']['version']
+    project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in mc_data['time'])
     line = {}
 
-    speed_changes = sorted([(i['beat'], 'base', i['bpm']) for i in time] +  # 以 BPM 为基准流速
-                           [(i['beat'], 'rate', i['scroll']) for i in effect
+    speed_changes = sorted([(i['beat'], 'base', i['bpm']) for i in mc_data['time']] +  # 以 BPM 为基准流速
+                           [(i['beat'], 'rate', i['scroll']) for i in mc_data.get('effect')
                             # effect 中的 scroll 表示流速倍数（见 https://www.bilibili.com/read/cv8257852/）
                            if 'scroll' in i], key=lambda x: x[0][0]+x[0][1]/x[0][2])  # 节拍为带分数表示
     speed_changes_processed = {}
@@ -25,7 +25,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
     line['speed_changes'] = speed_changes_processed
 
     note_list = []
-    for i in note:
+    for i in mc_data['note']:
         if 'column' in i:
             note_data = {}
             note_data['start'] = i['beat']

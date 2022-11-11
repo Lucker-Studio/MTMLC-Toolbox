@@ -1,3 +1,4 @@
+import os
 import sys
 
 # 版本号
@@ -6,8 +7,10 @@ VERSION = 'v0.5.221111'
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
     DEBUG_MODE = False
+    RESOURCES_DIR = os.path.join(sys._MEIPASS, 'Resources')
 else:
     DEBUG_MODE = True
+    RESOURCES_DIR = 'Resources'
 
 # 对话框标题
 DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
@@ -33,10 +36,10 @@ omgc 转换
 """
 
 # 画面高度
-CHART_FRAME_HEIGHT = 500
+CHART_FRAME_HEIGHT = 600
 
 # 默认判定线初始位置
-DEFAULT_LINE_INITIAL_POSITION = 400
+DEFAULT_LINE_INITIAL_POSITION = 500
 
 # 默认判定线透明度
 DEFAULT_LINE_INITIAL_ALPHA = 1

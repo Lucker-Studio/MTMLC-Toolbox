@@ -8,7 +8,9 @@ a = Analysis(
     ['toolbox.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('Resources', 'Resources')
+    ],
     hiddenimports=[
         'export_chart',
         'import_chart',

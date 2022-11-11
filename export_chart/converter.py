@@ -3,7 +3,7 @@ import math
 from constants import *
 
 
-def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
+def json2omgc(project_data: dict) -> tuple:
     """
     将工程文件数据转换为 omgc 谱面文件数据
     """
@@ -12,12 +12,13 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
     notes = []  # 音符列表
     commands = []  # 指令列表
 
+    music_offset = project_data['music_offset']
     if music_offset < 0:
         commands.append((0.0, CMD_PLAY_MUSIC, (-float(music_offset),)))
     else:
         commands.append((music_offset, CMD_PLAY_MUSIC, (0.0,)))
 
-    beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in bpm_list)  # 节拍、每拍秒数
+    beat_spb = sorted((i[0]+i[1]/i[2], 60/j) for i, j in project_data['bpm_list'])  # 节拍、每拍秒数
     beat_time_spb = [(0, 0, beat_spb[0][1])]  # 节拍、时间（s）、每拍秒数
     i = 1
     while i < len(beat_spb):
@@ -70,7 +71,7 @@ def json2omgc(music_offset: float, bpm_list: list, line_list: list) -> tuple:
             ret.append((float(time), change_type, (*id, *change[1:])))
         return ret
 
-    for line_id, line in enumerate(line_list):
+    for line_id, line in enumerate(project_data['line_list']):
         initial_position = float(line.get('initial_position', DEFAULT_LINE_INITIAL_POSITION))
         initial_alpha = float(line.get('initial_alpha', DEFAULT_LINE_INITIAL_ALPHA))
         commands.extend(process_changes(initial_position, line.get('motions', []), CMD_LINE_POS_LINEAR, CMD_LINE_POS_SINE, line_id))

@@ -14,7 +14,7 @@ def launch(chart_dir: str) -> None:
     """
     游戏启动器
     """
-    info = json.load(open(os.path.join(chart_dir, 'info.json'), 'r', encoding='utf-8'))
+    info = json.load(open(os.path.join(chart_dir, 'info.json'), encoding='utf-8'))
     chart_choices = {i['difficulty']+' '+i['number']+' By '+i['writer']: i for i in info['charts']}
     while True:
         if len(chart_choices) > 1:

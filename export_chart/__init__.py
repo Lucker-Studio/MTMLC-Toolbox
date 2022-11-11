@@ -6,7 +6,7 @@ import easygui
 from constants import *
 
 from .batcher import batch_charts
-from .packer import pack_to_zip
+from .packer import pack_to_omgz
 
 
 def main() -> None:
@@ -82,12 +82,12 @@ def main() -> None:
                 if template_path:
                     json.dump([music_path, illustration_path, title, composer, illustrator, charts_info], open(template_path, 'w', encoding='utf-8'), indent=4)
 
-                # 保存 ZIP 文件
-                zip_path = easygui.filesavebox('保存 ZIP 文件', default=title+'.zip')
-                if zip_path is None:  # 未保存文件
+                # 保存 OMGZ 文件
+                omgz_path = easygui.filesavebox('保存 omgz 文件', default=title+'.omgz')
+                if omgz_path is None:  # 未保存文件
                     return
                 files = batch_charts(title, composer, illustrator, music_path, illustration_path, charts_info)
-                pack_to_zip(files, zip_path)
+                pack_to_omgz(files, omgz_path)
                 easygui.msgbox('导出成功！', '导出谱面', '好耶')
                 return
 
