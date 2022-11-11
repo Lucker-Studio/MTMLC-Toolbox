@@ -16,7 +16,7 @@ def main() -> None:
     illustrator = ''
     music_path = OMGZ_SUPPORTED_MUSIC_FORMATS[0]
     illustration_path = OMGZ_SUPPORTED_ILLUSTRATION_FORMATS[0]
-    charts_info = []
+    charts = []
 
     using_template = easygui.ynbox('是否要使用已有的模板？', '导出谱面', ('是', '否'))
     if using_template is None:  # 关闭对话框
@@ -28,7 +28,7 @@ def main() -> None:
         try:
             # 读取 json 数据
             template_data = json.load(open(template_path, encoding='utf-8'))
-            music_path, illustration_path, title, composer, illustrator, charts_info = template_data
+            music_path, illustration_path, title, composer, illustrator, charts = template_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出谱面', '好的')
             using_template = False
@@ -68,10 +68,10 @@ def main() -> None:
             return
 
     while True:
-        if len(charts_info) >= 1:  # 至少添加一张谱面
+        if len(charts) >= 1:  # 至少添加一张谱面
             # key 为谱面的显示名称，value 为谱面信息
-            show_charts = {f'{i["difficulty"]} {i["number"]} By {i["writer"]} ({i["json_path"]})': i for i in charts_info}
-            ch = easygui.buttonbox(f'已添加 {len(charts_info)} 张谱面：\n'+'\n'.join(show_charts.keys()), '导出谱面', ('继续添加', '完成添加', '删除谱面'))
+            show_charts = {f'{i["difficulty"]} {i["number"]} By {i["writer"]} ({i["json_path"]})': i for i in charts}
+            ch = easygui.buttonbox(f'已添加 {len(charts)} 张谱面：\n'+'\n'.join(show_charts.keys()), '导出谱面', ('继续添加', '完成添加', '删除谱面'))
             if ch is None:  # 关闭对话框
                 return
 
@@ -80,13 +80,13 @@ def main() -> None:
                 if not using_template and easygui.ynbox('是否保存模板供以后使用？', '导出谱面', ('是', '否')):
                     template_path = easygui.filesavebox('保存模板', '导出谱面', title+'.tpl')
                 if template_path:
-                    json.dump([music_path, illustration_path, title, composer, illustrator, charts_info], open(template_path, 'w', encoding='utf-8'), indent=4)
+                    json.dump([music_path, illustration_path, title, composer, illustrator, charts], open(template_path, 'w', encoding='utf-8'), indent=4)
 
                 # 保存 OMGZ 文件
                 omgz_path = easygui.filesavebox('保存 omgz 文件', default=title+'.omgz')
                 if omgz_path is None:  # 未保存文件
                     return
-                files = batch_charts(title, composer, illustrator, music_path, illustration_path, charts_info)
+                files = batch_charts(title, composer, illustrator, music_path, illustration_path, charts)
                 pack_to_omgz(files, omgz_path)
                 easygui.msgbox('导出成功！', '导出谱面', '好耶')
                 return
@@ -94,18 +94,18 @@ def main() -> None:
             elif ch == '删除谱面':
                 if len(show_charts) == 1:
                     if easygui.ynbox(f'确认删除 {list(show_charts.keys())[0]}？', '导出谱面', ('确认', '取消')):
-                        charts_info = []
+                        charts = []
                 else:
                     charts_to_delete = easygui.multchoicebox('请选择要删除的谱面（支持多选）', '导出谱面', show_charts.keys())
                     for chart in charts_to_delete:
-                        charts_info.remove(show_charts[chart])
+                        charts.remove(show_charts[chart])
                 continue
 
         data = ('', '', '')
         while True:
-            data = easygui.multenterbox(f'请输入第 {len(charts_info)+1} 张谱面信息：', '导出谱面', ['难度', '定数', '谱师'], data)
+            data = easygui.multenterbox(f'请输入第 {len(charts)+1} 张谱面信息：', '导出谱面', ['难度', '定数', '谱师'], data)
             if data is None:  # 关闭对话框
-                if len(charts_info) >= 1:
+                if len(charts) >= 1:
                     break  # 回到谱面列表
                 else:
                     return
@@ -121,4 +121,4 @@ def main() -> None:
         json_path = easygui.fileopenbox('请选择谱面工程文件', '导出谱面', '*.json')
         if json_path is None:
             continue  # 回到谱面列表
-        charts_info.append({'difficulty': difficulty, 'number': number, 'writer': writer, 'json_path': json_path})
+        charts.append({'difficulty': difficulty, 'number': number, 'writer': writer, 'json_path': json_path})
