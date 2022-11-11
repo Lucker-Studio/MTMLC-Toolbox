@@ -1,7 +1,7 @@
 import sys
 
 # 版本号
-VERSION = 'v0.5.221109'
+VERSION = 'v0.5.221111'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
@@ -36,7 +36,10 @@ omgc 转换
 CHART_FRAME_HEIGHT = 1000
 
 # 默认判定线初始位置
-CHART_LINE_INITIAL_POSITION = 800
+DEFAULT_LINE_INITIAL_POSITION = 800
+
+# 默认判定线透明度
+DEFAULT_LINE_INITIAL_ALPHA = 1
 
 # 缓冲时间（单位：秒，适用于提前激活、推迟消失、游戏提前开始）
 BUFFER_TIME = 1
@@ -53,40 +56,44 @@ omgc 指令
 """
 
 # 指令代码
-CMD_ACTIVATE_NOTE = 0x0100
-CMD_REMOVE_NOTE = 0x0101
-CMD_NOTE_POS_LINEAR = 0x0110
-CMD_NOTE_TRACK_LINEAR = 0x0120
-CMD_NOTE_TRACK_SINE = 0x0121
-CMD_LINE_ALPHA_LINEAR = 0x0200
-CMD_LINE_ALPHA_SINE = 0x0201
-CMD_LINE_POS_LINEAR = 0x0210
-CMD_LINE_POS_SINE = 0x0211
+CMD_PLAY_MUSIC = 0x00
+CMD_ACTIVATE_NOTE = 0x01
+CMD_NOTE_TRACK_LINEAR = 0x02
+CMD_NOTE_TRACK_SINE = 0x03
+CMD_LINE_ALPHA_LINEAR = 0x11
+CMD_LINE_ALPHA_SINE = 0x12
+CMD_LINE_POS_LINEAR = 0x13
+CMD_LINE_POS_SINE = 0x14
+CMD_LINE_PLAY_POS = 0x15
 
 # 指令名称
 COMMAND_NAME = {
+    CMD_PLAY_MUSIC: '播放音乐',
     CMD_ACTIVATE_NOTE: '激活 note',
-    CMD_REMOVE_NOTE: '移除 note',
-    CMD_NOTE_POS_LINEAR: 'note 位置-线性',
     CMD_NOTE_TRACK_LINEAR: 'note 轨道-线性',
     CMD_NOTE_TRACK_SINE: 'note 轨道-正弦',
     CMD_LINE_ALPHA_LINEAR: 'line 透明度-线性',
     CMD_LINE_ALPHA_SINE: 'line 透明度-正弦',
     CMD_LINE_POS_LINEAR: 'line 位置-线性',
-    CMD_LINE_POS_SINE: 'line 位置-正弦'
+    CMD_LINE_POS_SINE: 'line 位置-正弦',
+    CMD_LINE_PLAY_POS: 'line 播放位置'
 }
+
+# 指令参数类型模板
+PT_LINEAR = (int,)+(float,)*2
+PT_SINE = (int,)+(float,)*4
 
 # 指令参数类型
 COMMAND_PARAM_TYPE = {
+    CMD_PLAY_MUSIC: (float,),
     CMD_ACTIVATE_NOTE: (int,),
-    CMD_REMOVE_NOTE: (int,),
-    CMD_NOTE_POS_LINEAR: (int, float, float),
-    CMD_NOTE_TRACK_LINEAR: (int, float, float),
-    CMD_NOTE_TRACK_SINE: (int, float, float, float, float),
-    CMD_LINE_ALPHA_LINEAR: (int, float, float),
-    CMD_LINE_ALPHA_SINE: (int, float, float, float, float),
-    CMD_LINE_POS_LINEAR: (int, float, float),
-    CMD_LINE_POS_SINE: (int, float, float, float, float)
+    CMD_NOTE_TRACK_LINEAR: PT_LINEAR,
+    CMD_NOTE_TRACK_SINE: PT_SINE,
+    CMD_LINE_ALPHA_LINEAR: PT_LINEAR,
+    CMD_LINE_ALPHA_SINE: PT_SINE,
+    CMD_LINE_POS_LINEAR: PT_LINEAR,
+    CMD_LINE_POS_SINE: PT_SINE,
+    CMD_LINE_PLAY_POS: PT_LINEAR
 }
 
 
@@ -95,10 +102,21 @@ omgc 写入
 """
 
 # 写入的 omgc 版本
-OMGC_WRITING_VERSION = 4
+OMGC_WRITING_VERSION = 5
 
 # omgc 数据存储格式
 OMGC_STRUCT_FORMAT = {int: '<I', float: '<f'}
+
+
+"""
+omgz 打包
+"""
+
+# 支持的音频格式
+OMGZ_SUPPORTED_MUSIC_FORMATS = ['*.ogg', '*.mp3']
+
+# 支持的曲绘格式
+OMGZ_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
 
 
 """
@@ -106,7 +124,7 @@ OMGC_STRUCT_FORMAT = {int: '<I', float: '<f'}
 """
 
 # 支持读取的 omgc 版本
-PREVIEW_SUPPORTED_OMGC_VERSIONS = {3, 4}
+PREVIEW_SUPPORTED_OMGC_VERSIONS = {5}
 
 # 窗口高度
 PREVIEW_WINDOW_HEIGHT = 600
@@ -117,11 +135,8 @@ PREVIEW_BACKGROUND_BRIGHTNESS = 0.5
 # 背景模糊度
 PREVIEW_BACKGROUND_BLUR = 10
 
-# 键位映射
-PREVIEW_KEY_MAP = 'dfjk'
-
 # 轨道数量
-PREVIEW_TRACK_NUMBER = len(PREVIEW_KEY_MAP)
+PREVIEW_TRACK_NUMBER = 4
 
 # 轨道宽度
 PREVIEW_TRACK_WIDTH = 100

@@ -24,7 +24,7 @@ def launch(chart_dir: str) -> None:
             chart_info = chart_choices[ch]
         else:  # 只有一个选项可用不了 choicebox 哦~
             chart_info = charts_info[0]
-        difficulty, diff_number, chart_writer, omgc_md5 = chart_info
+        difficulty, number, chart_writer, omgc_md5 = chart_info
         omgc_data = read_omgc(os.path.join(chart_dir, 'charts', difficulty+'.omgc'), omgc_md5)
         if omgc_data is None:
             if len(chart_choices) > 1:
@@ -41,7 +41,7 @@ def launch(chart_dir: str) -> None:
                 break
             except Exception:
                 easygui.msgbox('输入有误，请重新输入！', '好的')
-        game_window = Window(f'{title} {difficulty} {diff_number}', os.path.join(chart_dir, 'illustration.png'))
+        game_window = Window(f'{title} {difficulty} {number}', os.path.join(chart_dir, 'illustration.png'))
         game = Game(omgc_data, os.path.join(chart_dir, 'music.mp3'), game_window, note_speed_rate, music_volume, chart_offset)
         game.main_loop()
         if len(chart_choices) == 1:

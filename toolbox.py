@@ -5,8 +5,7 @@ from constants import *
 builtin_modules = {
     '导入谱面': 'import_chart',
     '导出谱面': 'export_chart',
-    '谱面预览': 'preview_chart',
-    '快速预览': 'quick_preview'
+    '预览谱面': 'preview_chart'
 }
 
 if __name__ == '__main__':

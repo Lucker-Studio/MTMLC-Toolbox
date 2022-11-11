@@ -12,26 +12,20 @@ a = Analysis(
     hiddenimports=[
         'export_chart',
         'import_chart',
-        'preview_chart',
-        'quick_preview'
+        'preview_chart'
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
         'altgraph',
-        'autopep8',
-        'colorama',
         'future',
         'pefile',
         'pip',
-        'pycodestyle',
         'pyinstaller',
         'pyinstaller-hooks-contrib',
         'pywin32-ctypes',
         'setuptools',
-        'tomli',
-        'tqdm',
         'wheel'
     ],
     win_no_prefer_redirects=False,

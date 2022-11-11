@@ -1,6 +1,3 @@
-from constants import *
-
-
 def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
     """
     将 Malody 谱面数据转换为 Omegar 工程文件数据
@@ -9,7 +6,7 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
     project_data = {}
     project_data['project_name'] = meta['song']['title']+' '+meta['version']
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in time)
-    project_data['line_list'] = [{'initial_position': CHART_LINE_INITIAL_POSITION, 'initial_alpha': 1, 'motions': [], 'alpha_changes': []}]
+    line = {}
 
     speed_changes = sorted([(i['beat'], 'base', i['bpm']) for i in time] +  # 以 BPM 为基准流速
                            [(i['beat'], 'rate', i['scroll']) for i in effect
@@ -25,24 +22,22 @@ def malody2omegar(meta: dict, time: list, effect: list, note: list) -> dict:
             cur_rate = i[2]
         speed_changes_processed[tuple(i[0])] = cur_base*cur_rate
     speed_changes_processed = sorted(speed_changes_processed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
-    project_data['line_list'][0]['global_speed_changes'] = speed_changes_processed
+    line['speed_changes'] = speed_changes_processed
 
     note_list = []
     for i in note:
         if 'column' in i:
-            note_list.append({
-                'start':                    i['beat'],
-                'end':                      i.get('endbeat', i['beat']),
-                'judging_track':            i['column'],
-                'initial_showing_track':    i['column'],
-                'showing_track_changes':    [],
-                'speed_changes':         [],
-                'properties':               {i: DEFAULT_PROPERTIES.get(i, False) for i in NOTE_PROPERTIES}
-            })
+            note_data = {}
+            note_data['start'] = i['beat']
+            if 'endbeat' in i:
+                note_data['end'] = i['endbeat']
+            note_data['judging_track'] = i['column']
+            note_list.append(note_data)
         elif 'sound' in i:
             project_data['music_path'] = i['sound']
-            project_data['music_offset'] = -i.get('offset', 0)/1000
+            project_data['music_offset'] = i.get('offset', 0)/1000
 
-    project_data['line_list'][0]['note_list'] = note_list
+    line['note_list'] = note_list
+    project_data['line_list'] = [line]
 
     return project_data

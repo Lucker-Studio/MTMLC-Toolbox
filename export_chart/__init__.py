@@ -3,6 +3,8 @@ import os
 
 import easygui
 
+from constants import *
+
 from .batcher import batch_charts
 from .packer import pack_to_zip
 
@@ -12,8 +14,8 @@ def main() -> None:
     title = ''
     composer = ''
     illustrator = ''
-    music_path = '*.mp3'
-    illustration_path = '*.png'
+    music_path = OMGZ_SUPPORTED_MUSIC_FORMATS[0]
+    illustration_path = OMGZ_SUPPORTED_ILLUSTRATION_FORMATS[0]
     charts_info = []
 
     using_template = easygui.ynbox('是否要使用已有的模板？', '导出谱面', ('是', '否'))
@@ -25,13 +27,15 @@ def main() -> None:
             return
         try:
             # 读取 json 数据
-            template_data = tuple(json.load(open(template_path, encoding='utf-8')))  # 为了比较数据是否改变，需要转为不可变类型
+            template_data = json.load(open(template_path, encoding='utf-8'))
             music_path, illustration_path, title, composer, illustrator, charts_info = template_data
         except:
             easygui.msgbox('未成功读取模板文件，将不使用模板。', '导出谱面', '好的')
             using_template = False
     else:  # 选择“否”
         using_template = False
+    if not using_template:
+        template_path = None
 
     skip = False
     if using_template:
@@ -56,43 +60,34 @@ def main() -> None:
                 title, composer, illustrator = data
                 break
 
-        music_path = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_path)
+        music_path = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_path, OMGZ_SUPPORTED_MUSIC_FORMATS)
         if music_path is None:
             return
-        illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_path)
+        illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_path, OMGZ_SUPPORTED_ILLUSTRATION_FORMATS)
         if illustration_path is None:
             return
 
     while True:
         if len(charts_info) >= 1:  # 至少添加一张谱面
             # key 为谱面的显示名称，value 为谱面信息
-            show_charts = {f'{i["difficulty"]} {i["diff_number"]} By {i["writer"]} ({i["json_path"]})': i for i in charts_info}
+            show_charts = {f'{i["difficulty"]} {i["number"]} By {i["writer"]} ({i["json_path"]})': i for i in charts_info}
             ch = easygui.buttonbox(f'已添加 {len(charts_info)} 张谱面：\n'+'\n'.join(show_charts.keys()), '导出谱面', ('继续添加', '完成添加', '删除谱面'))
             if ch is None:  # 关闭对话框
                 return
 
             elif ch == '完成添加':
                 # 保存或更新模板
-                new_data = music_path, illustration_path, title, composer, illustrator, charts_info
-                if using_template:
-                    if easygui.ynbox('是否更新模板？', '导出谱面', ('是', '否')):
-                        # 将信息保存到原有文件中
-                        json.dump(new_data, open(template_path, 'w', encoding='utf-8'), indent=4)
-                        easygui.msgbox('模板更新成功！', '导出谱面', '好耶')
-                else:
-                    if easygui.ynbox('是否保存模板供以后使用？', '导出谱面', ('是', '否')):
-                        template_path = easygui.filesavebox('保存模板', '导出谱面', title+'.tpl')
-                        if template_path is None:  # 未选择文件
-                            return
-                        json.dump(new_data, open(template_path, 'w', encoding='utf-8'), indent=4)
-                        easygui.msgbox('模板保存成功！', '导出谱面', '好耶')
+                if not using_template and easygui.ynbox('是否保存模板供以后使用？', '导出谱面', ('是', '否')):
+                    template_path = easygui.filesavebox('保存模板', '导出谱面', title+'.tpl')
+                if template_path:
+                    json.dump([music_path, illustration_path, title, composer, illustrator, charts_info], open(template_path, 'w', encoding='utf-8'), indent=4)
 
                 # 保存 ZIP 文件
                 zip_path = easygui.filesavebox('保存 ZIP 文件', default=title+'.zip')
                 if zip_path is None:  # 未保存文件
                     return
-                charts_info, info_path = batch_charts(title, composer, illustrator, charts_info)
-                pack_to_zip(info_path, music_path, illustration_path, charts_info, zip_path)
+                files = batch_charts(title, composer, illustrator, music_path, illustration_path, charts_info)
+                pack_to_zip(files, zip_path)
                 easygui.msgbox('导出成功！', '导出谱面', '好耶')
                 return
 
@@ -117,7 +112,7 @@ def main() -> None:
             if not all(data):  # 存在空字符串
                 easygui.msgbox('请将谱面信息填写完整！', '导出谱面', '哦~')
             else:
-                difficulty, diff_number, writer = data
+                difficulty, number, writer = data
                 break
 
         if data is None:
@@ -126,4 +121,4 @@ def main() -> None:
         json_path = easygui.fileopenbox('请选择谱面工程文件', '导出谱面', '*.json')
         if json_path is None:
             continue  # 回到谱面列表
-        charts_info.append({'difficulty': difficulty, 'diff_number': diff_number, 'writer': writer, 'json_path': json_path})
+        charts_info.append({'difficulty': difficulty, 'number': number, 'writer': writer, 'json_path': json_path})

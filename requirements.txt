@@ -1,6 +1,4 @@
-autopep8
 easygui
 Pillow
 pygame
 pyinstaller
-tqdm
