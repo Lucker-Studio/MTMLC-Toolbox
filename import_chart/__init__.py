@@ -1,11 +1,11 @@
 import json
 import os
-import zipfile
 
 import easygui
 
 from export_chart.batcher import batch_charts
 from export_chart.packer import pack_to_omgz
+from zip_unpacker import unpack_zip
 
 from .converter import malody2omegar
 from .mc_reader import read_mc
@@ -35,7 +35,7 @@ def main() -> None:
                             raise Exception('已存在同名文件夹')
                     else:
                         os.makedirs(target)
-                    zipfile.ZipFile(chart).extractall(target)
+                    unpack_zip(chart, target)
                     info_list[target] = import_dir(target)
                 elif chart_ext == '.mc':
                     target = os.path.join(chart_dir, chart_name+'.omg')

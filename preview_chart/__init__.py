@@ -2,7 +2,6 @@ import hashlib
 import json
 import os
 import tempfile
-import zipfile
 
 import easygui
 
@@ -14,6 +13,7 @@ from export_chart.packer import pack_to_dir
 from import_chart.converter import malody2omegar
 from import_chart.dir_importer import import_dir
 from import_chart.mc_reader import read_mc
+from zip_unpacker import unpack_zip
 
 from .game_launcher import launch
 
@@ -26,7 +26,7 @@ def main() -> None:
     chart_name, chart_ext = os.path.splitext(file_name)
     chart_dir = tempfile.mkdtemp()
     if chart_ext == '.omgz':
-        zipfile.ZipFile(file_path).extractall(chart_dir)
+        unpack_zip(file_path, chart_dir)
     elif chart_ext == '.omg':
         omgc_path = os.path.join(chart_dir, 'Default.omgc')
         project_data = json.load(open(file_path, encoding='utf-8'))
@@ -49,7 +49,7 @@ def main() -> None:
             info['illustration_file'] = os.path.join(file_dir, info['illustration_file'])
         json.dump(info, open(os.path.join(chart_dir, 'info.json'), 'w', encoding='utf-8'))
     elif chart_ext == '.mcz':
-        zipfile.ZipFile(file_path).extractall(chart_dir)
+        unpack_zip(file_path, chart_dir)
         info = import_dir(chart_dir)
         files = batch_charts(**info)
         pack_to_dir(files, chart_dir)
