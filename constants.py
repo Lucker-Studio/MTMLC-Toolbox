@@ -17,29 +17,37 @@ DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
 
 
 """
-omg 写入
+note 属性
 """
 
-# note 属性
+# 属性列表
 NOTE_PROPERTIES = [
     'is_fake'
 ]
 
-# note 默认属性
+# 默认属性
 DEFAULT_PROPERTIES = {
     'is_fake': False
 }
 
 
 """
-omgc 转换
+mc 转 omg
+"""
+
+# 流速倍率
+MC_SPEED_RATE = 3.5
+
+
+"""
+omg 转 omgc
 """
 
 # 画面高度
-CHART_FRAME_HEIGHT = 600
+CHART_FRAME_HEIGHT = 1000
 
 # 默认判定线初始位置
-DEFAULT_LINE_INITIAL_POSITION = 500
+DEFAULT_LINE_INITIAL_POSITION = 800
 
 # 默认判定线透明度
 DEFAULT_LINE_INITIAL_ALPHA = 1
@@ -171,6 +179,9 @@ PREVIEW_FONT_SIZE = 30
 # 字体颜色
 PREVIEW_FONT_COLOR = (255, 100, 100)
 
+# FPS 更新时间
+PREVIEW_FPS_UPDATE_TIME = 0.5
+
 # 开始前等待时间
 PREVIEW_WAIT_TIME = 1
 
@@ -178,7 +189,7 @@ PREVIEW_WAIT_TIME = 1
 PREVIEW_MISS_TIME = 0.2
 
 # 默认音符流速倍率
-PREVIEW_DEFAULT_NOTE_SPEED_RATE = 5
+PREVIEW_DEFAULT_NOTE_SPEED_RATE = 3
 
 # 默认音乐音量
 PREVIEW_DEFAULT_MUSIC_VOLUME = 0.5

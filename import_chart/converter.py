@@ -1,3 +1,6 @@
+from constants import *
+
+
 def malody2omegar(mc_data: dict) -> dict:
     """
     将 Malody 谱面数据转换为 Omegar 工程文件数据
@@ -21,7 +24,7 @@ def malody2omegar(mc_data: dict) -> dict:
             cur_base = i[2]
         elif i[1] == 'rate':
             cur_rate = i[2]
-        speed_changes_processed[tuple(i[0])] = cur_base*cur_rate
+        speed_changes_processed[tuple(i[0])] = cur_base*cur_rate*MC_SPEED_RATE
     speed_changes_processed = sorted(speed_changes_processed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
     line['speed_changes'] = speed_changes_processed
 

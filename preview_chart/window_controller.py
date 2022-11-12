@@ -30,6 +30,8 @@ class Window:
 
         if DEBUG_MODE:
             self.last_time = time.time()
+            self.frame_count = 0
+            self.fps = '?'
 
     def start_drawing(self) -> None:
         """
@@ -71,12 +73,13 @@ class Window:
         """
         if DEBUG_MODE:
             now_time = time.time()
-            if now_time == self.last_time:
-                fps = 'inf'
-            else:
-                fps = str(round(1/(now_time-self.last_time)))
+            if now_time-self.last_time >= PREVIEW_FPS_UPDATE_TIME:
+                self.fps = str(round(self.frame_count/PREVIEW_FPS_UPDATE_TIME))
                 self.last_time = now_time
-            text_fps = self.font.render(fps, True, PREVIEW_FONT_COLOR)
+                self.frame_count = 1
+            else:
+                self.frame_count += 1
+            text_fps = self.font.render(self.fps, True, PREVIEW_FONT_COLOR)
             rect_fps = text_fps.get_rect()
             rect_fps.bottomright = self.size
             self.screen.blit(text_fps, rect_fps)
