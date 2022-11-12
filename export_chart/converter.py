@@ -46,7 +46,7 @@ def omg2omgc(project_data: dict) -> tuple:
         cur_val = initial_val
         for change in changes:
             t_0 = beat2sec(change['start'])  # 初时间
-            t_1 = beat2sec(change['end'])  # 末时间
+            t_1 = beat2sec(change.get('end', change['start']))  # 末时间
             val_0 = cur_val  # 初值
             val_1 = cur_val = change['target']  # 末值
             moving_type = change['type']
