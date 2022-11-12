@@ -20,14 +20,14 @@ def unpack_mcz(mcz_path: str, dir_path: str) -> list:
         chart_name, chart_ext = os.path.splitext(file_name)
         if chart_ext == '.mc':
             try:
-                target = os.path.join(dir_path, chart_name+'.json')
+                target = os.path.join(dir_path, chart_name+'.omg')
                 mc_data, chart_info, song_info = read_mc(os.path.join(dir_path, file_name))
                 project_data = malody2omegar(mc_data)
                 json.dump(project_data, open(target, 'w', encoding='utf-8'))
                 info['music_path'] = os.path.join(dir_path, project_data['music_file'])
                 if project_data['illustration_file']:
                     info['illustration_path'] = os.path.join(dir_path, project_data['illustration_file'])
-                info['charts'].append({**chart_info, 'json_path': target})
+                info['charts'].append({**chart_info, 'omg_path': target})
                 for key, value in song_info.items():
                     if value:
                         info[key] = value

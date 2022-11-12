@@ -29,7 +29,7 @@ def main() -> None:
                     raise Exception('已存在同名文件夹')
                 info_list[target] = unpack_mcz(chart, target)
             elif chart_ext == '.mc':
-                target = os.path.join(chart_dir, chart_name+'.json')
+                target = os.path.join(chart_dir, chart_name+'.omg')
                 if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
                     raise Exception('已存在同名文件')
                 mc_data = read_mc(chart)[0]

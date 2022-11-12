@@ -17,7 +17,7 @@ DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
 
 
 """
-json 写入
+omg 写入
 """
 
 # note 属性

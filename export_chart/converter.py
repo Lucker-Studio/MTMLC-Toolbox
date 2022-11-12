@@ -3,7 +3,7 @@ import math
 from constants import *
 
 
-def json2omgc(project_data: dict) -> tuple:
+def omg2omgc(project_data: dict) -> tuple:
     """
     将工程文件数据转换为 omgc 谱面文件数据
     """
