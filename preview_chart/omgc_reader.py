@@ -29,8 +29,8 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     # 文件开头 4 字节必须是“omgc”的 ASCII 码
     if next(read_4byte).decode('ascii') != 'omgc':
-        easygui.msgbox('谱面文件头不符合 omgc 格式！', '无法打开谱面', '返回')
-        return None
+        easygui.msgbox('谱面文件头不符合 omgc 格式！', '预览谱面', '返回')
+        raise Exception()
 
     def read_data(data_type):
         """
@@ -46,8 +46,8 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     omgc_version = read_data(int)
     if omgc_version not in PREVIEW_SUPPORTED_OMGC_VERSIONS:
-        if not easygui.ynbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{PREVIEW_SUPPORTED_OMGC_VERSIONS}\n是否强行打开谱面？', '打开谱面受阻', ('继续', '返回')):
-            return None
+        easygui.msgbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{PREVIEW_SUPPORTED_OMGC_VERSIONS}', '预览谱面')
+        raise Exception()
 
     line_count, note_count, cmd_count = read_multi_data(int, int, int)
 
@@ -56,11 +56,14 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         lines.append(Line(*read_multi_data(float, float, float)))
 
     notes = []
-    activated_notes = [[]]*PREVIEW_TRACK_NUMBER
+    num_of_tracks = 0
+    activated_notes_map = {}
     for i in range(note_count):
         note_data = read_multi_data(float, float, int, float, float, float, int, int, int)
+        num_of_tracks = max(num_of_tracks, note_data[2]+1)
         if note_data.pop():
-            activated_notes[note_data[2]].append(i)
+            activated_notes_map.setdefault(note_data[2], [])
+            activated_notes_map[note_data[2]].append(i)
         notes.append(Note(*note_data))
 
     commands = []
@@ -74,4 +77,8 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
             for j in range(cmd_param_count):
                 next(read_4byte)
 
-    return lines, notes, commands, activated_notes
+    activated_notes = []
+    for i in range(num_of_tracks):
+        activated_notes.append(activated_notes_map.get(i, []))
+
+    return (lines, notes, commands), activated_notes, num_of_tracks

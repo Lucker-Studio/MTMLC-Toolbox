@@ -1,6 +1,7 @@
 import time
 
 import pygame
+import tinytag
 
 from constants import *
 
@@ -9,19 +10,20 @@ from .window_controller import Window
 
 
 class Game:
-    def __init__(self, lines: list, notes: list, commands: list, activated_notes: list, mp3_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
-        self.lines = lines
-        self.notes = notes
-        self.commands = commands
+    def __init__(self, omgc_data: tuple, activated_notes: list, music_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
+        self.lines, self.notes, self.commands = omgc_data
         self.activated_notes = activated_notes
         self.game_window = game_window
         self.note_speed_rate = note_speed_rate
         self.game_time = -PREVIEW_WAIT_TIME
         self.start_time = 0  # 游戏开始的绝对时间
+        self.music_length = tinytag.TinyTag.get(music_path).duration
+
         pygame.mixer.init()
+        pygame.mixer.music.load(music_path)
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
         pygame.mixer.music.set_volume(music_volume**2.5)  # Pygame 的速度曲线有点离谱
-        pygame.mixer.music.load(mp3_path)
+
         self.cmd_processor = {
             CMD_PLAY_MUSIC:         self.play_music,
             CMD_ACTIVATE_NOTE:      self.activate_node,
@@ -46,7 +48,7 @@ class Game:
                 cmd = self.commands.pop(0)
                 self.cmd_processor[cmd[1]](*cmd[2])
 
-            self.game_window.start_drawing()
+            self.game_window.start_drawing(pygame.mixer.music.get_pos()/1000/self.music_length)
 
             line_pos = []
             line_play_pos = []
@@ -60,8 +62,10 @@ class Game:
                     note = self.notes[note_id]
                     if self.game_time-note.end_time > PREVIEW_MISS_TIME:
                         track_notes.remove(note_id)
-                    note_pos = line_pos[note.line_id]+self.note_speed_rate*(line_play_pos[note.line_id]-note.showing_position_offset)
-                    self.game_window.draw_note(note_pos, self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time))
+                    else:
+                        alpha = 1-(max(0, self.game_time-note.end_time)/PREVIEW_MISS_TIME)**2
+                        note_pos = line_pos[note.line_id]+self.note_speed_rate*(line_play_pos[note.line_id]-note.showing_position_offset)
+                        self.game_window.draw_note(note_pos, self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time), alpha)
 
             self.game_window.end_drawing()
 
@@ -79,6 +83,7 @@ class Game:
     def play_music(self, start_pos: float) -> None:
         pygame.mixer.music.play()
         pygame.mixer.music.set_pos(start_pos)
+        self.music_length -= start_pos
 
     def activate_node(self, note_id: int) -> None:
         self.activated_notes[self.notes[note_id].judging_track].append(note_id)

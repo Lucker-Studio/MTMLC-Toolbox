@@ -12,9 +12,10 @@ class Window:
     窗口
     """
 
-    def __init__(self, title: str, bgimg_path: str) -> None:
+    def __init__(self, title: str, bgimg_path: str, num_of_tracks: int) -> None:
         pygame.init()
-        self.width = PREVIEW_TRACK_WIDTH*PREVIEW_TRACK_NUMBER+PREVIEW_SPLIT_WIDTH*(PREVIEW_TRACK_NUMBER+1)
+        self.num_of_tracks = num_of_tracks
+        self.width = PREVIEW_TRACK_WIDTH*self.num_of_tracks+PREVIEW_SPLIT_WIDTH*(self.num_of_tracks+1)
         self.height = PREVIEW_WINDOW_HEIGHT
         self.rate = self.height/CHART_FRAME_HEIGHT
         self.size = self.width, self.height
@@ -33,14 +34,16 @@ class Window:
             self.frame_count = 0
             self.fps = '?'
 
-    def start_drawing(self) -> None:
+    def start_drawing(self, music_progress: float) -> None:
         """
         开始绘制帧时调用此函数
         """
         self.screen.blit(self.bgimg, (0, 0))
-        for i in range(PREVIEW_TRACK_NUMBER+1):  # 绘制分割线
+        for i in range(self.num_of_tracks+1):  # 绘制分割线
             rect_split_line = pygame.Rect(i*(PREVIEW_TRACK_WIDTH+PREVIEW_SPLIT_WIDTH), 0, PREVIEW_SPLIT_WIDTH, self.height)
             pygame.draw.rect(self.screen, PREVIEW_SPLIT_COLOR, rect_split_line)
+        rect_progress_line = pygame.Rect(0, 0, self.width*music_progress, PREVIEW_PROGRESS_WIDTH)
+        pygame.draw.rect(self.screen, PREVIEW_PROGRESS_COLOR, rect_progress_line)  # 绘制进度条
 
     def draw_line(self, pos: float, alpha: float) -> None:
         """
@@ -52,7 +55,7 @@ class Window:
         rect_line.centery = pos*self.rate
         self.screen.blit(surf_line, rect_line)
 
-    def draw_note(self, pos: float, length: float, track: float) -> None:
+    def draw_note(self, pos: float, length: float, track: float, alpha: float) -> None:
         """
         绘制音符
         """
@@ -65,7 +68,9 @@ class Window:
             rect_note.top -= rect_note.height
         rect_note.top -= PREVIEW_NOTE_HEIGHT/2
         rect_note.height += PREVIEW_NOTE_HEIGHT
-        pygame.draw.rect(self.screen, PREVIEW_NOTE_COLOR, rect_note, border_radius=PREVIEW_NOTE_BORDER_RADIUS)
+        surf_note = pygame.Surface(rect_note.size, pygame.SRCALPHA)
+        pygame.draw.rect(surf_note, (*PREVIEW_NOTE_COLOR, int(alpha*255)), pygame.Rect((0, 0), rect_note.size), border_radius=PREVIEW_NOTE_BORDER_RADIUS)
+        self.screen.blit(surf_note, rect_note)
 
     def end_drawing(self) -> None:
         """

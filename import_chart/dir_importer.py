@@ -1,6 +1,5 @@
 import json
 import os
-import zipfile
 
 from constants import *
 
@@ -8,13 +7,10 @@ from .converter import malody2omegar
 from .mc_reader import read_mc
 
 
-def unpack_mcz(mcz_path: str, dir_path: str) -> list:
+def import_dir(dir_path: str) -> list:
     """
-    将 mcz 文件导入为文件夹
+    导入文件夹
     """
-    if not os.path.isdir(dir_path):
-        os.makedirs(dir_path)
-    zipfile.ZipFile(mcz_path).extractall(dir_path)
     info = {'illustration_path': os.path.join(RESOURCES_DIR, 'Default.jpg'), 'charts': []}
     for file_name in os.listdir(dir_path):
         chart_name, chart_ext = os.path.splitext(file_name)

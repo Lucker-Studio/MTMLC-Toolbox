@@ -2,3 +2,4 @@ easygui
 Pillow
 pygame
 pyinstaller
+tinytag

@@ -24,8 +24,9 @@ def launch(chart_dir: str) -> None:
             chart_info = chart_choices[ch]
         else:  # 只有一个选项可用不了 choicebox 哦~
             chart_info = info['charts'][0]
-        omgc_data = read_omgc(os.path.join(chart_dir, chart_info['difficulty']+'.omgc'), chart_info['md5'])
-        if omgc_data is None:
+        try:
+            omgc_data, activated_notes, num_of_tracks = read_omgc(os.path.join(chart_dir, chart_info['difficulty']+'.omgc'), chart_info['md5'])
+        except Exception:
             if len(chart_choices) > 1:
                 continue
             else:
@@ -36,12 +37,12 @@ def launch(chart_dir: str) -> None:
                 return
             try:
                 note_speed_rate, music_volume = map(float, input_data)
-                assert (note_speed_rate >= 1 and 0 <= music_volume <= 1)
+                assert note_speed_rate >= 1 and 0 <= music_volume <= 1
                 break
             except Exception:
                 easygui.msgbox('输入有误，请重新输入！', '好的')
-        game_window = Window(info['title']+' '+chart_info['difficulty']+' '+chart_info['number'], os.path.join(chart_dir, info['illustration_file']))
-        game = Game(*omgc_data, os.path.join(chart_dir, info['music_file']), game_window, note_speed_rate, music_volume)
+        game_window = Window(info['title']+' '+chart_info['difficulty']+' '+chart_info['number'], os.path.join(chart_dir, info['illustration_file']), num_of_tracks)
+        game = Game(omgc_data, activated_notes, os.path.join(chart_dir, info['music_file']), game_window, note_speed_rate, music_volume)
         game.main_loop()
         if len(chart_choices) == 1:
             return
