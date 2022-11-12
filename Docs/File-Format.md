@@ -2,7 +2,7 @@
 
 ## omg 工程文件
 
-*Version 5，2022/11/12*
+*Version 6，2022/11/12*
 
 - `project_name`：工程名称
 - `illustration_file`：曲绘文件名称
