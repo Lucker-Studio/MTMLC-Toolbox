@@ -1,6 +1,6 @@
 __pycache__/
 .vscode/
 build/
-charts/
+dist/
 debug.log
 Pipfile
