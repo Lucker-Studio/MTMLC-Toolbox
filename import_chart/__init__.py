@@ -5,7 +5,9 @@ import easygui
 
 from export_chart.batcher import batch_charts
 from export_chart.packer import pack_to_omgz
+
 from .converter import malody2omegar
+from .mc_reader import read_mc
 from .mcz_unpacker import unpack_mcz
 
 
@@ -30,7 +32,7 @@ def main() -> None:
                 target = os.path.join(chart_dir, chart_name+'.json')
                 if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
                     raise Exception('已存在同名文件')
-                mc_data = json.load(open(chart, encoding='utf-8'))
+                mc_data = read_mc(chart)[0]
                 project_data = malody2omegar(mc_data)
                 json.dump(project_data, open(target, 'w', encoding='utf-8'))
             else:

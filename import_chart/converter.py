@@ -4,7 +4,8 @@ def malody2omegar(mc_data: dict) -> dict:
     """
 
     project_data = {}
-    project_data['project_name'] = mc_data['meta']['song']['title']+' '+mc_data['meta']['version']
+    project_data['project_name'] = (mc_data['meta']['song']['title']+' '+mc_data['meta']['version']).strip()
+    project_data['illustration_file'] = mc_data['meta']['background']
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in mc_data['time'])
     line = {}
 
@@ -34,7 +35,7 @@ def malody2omegar(mc_data: dict) -> dict:
             note_data['judging_track'] = i['column']
             note_list.append(note_data)
         elif 'sound' in i:
-            project_data['music_path'] = i['sound']
+            project_data['music_file'] = i['sound']
             project_data['music_offset'] = i.get('offset', 0)/1000
 
     line['note_list'] = note_list

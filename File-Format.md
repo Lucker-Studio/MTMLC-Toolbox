@@ -3,10 +3,12 @@
 *Version 5，2022/11/11*
 
 - `project_name`：工程名称
-- `music_path`：音频文件路径
+- `illustration_file`：曲绘文件名称
+- `music_file`：音频文件名称
 - `music_offset`：第 0 拍对应音乐第几秒
 - `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍时 BPM 变为 `v`
 - `line_list`：判定线列表，每一项如下：
+
   - `initial_position`：初始位置（若未指定，则等于默认值）
   - `initial_alpha`：初始透明度（若未指定，则等于默认值）
   - `motions`：移动事件列表（若未指定，则为空）
@@ -25,6 +27,8 @@
     - `initial_showing_track`：初始显示轨道（若未指定，则等于 `judging_track`）
     - `showing_track_changes`：变轨事件列表，格式与 `motions` 相同（若未指定，则为空）
     - `properties`：属性（`value` 的类型均为 `bool`，若未指定，则等于默认值）
+- 
+- `music_path`：音频文件路径
 
 ---
 
