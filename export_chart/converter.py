@@ -30,6 +30,8 @@ def omg2omgc(project_data: dict) -> tuple:
         """
         将拍数转换为秒数
         """
+        if beat is None:
+            return None
         beat = beat[0]+beat[1]/beat[2]
         i = 0
         # 找到上一个 BPM 时间点
@@ -88,6 +90,7 @@ def omg2omgc(project_data: dict) -> tuple:
             commands.append((t, CMD_LINE_PLAY_POS, (line_id, k, b)))
 
         for note in line['note_list']:
+            appear_time = beat2sec(note.get('appear'))  # 出现秒数
             start_time = beat2sec(note['start'])  # 判定秒数
             end_time = beat2sec(note.get('end', note['start']))  # 结束秒数
 
@@ -97,7 +100,7 @@ def omg2omgc(project_data: dict) -> tuple:
 
             showing_pos_offset = get_play_pos(start_time)
             showing_length = get_play_pos(end_time)-showing_pos_offset
-            initial_activated = abs(showing_pos_offset) <= CHART_FRAME_HEIGHT  # note 初始可能可见
+            initial_activated = appear_time is None and abs(showing_pos_offset) <= CHART_FRAME_HEIGHT  # note 初始可能可见
 
             note_data = [None]*10  # 初始化长度为 10 的数组（最后一个元素用于临时存储指令）
             note_data[0] = float(start_time)  # 起始时间
@@ -111,22 +114,24 @@ def omg2omgc(project_data: dict) -> tuple:
             note_data[8] = int(initial_activated)  # 初始是否激活
             note_data[9] = process_changes(initial_showing_track, note.get('showing_track_changes', []), CMD_NOTE_TRACK_LINEAR, CMD_NOTE_TRACK_SINE)
 
-            # note 在判定线上下 FRAME_HEIGHT 高度内时可能可见
             if not initial_activated:
-                def solve(val, t0, t1, k, b):
-                    if k != 0:
-                        x = (val-b+showing_pos_offset)/k
-                        if t0 <= x <= t1:
-                            return x
-                    return math.inf
-                initial_activated = False
-                for i in range(len(play_pos_changes)):
-                    t0, k, b = play_pos_changes[i]
-                    t1 = play_pos_changes[i+1][0] if i+1 < len(play_pos_changes) else math.inf
-                    t = min(solve(CHART_FRAME_HEIGHT, t0, t1, k, b), solve(-CHART_FRAME_HEIGHT, t0, t1, k, b))  # 更早经过哪边就是从哪边出现
-                    if t != math.inf:
-                        note_data[9].append((t, CMD_ACTIVATE_NOTE, ()))
-                        break
+                if appear_time is None:
+                    def solve(val, t0, t1, k, b):
+                        if k != 0:
+                            x = (val-b+showing_pos_offset)/k
+                            if t0 <= x <= t1:
+                                return x
+                        return math.inf
+                    initial_activated = False
+                    for i in range(len(play_pos_changes)):
+                        t0, k, b = play_pos_changes[i]
+                        t1 = play_pos_changes[i+1][0] if i+1 < len(play_pos_changes) else math.inf
+                        t = min(solve(CHART_FRAME_HEIGHT, t0, t1, k, b), solve(-CHART_FRAME_HEIGHT, t0, t1, k, b))  # 更早经过哪边就是从哪边出现
+                        if t != math.inf:
+                            note_data[9].append((float(t), CMD_ACTIVATE_NOTE, ()))
+                            break
+                else:
+                    note_data[9].append((float(appear_time), CMD_ACTIVATE_NOTE, ()))
 
             notes.append(note_data)
 

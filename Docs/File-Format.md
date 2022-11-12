@@ -22,6 +22,7 @@
   - `speed_changes`：音符流速列表，每一项形如 `[[a, b, c], v]`，表示第 `a+b/c` 拍时流速变为 `v`
   - `alpha_changes`：透明度变化事件列表，格式与 `motions` 相同（若未指定，则为空）
   - `note_list`：音符列表
+    - `appear`：出现节拍（若未指定，则始终显示）
     - `start`：起始节拍
     - `end`：终止节拍（若未指定，则等于 `start`）
     - `judging_track`：判定轨道
