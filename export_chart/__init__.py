@@ -14,6 +14,8 @@ def main() -> None:
         return
     elif mode:
         info_path = easygui.fileopenbox('打开 info.json', '导出谱面', 'info.json')
+        if info_path is None:
+            return
         info = json.load(open(info_path, encoding='utf-8'))
     else:
         # 不使用 info.json 时的默认信息
