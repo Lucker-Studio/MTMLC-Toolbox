@@ -2,7 +2,7 @@ import os
 import sys
 
 # 版本号
-VERSION = 'v0.5.221111'
+VERSION = 'v0.5.221112'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
@@ -10,7 +10,7 @@ if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
     RESOURCES_DIR = os.path.join(sys._MEIPASS, 'Resources')
 else:
     DEBUG_MODE = True
-    RESOURCES_DIR = 'Resources'
+    RESOURCES_DIR = os.path.abspath('Resources')
 
 # 对话框标题
 DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
@@ -120,7 +120,7 @@ OMGZ_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
 
 
 """
-谱面预览
+预览谱面
 """
 
 # 支持读取的 omgc 版本

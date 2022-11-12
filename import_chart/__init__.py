@@ -50,7 +50,7 @@ def main() -> None:
             msg += '\n'+i
     easygui.msgbox(msg, '导入谱面', '好的')
 
-    if len(info_list) > 1 and easygui.ynbox('是否要立即打包为 omgz 文件？', '导入谱面', ('好的', '不用了')):
+    if len(info_list) >= 1 and easygui.ynbox('是否要立即打包为 omgz 文件？', '导入谱面', ('好的', '不用了')):
         ok_list = []
         not_ok_list = []
         for dir_path, info in info_list.items():

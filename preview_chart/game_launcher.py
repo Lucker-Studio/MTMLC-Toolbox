@@ -18,7 +18,7 @@ def launch(chart_dir: str) -> None:
     chart_choices = {i['difficulty']+' '+i['number']+' By '+i['writer']: i for i in info['charts']}
     while True:
         if len(chart_choices) > 1:
-            ch = easygui.choicebox('请选择谱面', info['title']+' - 谱面预览', chart_choices.keys())
+            ch = easygui.choicebox('请选择谱面', info['title']+' - 预览谱面', chart_choices.keys())
             if ch is None:
                 return
             chart_info = chart_choices[ch]
@@ -31,7 +31,7 @@ def launch(chart_dir: str) -> None:
             else:
                 return
         while True:
-            input_data = easygui.multenterbox('请确认或更改播放参数', info['title']+' - 谱面预览', ['流速倍率(不小于1)', '音乐音量(0~1之间)'], [PREVIEW_DEFAULT_NOTE_SPEED_RATE, PREVIEW_DEFAULT_MUSIC_VOLUME])
+            input_data = easygui.multenterbox('请确认或更改播放参数', info['title']+' - 预览谱面', ['流速倍率(不小于1)', '音乐音量(0~1之间)'], [PREVIEW_DEFAULT_NOTE_SPEED_RATE, PREVIEW_DEFAULT_MUSIC_VOLUME])
             if input_data is None:
                 return
             try:
