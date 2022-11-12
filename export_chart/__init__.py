@@ -53,7 +53,6 @@ def main() -> None:
                     return
 
                 elif ch == '完成添加':
-                    # 保存 OMGZ 文件
                     info = {
                         'title': title,
                         'composer': composer,
@@ -62,6 +61,9 @@ def main() -> None:
                         'illustration_path': illustration_path,
                         'charts': charts
                     }
+                    info_path = easygui.filesavebox('保存 info.json', '导出谱面', 'info.json')
+                    if info_path:
+                        json.dump(info, open(info_path, 'w', encoding='utf-8'))
                     break
 
                 elif ch == '删除谱面':
