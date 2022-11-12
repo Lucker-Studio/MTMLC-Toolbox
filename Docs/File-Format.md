@@ -1,4 +1,6 @@
-# omg 工程文件
+# Omegar-Toolbox 格式文档
+
+## omg 工程文件
 
 *Version 5，2022/11/12*
 
@@ -29,7 +31,7 @@
 
 ---
 
-# omgc 谱面文件
+## omgc 谱面文件
 
 *Version 5，2022/11/9*
 
@@ -41,7 +43,7 @@ omgc 文件开头 4 字节为“omgc”四个小写字母的 ASCII 码，即 `6F
 
 omgc 文件主体分为四部分：meta 区，line 区，note 区，cmd 区。
 
-## meta 区
+### meta 区
 
 meta 区由以下 4 个数据组成：
 
@@ -50,7 +52,7 @@ meta 区由以下 4 个数据组成：
 - 音符数量（uint）
 - 指令数量（uint）
 
-## line 区
+### line 区
 
 line 区中每条判定线的格式如下：
 
@@ -58,7 +60,7 @@ line 区中每条判定线的格式如下：
 - 初始透明度（float）
 - 初始音符流速（float，即代表播放位置函数为 $val=kx$）
 
-## note 区
+### note 区
 
 note 区中每个音符的格式如下：
 
@@ -72,7 +74,7 @@ note 区中每个音符的格式如下：
 - note 的属性（uint，每个二进制位表示一个属性）
 - 初始是否激活（uint）
 
-## cmd 区
+### cmd 区
 
 cmd 区中每条指令的格式如下：
 
@@ -80,23 +82,23 @@ cmd 区中每条指令的格式如下：
 
 指令类型列表如下：
 
-### `0x00` 播放音乐
+#### `0x00` 播放音乐
 
 - 参数 1：起始时间（float）
 
-### `0x01` 激活 note
+#### `0x01` 激活 note
 
 - 参数 1：note 的 ID（uint）
 
 注：激活 note 即将 note 添加到活动 note 列表。绘制 note 和进行打击判定时，只遍历活动 note 列表中的 note。
 
-### `0x02` 将 note 轨道函数改为 $val=kt+b$
+#### `0x02` 将 note 轨道函数改为 $val=kt+b$
 
 - 参数 1：note 的 ID（uint）
 - 参数 2：$k$ 的值（float）
 - 参数 3：$b$ 的值（float）
 
-### `0x03` 将 note 轨道函数改为 $val=Asin(\omega x+\varphi)+b$
+#### `0x03` 将 note 轨道函数改为 $val=Asin(\omega x+\varphi)+b$
 
 - 参数 1：note 的 ID（uint）
 - 参数 2：$A$ 的值（float）
@@ -104,13 +106,13 @@ cmd 区中每条指令的格式如下：
 - 参数 4：$\varphi$ 的值（float）
 - 参数 5：$b$ 的值（float）
 
-### `0x11` 将 line 透明度函数改为 $val=kt+b$
+#### `0x11` 将 line 透明度函数改为 $val=kt+b$
 
 - 参数 1：line 的 ID（uint）
 - 参数 2：$k$ 的值（float）
 - 参数 3：$b$ 的值（float）
 
-### `0x12` 将 line 透明度函数改为 $val=Asin(\omega x+\varphi)+b$
+#### `0x12` 将 line 透明度函数改为 $val=Asin(\omega x+\varphi)+b$
 
 - 参数 1：line 的 ID（uint）
 - 参数 2：$A$ 的值（float）
@@ -118,13 +120,13 @@ cmd 区中每条指令的格式如下：
 - 参数 4：$\varphi$ 的值（float）
 - 参数 5：$b$ 的值（float）
 
-### `0x13` 将 line 位置函数改为 $val=kt+b$
+#### `0x13` 将 line 位置函数改为 $val=kt+b$
 
 - 参数 1：line 的 ID（uint）
 - 参数 2：$k$ 的值（float）
 - 参数 3：$b$ 的值（float）
 
-### `0x14` 将 line 位置函数改为 $val=Asin(\omega x+\varphi)+b$
+#### `0x14` 将 line 位置函数改为 $val=Asin(\omega x+\varphi)+b$
 
 - 参数 1：line 的 ID（uint）
 - 参数 2：$A$ 的值（float）
@@ -132,7 +134,7 @@ cmd 区中每条指令的格式如下：
 - 参数 4：$\varphi$ 的值（float）
 - 参数 5：$b$ 的值（float）
 
-### `0x15` 将 line 播放位置函数改为 $val=kx+b$
+#### `0x15` 将 line 播放位置函数改为 $val=kx+b$
 
 - 参数 1：line 的 ID（uint）
 - 参数 2：$k$ 的值（float）
@@ -140,7 +142,7 @@ cmd 区中每条指令的格式如下：
 
 ---
 
-# json 歌曲信息文件
+## json 歌曲信息文件
 
 *Version 2，2022/11/11*
 
@@ -157,7 +159,7 @@ cmd 区中每条指令的格式如下：
 
 ---
 
-# omgz 歌曲压缩包
+## omgz 歌曲压缩包
 
 *Version 2，2022/11/11*
 

@@ -17,7 +17,7 @@ from .game_launcher import launch
 
 
 def main() -> None:
-    file_path = easygui.fileopenbox('选择文件', '预览谱面', '*.omgz', ['*.omgz', '*.omg', '*.json', '*.mcz'])
+    file_path = easygui.fileopenbox('选择文件', '预览谱面', '*.omgz', ['*.omgz', '*.omg', '*.mcz', '*.json'])
     if file_path is None:
         return
     file_dir, file_name = os.path.split(file_path)
@@ -46,12 +46,12 @@ def main() -> None:
         else:
             info['illustration_file'] = os.path.join(file_dir, info['illustration_file'])
         json.dump(info, open(os.path.join(chart_dir, 'info.json'), 'w', encoding='utf-8'))
-    elif chart_ext == '.json':
-        info = json.load(open(file_path, encoding='utf-8'))
-        files = batch_charts(**info)
-        pack_to_dir(files, chart_dir)
     elif chart_ext == '.mcz':
         info = unpack_mcz(file_path, chart_dir)
+        files = batch_charts(**info)
+        pack_to_dir(files, chart_dir)
+    elif chart_ext == '.json':
+        info = json.load(open(file_path, encoding='utf-8'))
         files = batch_charts(**info)
         pack_to_dir(files, chart_dir)
     else:
