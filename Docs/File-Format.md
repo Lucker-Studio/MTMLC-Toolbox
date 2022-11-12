@@ -34,7 +34,7 @@
 
 ## omgc 谱面文件
 
-*Version 5，2022/11/9*
+*Version 5，2022/11/11*
 
 omgc 文件中无符号整型（uint）和浮点型（float）均为 4 字节小端型数据。
 
@@ -145,13 +145,18 @@ cmd 区中每条指令的格式如下：
 
 ## json 歌曲信息文件
 
-*Version 2，2022/11/11*
+*Version 3，2022/11/12*
+
 
 - `title`：曲名
 - `composer`：曲师
 - `illustrator`：画师
-- `music_file`：歌曲音频文件名称
-- `illustration_file`：曲绘文件名称
+- 对于 `omgz` 文件内的 `info.json`：
+  - `music_file`：歌曲音频文件名称
+  - `illustration_file`：曲绘文件名称
+- 对于工程文件夹中的 `info.json`：
+  - `music_path`：歌曲音频文件路径
+  - `illustration_path`：曲绘文件路径
 - `charts`：谱面列表
   - `difficulty`：难度
   - `number`：定数
