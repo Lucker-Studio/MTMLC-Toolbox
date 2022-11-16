@@ -19,20 +19,21 @@ class Window:
         self.height = PREVIEW_WINDOW_HEIGHT
         self.rate = self.height/CHART_FRAME_HEIGHT
         self.size = self.width, self.height
-        self.screen = pygame.display.set_mode(self.size)
-        self.font = pygame.font.SysFont(pygame.font.get_default_font(), PREVIEW_FONT_SIZE)
-        pygame.display.set_caption(title)
 
         bgimg_original = PIL.Image.open(bgimg_path)
         bgimg_resized = bgimg_original.resize(self.size)  # 缩放大小
         bgimg_dark = bgimg_resized.point(lambda x: x*PREVIEW_BACKGROUND_BRIGHTNESS)  # 降低亮度
         bgimg_blur = bgimg_dark.filter(PIL.ImageFilter.GaussianBlur(PREVIEW_BACKGROUND_BLUR))  # 高斯模糊
         self.bgimg = pygame.image.frombuffer(bgimg_blur.tobytes(), self.size, bgimg_blur.mode)
+        self.font = pygame.font.SysFont(pygame.font.get_default_font(), PREVIEW_FONT_SIZE)
+
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.display.set_caption(title)
 
         if DEBUG_MODE:
-            self.last_time = time.time()
             self.frame_count = 0
             self.fps = '?'
+            self.last_time = time.time()
 
     def start_drawing(self, music_progress: float) -> None:
         """
@@ -90,9 +91,3 @@ class Window:
             self.screen.blit(text_fps, rect_fps)
 
         pygame.display.update()  # 更新画面
-
-    def close(self) -> None:
-        """
-        关闭窗口
-        """
-        pygame.quit()

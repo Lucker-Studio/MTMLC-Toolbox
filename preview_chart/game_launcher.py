@@ -1,6 +1,7 @@
 import os
 
 import easygui
+import pygame
 
 from common import *
 
@@ -41,12 +42,12 @@ def launch(chart_dir: str) -> None:
                 break
             except Exception:
                 easygui.msgbox('输入有误，请重新输入！', '好的')
-        game_window = Window(song_info['title']+' '+chart_info['difficulty'], os.path.join(chart_dir, song_info['illustration_file']), num_of_tracks)
         try:
+            game_window = Window(song_info['title']+' '+chart_info['difficulty'], os.path.join(chart_dir, song_info['illustration_file']), num_of_tracks)
             game = Game(omgc_data, activated_notes, os.path.join(chart_dir, song_info['music_file']), game_window, note_speed_rate, music_volume)
             game.main_loop()
         except Exception as e:
-            game_window.close()
+            pygame.quit()
             raise e
         if len(chart_choices) == 1:
             return
