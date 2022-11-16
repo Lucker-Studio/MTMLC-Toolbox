@@ -1,8 +1,6 @@
 import hashlib
 import struct
 
-import easygui
-
 from common import *
 
 from .base import *
@@ -15,7 +13,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     chart_data = open(omgc_path, 'rb').read()
     if hashlib.md5(chart_data).hexdigest() != omgc_md5:
-        easygui.msgbox('谱面文件 MD5 不匹配，可能已被篡改！', '无法打开谱面', '返回')
+        raise Exception('谱面文件 MD5 不匹配，可能已被篡改')
 
     def read_4byte():
         """
@@ -29,8 +27,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     # 文件开头 4 字节必须是“omgc”的 ASCII 码
     if next(read_4byte).decode('ascii') != 'omgc':
-        easygui.msgbox('谱面文件头不符合 omgc 格式！', '预览谱面', '返回')
-        raise Exception()
+        raise Exception('谱面文件头不符合 omgc 格式')
 
     def read_data(data_type):
         """
@@ -46,8 +43,7 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
 
     omgc_version = read_data(int)
     if omgc_version not in PREVIEW_SUPPORTED_OMGC_VERSIONS:
-        easygui.msgbox(f'暂不支持此版本（{omgc_version}）的 omgc 文件！\n目前支持的版本为：{PREVIEW_SUPPORTED_OMGC_VERSIONS}', '预览谱面')
-        raise Exception()
+        raise Exception(f'暂不支持此版本（{omgc_version}）的 omgc 文件')
 
     line_count, note_count, cmd_count = read_multi_data(int, int, int)
 

@@ -64,7 +64,6 @@ def main() -> None:
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
-                    print(song_info)
                     files = batch_charts(**song_info, dir_path=dir_path)
                     pack_zip(files, dir_path+'.omgz')
                     ok_list.append(dir_path)

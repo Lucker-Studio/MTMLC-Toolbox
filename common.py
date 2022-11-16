@@ -234,7 +234,7 @@ def unpack_zip(zip_path: str, target_path: str) -> None:
             try:
                 newname = name.encode('cp437').decode('utf-8')
                 os.rename(os.path.join(target_path, dirpath, name), os.path.join(target_path, dirpath, newname))
-            except:
+            except UnicodeError:
                 pass
 
 

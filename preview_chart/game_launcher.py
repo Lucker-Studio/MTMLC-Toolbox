@@ -26,6 +26,7 @@ def launch(chart_dir: str) -> None:
         try:
             omgc_data, activated_notes, num_of_tracks = read_omgc(os.path.join(chart_dir, chart_info['difficulty']+'.omgc'), chart_info['md5'])
         except Exception:
+            easygui.exceptionbox('无法读取谱面文件')
             if len(chart_choices) > 1:
                 continue
             else:
