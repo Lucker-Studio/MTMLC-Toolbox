@@ -1,14 +1,24 @@
 from constants import *
 
 
-def malody2omegar(mc_data: dict) -> dict:
+def malody2omegar(mc_data: dict) -> tuple:
     """
     将 Malody 谱面数据转换为 Omegar 工程文件数据
+    返回值：song_info, chart_info, project_data
     """
-
+    song_info = {}
+    if title := mc_data['meta']['song'].get('title'):
+        song_info['title'] = title
+    if composer := mc_data['meta']['song'].get('artist'):
+        song_info['composer'] = composer
+    if illustration_file := mc_data['meta'].get('background'):
+        song_info['illustration_file'] = illustration_file
+    if not (difficulty := mc_data['meta'].get('version')):
+        difficulty = 'Default'
+    if not (writer := mc_data['meta'].get('creator')):
+        writer = 'Unknown'
+    chart_info = {'difficulty': difficulty,'writer': writer}
     project_data = {}
-    project_data['project_name'] = (mc_data['meta']['song']['title']+' '+mc_data['meta']['version']).strip()
-    project_data['illustration_file'] = mc_data['meta']['background']
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in mc_data['time'])
     line = {}
 
@@ -31,7 +41,7 @@ def malody2omegar(mc_data: dict) -> dict:
     note_list = []
     for i in mc_data['note']:
         if 'sound' in i:
-            project_data['music_file'] = i['sound']
+            song_info['music_file'] = i['sound']
             project_data['music_offset'] = i.get('offset', 0)/1000
         elif 'column' in i:
             note_data = {}
@@ -46,4 +56,4 @@ def malody2omegar(mc_data: dict) -> dict:
     line['note_list'] = note_list
     project_data['line_list'] = [line]
 
-    return project_data
+    return song_info, chart_info, project_data

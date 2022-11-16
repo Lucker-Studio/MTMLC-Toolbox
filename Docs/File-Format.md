@@ -2,11 +2,8 @@
 
 ## omg 工程文件
 
-*Version 6，2022/11/12*
+*Version 7，2022/11/16*
 
-- `project_name`：工程名称
-- `illustration_file`：曲绘文件名称
-- `music_file`：音频文件名称
 - `music_offset`：第 0 拍对应音乐第几秒
 - `bpm_list`：BPM 列表，每一项形如 `[[a, b, c], v]`，表示从第 `a+b/c` 拍时 BPM 变为 `v`
 - `line_list`：判定线列表，每一项如下：
@@ -143,25 +140,20 @@ cmd 区中每条指令的格式如下：
 
 ---
 
-## json 歌曲信息文件
+## omginfo 歌曲信息文件
 
-*Version 3，2022/11/12*
-
+*Version 4，2022/11/16*
 
 - `title`：曲名
 - `composer`：曲师
 - `illustrator`：画师
-- 对于 `omgz` 文件内的 `info.json`：
-  - `music_file`：歌曲音频文件名称
-  - `illustration_file`：曲绘文件名称
-- 对于工程文件夹中的 `info.json`：
-  - `music_path`：歌曲音频文件路径
-  - `illustration_path`：曲绘文件路径
+- `music_file`：歌曲音频文件名称/路径
+- `illustration_file`：曲绘文件名称/路径
 - `charts`：谱面列表
   - `difficulty`：难度
-  - `number`：定数
   - `writer`：谱师
-  - `md5`：omgc 的 MD5 字符串
+  - `omg_path`：omg 工程文件路径（仅工程文件夹内）
+  - `md5`：omgc 的 MD5 字符串（仅 omgz 内）
 
 ---
 
@@ -169,7 +161,7 @@ cmd 区中每条指令的格式如下：
 
 *Version 2，2022/11/11*
 
-- 歌曲信息文件：`info.json`
+- 歌曲信息文件：`index.omginfo`
 - 歌曲音频：`music.mp3` 或 `music.ogg`
 - 曲绘：`illustration.png` 或 `illustration.jpg`
 - 谱面文件： `(等级名称).omgc`

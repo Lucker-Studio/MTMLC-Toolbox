@@ -9,16 +9,16 @@ from .packer import pack_to_omgz
 
 
 def main() -> None:
-    mode = easygui.ynbox('请选择导出模式', '导出谱面', ('使用 info.json 自动导出', '手动设置信息'))
+    mode = easygui.ynbox('请选择导出模式', '导出谱面', ('使用 omginfo 自动导出', '手动设置信息'))
     if mode is None:
         return
     elif mode:
-        info_path = easygui.fileopenbox('打开 info.json', '导出谱面', 'info.json')
+        info_path = easygui.fileopenbox('打开 omginfo 文件', '导出谱面', '*.omginfo')
         if info_path is None:
             return
-        info = json.load(open(info_path, encoding='utf-8'))
+        song_info = json.load(open(info_path, encoding='utf-8'))
     else:
-        # 不使用 info.json 时的默认信息
+        # 不使用 omginfo 时的默认信息
         title = ''
         composer = ''
         illustrator = ''
@@ -47,13 +47,13 @@ def main() -> None:
         while True:
             if len(charts) >= 1:  # 至少添加一张谱面
                 # key 为谱面的显示名称，value 为谱面信息
-                show_charts = {f'{i["difficulty"]} {i["number"]} By {i["writer"]} ({i["omg_path"]})': i for i in charts}
+                show_charts = {f'{i["difficulty"]} By {i["writer"]} ({i["omg_path"]})': i for i in charts}
                 ch = easygui.buttonbox(f'已添加 {len(charts)} 张谱面：\n'+'\n'.join(show_charts.keys()), '导出谱面', ('继续添加', '完成添加', '删除谱面'))
                 if ch is None:  # 关闭对话框
                     return
 
                 elif ch == '完成添加':
-                    info = {
+                    song_info = {
                         'title': title,
                         'composer': composer,
                         'illustrator': illustrator,
@@ -61,9 +61,9 @@ def main() -> None:
                         'illustration_path': illustration_path,
                         'charts': charts
                     }
-                    info_path = easygui.filesavebox('保存 info.json', '导出谱面', 'info.json')
+                    info_path = easygui.filesavebox('保存 omginfo 文件', '导出谱面', 'index.omginfo')
                     if info_path:
-                        json.dump(info, open(info_path, 'w', encoding='utf-8'))
+                        json.dump(song_info, open(info_path, 'w', encoding='utf-8'))
                     break
 
                 elif ch == '删除谱面':
@@ -78,7 +78,7 @@ def main() -> None:
 
             data = ('', '', '')
             while True:
-                data = easygui.multenterbox(f'请输入第 {len(charts)+1} 张谱面信息：', '导出谱面', ['难度', '定数', '谱师'], data)
+                data = easygui.multenterbox(f'请输入第 {len(charts)+1} 张谱面信息：', '导出谱面', ['难度', '谱师'], data)
                 if data is None:  # 关闭对话框
                     if len(charts) >= 1:
                         break  # 回到谱面列表
@@ -87,7 +87,7 @@ def main() -> None:
                 if not all(data):  # 存在空字符串
                     easygui.msgbox('请将谱面信息填写完整！', '导出谱面', '哦~')
                 else:
-                    difficulty, number, writer = data
+                    difficulty, writer = data
                     break
 
             if data is None:
@@ -96,11 +96,11 @@ def main() -> None:
             omg_path = easygui.fileopenbox('请选择谱面工程文件', '导出谱面', '*.omg')
             if omg_path is None:
                 continue  # 回到谱面列表
-            charts.append({'difficulty': difficulty, 'number': number, 'writer': writer, 'omg_path': omg_path})
+            charts.append({'difficulty': difficulty,  'writer': writer, 'omg_path': omg_path})
 
-    omgz_path = easygui.filesavebox('保存 omgz 文件', default=info['title']+'.omgz')
+    omgz_path = easygui.filesavebox('保存 omgz 文件', default=song_info['title']+'.omgz')
     if omgz_path is None:  # 未保存文件
         return
-    files = batch_charts(**info)
+    files = batch_charts(**song_info)
     pack_to_omgz(files, omgz_path)
     easygui.msgbox('导出成功！', '导出谱面', '好耶')
