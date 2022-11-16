@@ -3,9 +3,9 @@ import time
 import pygame
 import tinytag
 
-from constants import *
+from common import *
 
-from .common import *
+from .base import *
 from .window_controller import Window
 
 

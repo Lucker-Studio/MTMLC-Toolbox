@@ -1,11 +1,10 @@
-import json
 import os
+import traceback
 
 import easygui
 
+from common import *
 from export_chart.batcher import batch_charts
-from export_chart.packer import pack_to_omgz
-from zip_unpacker import unpack_zip
 
 from .converter import malody2omegar
 from .dir_importer import import_dir
@@ -40,13 +39,15 @@ def main() -> None:
                     target = os.path.join(chart_dir, chart_name+'.omg')
                     if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
                         raise Exception('已存在同名文件')
-                    mc_data = json.load(open(chart, encoding='utf-8'))
+                    mc_data = read_json(chart)
                     project_data = malody2omegar(mc_data)[-1]
-                    json.dump(project_data, open(target, 'w', encoding='utf-8'))
+                    write_json(project_data, target)
                 else:
                     raise Exception('不支持的文件格式')
                 ok_list.append(file_name)
             except Exception as e:
+                if DEBUG_MODE:
+                    traceback.print_exc()
                 not_ok_list.append(f'{file_name}:{repr(e)}')
 
         msg = f'{len(ok_list)} 个谱面导入成功'+'。；'[bool(ok_list)]
@@ -63,10 +64,13 @@ def main() -> None:
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
-                    files = batch_charts(**song_info)
-                    pack_to_omgz(files, dir_path+'.omgz')
+                    print(song_info)
+                    files = batch_charts(**song_info, dir_path=dir_path)
+                    pack_zip(files, dir_path+'.omgz')
                     ok_list.append(dir_path)
                 except Exception as e:
+                    if DEBUG_MODE:
+                        traceback.print_exc()
                     not_ok_list.append(f'{dir_path}:{repr(e)}')
 
             msg = f'{len(ok_list)} 个谱面已打包为 omgz'+'。；'[bool(ok_list)]
@@ -85,6 +89,6 @@ def main() -> None:
         song_info = import_dir(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
         if easygui.ynbox('是否要立即打包为 omgz 文件？', '导入谱面', ('好的', '不用了')):
-            files = batch_charts(**song_info)
-            pack_to_omgz(files, chart_dir+'.omgz')
+            files = batch_charts(**song_info, dir_path=chart_dir)
+            pack_zip(files, chart_dir+'.omgz')
             easygui.msgbox('成功打包为 omgz 文件！', '导入谱面', '好的')

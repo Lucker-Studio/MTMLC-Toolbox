@@ -1,4 +1,4 @@
-from constants import *
+from common import *
 
 
 def malody2omegar(mc_data: dict) -> tuple:

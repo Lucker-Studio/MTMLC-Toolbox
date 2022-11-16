@@ -3,9 +3,9 @@ import struct
 
 import easygui
 
-from constants import *
+from common import *
 
-from .common import *
+from .base import *
 
 
 def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:

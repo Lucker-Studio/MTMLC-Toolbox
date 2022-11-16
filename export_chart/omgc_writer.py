@@ -1,6 +1,6 @@
 import struct
 
-from constants import *
+from common import *
 
 
 def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None:

@@ -1,9 +1,8 @@
-import json
 import os
 
 import easygui
 
-from constants import *
+from common import *
 
 from .game_controller import Game
 from .omgc_reader import read_omgc
@@ -14,7 +13,7 @@ def launch(chart_dir: str) -> None:
     """
     游戏启动器
     """
-    song_info = json.load(open(os.path.join(chart_dir, 'index.omginfo'), encoding='utf-8'))
+    song_info = read_json(os.path.join(chart_dir, 'index.omginfo'))
     chart_choices = {i['difficulty']+' By '+i['writer']: i for i in song_info['charts']}
     while True:
         if len(chart_choices) > 1:

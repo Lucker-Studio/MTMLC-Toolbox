@@ -1,6 +1,6 @@
 import easygui
 
-from constants import *
+from common import *
 
 builtin_modules = {
     '导入谱面': 'import_chart',

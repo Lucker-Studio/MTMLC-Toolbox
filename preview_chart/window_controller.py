@@ -4,7 +4,7 @@ import PIL.Image
 import PIL.ImageFilter
 import pygame
 
-from constants import *
+from common import *
 
 
 class Window:

@@ -1,6 +1,6 @@
 import math
 
-from constants import *
+from common import *
 
 
 class Linear_func:

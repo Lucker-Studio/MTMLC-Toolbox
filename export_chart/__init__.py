@@ -1,11 +1,8 @@
-import json
-
 import easygui
 
-from constants import *
+from common import *
 
 from .batcher import batch_charts
-from .packer import pack_to_omgz
 
 
 def main() -> None:
@@ -16,14 +13,14 @@ def main() -> None:
         info_path = easygui.fileopenbox('打开 omginfo 文件', '导出谱面', '*.omginfo')
         if info_path is None:
             return
-        song_info = json.load(open(info_path, encoding='utf-8'))
+        song_info = read_json(info_path)
     else:
         # 不使用 omginfo 时的默认信息
         title = ''
         composer = ''
         illustrator = ''
-        music_path = OMGZ_SUPPORTED_MUSIC_FORMATS[0]
-        illustration_path = OMGZ_SUPPORTED_ILLUSTRATION_FORMATS[0]
+        music_file = OMGZ_SUPPORTED_MUSIC_FORMATS[0]
+        illustration_file = OMGZ_SUPPORTED_ILLUSTRATION_FORMATS[0]
         charts = []
 
         data = (title, composer, illustrator)  # 默认信息，可能来自于模板
@@ -37,11 +34,11 @@ def main() -> None:
                 title, composer, illustrator = data
                 break
 
-        music_path = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_path, OMGZ_SUPPORTED_MUSIC_FORMATS)
-        if music_path is None:
+        music_file = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_file, OMGZ_SUPPORTED_MUSIC_FORMATS)
+        if music_file is None:
             return
-        illustration_path = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_path, OMGZ_SUPPORTED_ILLUSTRATION_FORMATS)
-        if illustration_path is None:
+        illustration_file = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_file, OMGZ_SUPPORTED_ILLUSTRATION_FORMATS)
+        if illustration_file is None:
             return
 
         while True:
@@ -57,13 +54,13 @@ def main() -> None:
                         'title': title,
                         'composer': composer,
                         'illustrator': illustrator,
-                        'music_path': music_path,
-                        'illustration_path': illustration_path,
+                        'music_file': music_file,
+                        'illustration_file': illustration_file,
                         'charts': charts
                     }
                     info_path = easygui.filesavebox('保存 omginfo 文件', '导出谱面', 'index.omginfo')
                     if info_path:
-                        json.dump(song_info, open(info_path, 'w', encoding='utf-8'))
+                        write_json(song_info, info_path)
                     break
 
                 elif ch == '删除谱面':
@@ -102,5 +99,5 @@ def main() -> None:
     if omgz_path is None:  # 未保存文件
         return
     files = batch_charts(**song_info)
-    pack_to_omgz(files, omgz_path)
+    pack_zip(files, omgz_path)
     easygui.msgbox('导出成功！', '导出谱面', '好耶')
