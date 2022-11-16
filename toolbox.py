@@ -1,3 +1,5 @@
+import traceback
+
 import easygui
 
 from common import *
@@ -13,4 +15,6 @@ if __name__ == '__main__':
         try:
             __import__(builtin_modules[ch]).main()
         except Exception:
+            if DEBUG_MODE:
+                traceback.print_exc()
             easygui.exceptionbox(f'使用功能“{ch}”时出错', DIALOG_TITLE)

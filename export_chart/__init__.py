@@ -14,6 +14,7 @@ def main() -> None:
         if info_path is None:
             return
         song_info = read_json(info_path)
+        song_info['dir_path'] = os.path.split(info_path)[0]
     else:
         # 不使用 omginfo 时的默认信息
         title = ''

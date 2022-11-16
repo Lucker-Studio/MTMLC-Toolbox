@@ -15,7 +15,7 @@ def batch_charts(title: str, composer: str, illustrator: str, music_file: str, i
     files = {}
     for chart_info in charts:
         omgc_path = tempfile.mkstemp()[1]  # 获取临时 omgc 文件名
-        project_data = read_json(chart_info.pop('omg_path'))
+        project_data = read_json(os.path.join(dir_path, chart_info.pop('omg_path')))
         lines, notes, commands = omg2omgc(project_data)
         write_omgc(lines, notes, commands, omgc_path)
         files[chart_info['difficulty']+'.omgc'] = omgc_path
