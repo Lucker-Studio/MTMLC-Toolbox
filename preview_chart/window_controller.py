@@ -90,3 +90,9 @@ class Window:
             self.screen.blit(text_fps, rect_fps)
 
         pygame.display.update()  # 更新画面
+
+    def close(self) -> None:
+        """
+        关闭窗口
+        """
+        pygame.quit()
