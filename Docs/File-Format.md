@@ -159,7 +159,7 @@ cmd 区中每条指令的格式如下：
 
 ## omgz 歌曲压缩包
 
-*Version 2，2022/11/11*
+*Version 3，2022/11/16*
 
 - 歌曲信息文件：`index.omginfo`
 - 歌曲音频：`music.mp3` 或 `music.ogg`
