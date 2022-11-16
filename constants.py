@@ -2,7 +2,7 @@ import os
 import sys
 
 # 版本号
-VERSION = 'v0.7.221116'
+VERSION = 'v0.8.221116'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
