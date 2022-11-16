@@ -22,7 +22,7 @@ class Game:
         pygame.mixer.init()
         pygame.mixer.music.load(music_path)
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
-        pygame.mixer.music.set_volume(music_volume**2.5)  # Pygame 的速度曲线有点离谱
+        pygame.mixer.music.set_volume(music_volume**2)  # 针对 Pygame 离谱的速度曲线的优化
 
         self.cmd_processor = {
             CMD_PLAY_MUSIC:         self.play_music,
