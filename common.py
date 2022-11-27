@@ -7,7 +7,7 @@ import zipfile
 
 
 # 版本号
-VERSION = 'v1.0.221127'
+VERSION = 'v0.9.221127'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
