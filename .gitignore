@@ -2,5 +2,4 @@ __pycache__/
 .vscode/
 build/
 dist/
-debug.log
 Pipfile

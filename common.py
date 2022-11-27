@@ -79,19 +79,6 @@ CMD_LINE_POS_LINEAR = 0x13
 CMD_LINE_POS_SINE = 0x14
 CMD_LINE_PLAY_POS = 0x15
 
-# 指令名称
-COMMAND_NAME = {
-    CMD_PLAY_MUSIC: '播放音乐',
-    CMD_ACTIVATE_NOTE: '激活 note',
-    CMD_NOTE_TRACK_LINEAR: 'note 轨道-线性',
-    CMD_NOTE_TRACK_SINE: 'note 轨道-正弦',
-    CMD_LINE_ALPHA_LINEAR: 'line 透明度-线性',
-    CMD_LINE_ALPHA_SINE: 'line 透明度-正弦',
-    CMD_LINE_POS_LINEAR: 'line 位置-线性',
-    CMD_LINE_POS_SINE: 'line 位置-正弦',
-    CMD_LINE_PLAY_POS: 'line 播放位置'
-}
-
 # 指令参数类型模板
 ID_LINEAR = (int,)+(float,)*2
 ID_SINE = (int,)+(float,)*4
