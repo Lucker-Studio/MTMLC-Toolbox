@@ -1,5 +1,5 @@
 # 流速倍率
-MC_SPEED_RATE = 3
+SPEED_RATE = 3
 
 
 def mc2mtmlproj(mc_data: dict) -> tuple:
@@ -35,7 +35,7 @@ def mc2mtmlproj(mc_data: dict) -> tuple:
             cur_base = i[2]
         elif i[1] == 'rate':
             cur_rate = i[2]
-        speed_changes_processed[tuple(i[0])] = cur_base*cur_rate*MC_SPEED_RATE
+        speed_changes_processed[tuple(i[0])] = cur_base*cur_rate*SPEED_RATE
     speed_changes_processed = sorted(speed_changes_processed.items(), key=lambda x: x[0][0]+x[0][1]/x[0][2])
     line['speed_changes'] = speed_changes_processed
 
