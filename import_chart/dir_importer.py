@@ -20,7 +20,7 @@ def import_dir(dir_path: str) -> list:
                 song_info_upd, chart_info, project_data = mc2mtmlproj(mc_data)
                 song_info.update(song_info_upd)
                 write_json(project_data, target)
-                song_info['charts'].append({**chart_info, 'mtmlproj_path': target})
+                song_info['charts'].append({**chart_info, 'path': target})
             except Exception:
                 if DEBUG_MODE:
                     traceback.print_exc()

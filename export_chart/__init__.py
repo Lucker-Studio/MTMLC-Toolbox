@@ -45,7 +45,7 @@ def main() -> None:
         while True:
             if len(charts) >= 1:  # 至少添加一张谱面
                 # key 为谱面的显示名称，value 为谱面信息
-                show_charts = {f'{i["difficulty"]} By {i["writer"]} ({i["mtmlproj_path"]})': i for i in charts}
+                show_charts = {f'{i["difficulty"]} By {i["writer"]} ({i["path"]})': i for i in charts}
                 ch = easygui.buttonbox(f'已添加 {len(charts)} 张谱面：\n'+'\n'.join(show_charts.keys()), '导出谱面', ('继续添加', '完成添加', '删除谱面'))
                 if ch is None:  # 关闭对话框
                     return
@@ -94,7 +94,7 @@ def main() -> None:
             mtmlproj_path = easygui.fileopenbox('请选择工程文件', '导出谱面', '*.mtmlproj')
             if mtmlproj_path is None:
                 continue  # 回到谱面列表
-            charts.append({'difficulty': difficulty,  'writer': writer, 'mtmlproj_path': mtmlproj_path})
+            charts.append({'difficulty': difficulty,  'writer': writer, 'path': mtmlproj_path})
 
     mtmlz_path = easygui.filesavebox('保存 mtmlz 文件', default=song_info['title']+'.mtmlz')
     if mtmlz_path is None:  # 未保存文件
