@@ -28,8 +28,8 @@ def main() -> None:
         files = batch_project(**song_info, dir_path=chart_dir)
         pack_dir(files, chart_dir)
     elif chart_ext == '.mc':
-        mtmlc_path = os.path.join(chart_dir, chart_info['difficulty']+'.mtmlc')
         song_info, chart_info, project_data = mc2mtmlproj(read_json(file_path))
+        mtmlc_path = os.path.join(chart_dir, chart_info['difficulty']+'.mtmlc')
         lines, notes, commands = proj2chart(project_data)
         write_mtmlc(lines, notes, commands, mtmlc_path)
         song_info['music_file'] = os.path.join(file_dir, song_info['music_file'])

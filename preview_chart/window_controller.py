@@ -70,7 +70,8 @@ class Window:
         rect_note.top -= PREVIEW_NOTE_HEIGHT/2
         rect_note.height += PREVIEW_NOTE_HEIGHT
         surf_note = pygame.Surface(rect_note.size, pygame.SRCALPHA)
-        pygame.draw.rect(surf_note, (*PREVIEW_NOTE_COLOR, int(alpha*255)), pygame.Rect((0, 0), rect_note.size), border_radius=PREVIEW_NOTE_BORDER_RADIUS)
+        pygame.draw.rect(surf_note, (*PREVIEW_NOTE_BORDER_COLOR, int(alpha*255)), pygame.Rect((0, 0), rect_note.size), border_radius=PREVIEW_NOTE_BORDER_RADIUS)
+        pygame.draw.rect(surf_note, (*PREVIEW_NOTE_COLOR, int(alpha*255)), pygame.Rect((PREVIEW_NOTE_BORDER_WIDTH,)*2, tuple(i-PREVIEW_NOTE_BORDER_WIDTH*2 for i in rect_note.size)), border_radius=PREVIEW_NOTE_BORDER_RADIUS)
         self.screen.blit(surf_note, rect_note)
 
     def end_drawing(self) -> None:
