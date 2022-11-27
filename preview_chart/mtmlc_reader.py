@@ -6,18 +6,18 @@ from common import *
 from .base import *
 
 
-def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
+def read_mtmlc(mtmlc_path: str, mtmlc_md5: str) -> tuple:
     """
-    读取 omgc 谱面文件
+    读取 mtmlc 谱面文件
     """
 
-    chart_data = open(omgc_path, 'rb').read()
-    if hashlib.md5(chart_data).hexdigest() != omgc_md5:
+    chart_data = open(mtmlc_path, 'rb').read()
+    if hashlib.md5(chart_data).hexdigest() != mtmlc_md5:
         raise Exception('谱面文件 MD5 不匹配，可能已被篡改')
 
     def read_4byte():
         """
-        从 omgc 文件读取 4 字节（一个数据）
+        从 mtmlc 文件读取 4 字节（一个数据）
         """
         index = 0
         while True:
@@ -25,15 +25,15 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
             index += 4
     read_4byte = read_4byte()
 
-    # 文件开头 4 字节必须是“omgc”的 ASCII 码
-    if next(read_4byte).decode('ascii') != 'omgc':
-        raise Exception('谱面文件头不符合 omgc 格式')
+    # 文件开头 4 字节必须是“MTML”的 ASCII 码
+    if next(read_4byte).decode('ascii') != 'MTML':
+        raise Exception('谱面文件头不符合 mtmlc 格式')
 
     def read_data(data_type):
         """
         读取一个指定类型的数据
         """
-        return struct.unpack(OMGC_STRUCT_FORMAT[data_type], next(read_4byte))[0]
+        return struct.unpack(mtmlc_STRUCT_FORMAT[data_type], next(read_4byte))[0]
 
     def read_multi_data(*args):
         """
@@ -41,9 +41,9 @@ def read_omgc(omgc_path: str, omgc_md5: str) -> tuple:
         """
         return list(map(read_data, args))
 
-    omgc_version = read_data(int)
-    if omgc_version not in PREVIEW_SUPPORTED_OMGC_VERSIONS:
-        raise Exception(f'暂不支持此版本（{omgc_version}）的 omgc 文件')
+    mtmlc_version = read_data(int)
+    if mtmlc_version not in PREVIEW_SUPPORTED_mtmlc_VERSIONS:
+        raise Exception(f'暂不支持此版本（{mtmlc_version}）的 mtmlc 文件')
 
     line_count, note_count, cmd_count = read_multi_data(int, int, int)
 

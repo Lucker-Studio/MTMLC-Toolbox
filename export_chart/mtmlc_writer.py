@@ -3,9 +3,9 @@ import struct
 from common import *
 
 
-def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None:
+def write_mtmlc(lines: list, notes: list, commands: list, mtmlc_path: str) -> None:
     """
-    将指令列表写入 omgc 谱面文件
+    将指令列表写入 mtmlc 谱面文件
     """
 
     if DEBUG_MODE:
@@ -16,7 +16,7 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
             debug_log.write('\t'.join(map(lambda x: f'{x:.3f}' if type(x) == float else str(x), data))+'\n')
 
     output_log('[META]')
-    meta = [OMGC_WRITING_VERSION, len(lines), len(notes), len(commands)]
+    meta = [mtmlc_WRITING_VERSION, len(lines), len(notes), len(commands)]
     output_log(*meta)
 
     output_log('[LINE]')
@@ -37,11 +37,11 @@ def write_omgc(lines: list, notes: list, commands: list, omgc_path: str) -> None
         commands_expanded.extend((time, cmd_type, len(parameters), *parameters))  # 将二维列表展开成一维并添加参数数量
         output_log(time, COMMAND_NAME[cmd_type], len(parameters), parameters)
 
-    with open(omgc_path, 'wb') as f:
-        f.write('omgc'.encode('ascii'))
+    with open(mtmlc_path, 'wb') as f:
+        f.write('MTML'.encode('ascii'))
         for data in meta+lines_expanded+notes_expanded+commands_expanded:
             # 将二进制数据写入文件
-            f.write(struct.pack(OMGC_STRUCT_FORMAT[type(data)], data))
+            f.write(struct.pack(mtmlc_STRUCT_FORMAT[type(data)], data))
 
     if DEBUG_MODE:
         debug_log.close()

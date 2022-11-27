@@ -10,8 +10,8 @@ from .window_controller import Window
 
 
 class Game:
-    def __init__(self, omgc_data: tuple, activated_notes: list, music_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
-        self.lines, self.notes, self.commands = omgc_data
+    def __init__(self, mtmlc_data: tuple, activated_notes: list, music_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
+        self.lines, self.notes, self.commands = mtmlc_data
         self.activated_notes = activated_notes
         self.game_window = game_window
         self.note_speed_rate = note_speed_rate

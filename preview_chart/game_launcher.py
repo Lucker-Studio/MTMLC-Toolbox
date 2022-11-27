@@ -6,7 +6,7 @@ import pygame
 from common import *
 
 from .game_controller import Game
-from .omgc_reader import read_omgc
+from .mtmlc_reader import read_mtmlc
 from .window_controller import Window
 
 
@@ -14,7 +14,7 @@ def launch(chart_dir: str) -> None:
     """
     游戏启动器
     """
-    song_info = read_json(os.path.join(chart_dir, 'index.omginfo'))
+    song_info = read_json(os.path.join(chart_dir, 'index.mtmlinfo'))
     chart_choices = {i['difficulty']+' By '+i['writer']: i for i in song_info['charts']}
     while True:
         if len(chart_choices) > 1:
@@ -25,7 +25,7 @@ def launch(chart_dir: str) -> None:
         else:  # 只有一个选项可用不了 choicebox 哦~
             chart_info = song_info['charts'][0]
         try:
-            omgc_data, activated_notes, num_of_tracks = read_omgc(os.path.join(chart_dir, chart_info['difficulty']+'.omgc'), chart_info['md5'])
+            mtmlc_data, activated_notes, num_of_tracks = read_mtmlc(os.path.join(chart_dir, chart_info['difficulty']+'.mtmlc'), chart_info['md5'])
         except Exception:
             easygui.exceptionbox('无法读取谱面文件')
             if len(chart_choices) > 1:
@@ -44,7 +44,7 @@ def launch(chart_dir: str) -> None:
                 easygui.msgbox('输入有误，请重新输入！', '好的')
         try:
             game_window = Window(song_info['title']+' '+chart_info['difficulty'], os.path.join(chart_dir, song_info['illustration_file']), num_of_tracks)
-            game = Game(omgc_data, activated_notes, os.path.join(chart_dir, song_info['music_file']), game_window, note_speed_rate, music_volume)
+            game = Game(mtmlc_data, activated_notes, os.path.join(chart_dir, song_info['music_file']), game_window, note_speed_rate, music_volume)
             game.main_loop()
         except Exception as e:
             pygame.quit()

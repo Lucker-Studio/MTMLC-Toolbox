@@ -36,7 +36,7 @@ def main() -> None:
                     unpack_zip(chart, target)
                     info_list[target] = import_dir(target)
                 elif chart_ext == '.mc':
-                    target = os.path.join(chart_dir, chart_name+'.omg')
+                    target = os.path.join(chart_dir, chart_name+'.mtmlproj')
                     if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
                         raise Exception('已存在同名文件')
                     mc_data = read_json(chart)
@@ -59,20 +59,20 @@ def main() -> None:
                 msg += '\n'+i
         easygui.msgbox(msg, '导入谱面', '好的')
 
-        if len(info_list) >= 1 and easygui.ynbox('是否要立即打包为 omgz 文件？', '导入谱面', ('好的', '不用了')):
+        if len(info_list) >= 1 and easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
             ok_list = []
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
                     files = batch_charts(**song_info, dir_path=dir_path)
-                    pack_zip(files, dir_path+'.omgz')
+                    pack_zip(files, dir_path+'.mtmlz')
                     ok_list.append(dir_path)
                 except Exception as e:
                     if DEBUG_MODE:
                         traceback.print_exc()
                     not_ok_list.append(f'{dir_path}:{repr(e)}')
 
-            msg = f'{len(ok_list)} 个谱面已打包为 omgz'+'。；'[bool(ok_list)]
+            msg = f'{len(ok_list)} 个谱面已打包为 mtmlz'+'。；'[bool(ok_list)]
             for i in ok_list:
                 msg += '\n'+i
             if not_ok_list:
@@ -87,7 +87,7 @@ def main() -> None:
             return
         song_info = import_dir(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
-        if easygui.ynbox('是否要立即打包为 omgz 文件？', '导入谱面', ('好的', '不用了')):
+        if easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
             files = batch_charts(**song_info, dir_path=chart_dir)
-            pack_zip(files, chart_dir+'.omgz')
-            easygui.msgbox('成功打包为 omgz 文件！', '导入谱面', '好的')
+            pack_zip(files, chart_dir+'.mtmlz')
+            easygui.msgbox('成功打包为 mtmlz 文件！', '导入谱面', '好的')

@@ -7,7 +7,7 @@ import zipfile
 
 
 # 版本号
-VERSION = 'v0.8.221116'
+VERSION = 'v1.0.221127'
 
 # 调试模式
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
@@ -18,7 +18,7 @@ else:
     RESOURCES_DIR = os.path.abspath('Resources')
 
 # 对话框标题
-DIALOG_TITLE = 'Omegar Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
+DIALOG_TITLE = 'MTMLC-Toolbox '+VERSION+' [Debug Mode]'*DEBUG_MODE
 
 
 """
@@ -37,7 +37,7 @@ DEFAULT_PROPERTIES = {
 
 
 """
-mc 转 omg
+mc 转 mtmlproj
 """
 
 # 流速倍率
@@ -45,7 +45,7 @@ MC_SPEED_RATE = 3.5
 
 
 """
-omg 转 omgc
+mtmlproj 转 mtmlc
 """
 
 # 画面高度
@@ -65,7 +65,7 @@ SLOW_MOVING_SINE = 'sine'
 
 
 """
-omgc 指令
+mtmlc 指令
 """
 
 # 指令代码
@@ -111,33 +111,33 @@ COMMAND_PARAM_TYPE = {
 
 
 """
-omgc 写入
+mtmlc 写入
 """
 
-# 写入的 omgc 版本
-OMGC_WRITING_VERSION = 5
+# 写入的 mtmlc 版本
+mtmlc_WRITING_VERSION = 5
 
-# omgc 数据存储格式
-OMGC_STRUCT_FORMAT = {int: '<I', float: '<f'}
+# mtmlc 数据存储格式
+mtmlc_STRUCT_FORMAT = {int: '<I', float: '<f'}
 
 
 """
-omgz 打包
+mtmlz 打包
 """
 
 # 支持的音频格式
-OMGZ_SUPPORTED_MUSIC_FORMATS = ['*.ogg', '*.mp3']
+mtmlz_SUPPORTED_MUSIC_FORMATS = ['*.ogg', '*.mp3']
 
 # 支持的曲绘格式
-OMGZ_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
+mtmlz_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
 
 
 """
 预览谱面
 """
 
-# 支持读取的 omgc 版本
-PREVIEW_SUPPORTED_OMGC_VERSIONS = {5}
+# 支持读取的 mtmlc 版本
+PREVIEW_SUPPORTED_mtmlc_VERSIONS = {5}
 
 # 窗口高度
 PREVIEW_WINDOW_HEIGHT = 600
