@@ -1,4 +1,5 @@
-from common import *
+# 流速倍率
+MC_SPEED_RATE = 3
 
 
 def mc2mtmlproj(mc_data: dict) -> tuple:
@@ -17,7 +18,7 @@ def mc2mtmlproj(mc_data: dict) -> tuple:
         difficulty = 'Default'
     if not (writer := mc_data['meta'].get('creator')):
         writer = 'Unknown'
-    chart_info = {'difficulty': difficulty,'writer': writer}
+    chart_info = {'difficulty': difficulty, 'writer': writer}
     project_data = {}
     project_data['bpm_list'] = sorted((i['beat'], i['bpm']) for i in mc_data['time'])
     line = {}

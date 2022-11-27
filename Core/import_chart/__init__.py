@@ -3,11 +3,10 @@ import traceback
 
 import easygui
 
-from common import *
-from export_chart.batcher import batch_project
-
-from .converter import mc2mtmlproj
-from .dir_importer import import_dir
+from ..export_project import export_project
+from ..file_io import *
+from ..mc2mtmlproj import mc2mtmlproj
+from ..import_dir import import_dir
 
 
 def main() -> None:
@@ -46,8 +45,7 @@ def main() -> None:
                     raise Exception('不支持的文件格式')
                 ok_list.append(file_name)
             except Exception as e:
-                if DEBUG_MODE:
-                    traceback.print_exc()
+                traceback.print_exc()
                 not_ok_list.append(f'{file_name}:{repr(e)}')
 
         msg = f'{len(ok_list)} 个谱面导入成功'+'。；'[bool(ok_list)]
@@ -64,12 +62,11 @@ def main() -> None:
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
-                    files = batch_project(**song_info, dir_path=dir_path)
+                    files = export_project(**song_info, dir_path=dir_path)
                     pack_zip(files, dir_path+'.mtmlz')
                     ok_list.append(dir_path)
                 except Exception as e:
-                    if DEBUG_MODE:
-                        traceback.print_exc()
+                    traceback.print_exc()
                     not_ok_list.append(f'{dir_path}:{repr(e)}')
 
             msg = f'{len(ok_list)} 个谱面已打包为 mtmlz'+'。；'[bool(ok_list)]
@@ -88,6 +85,6 @@ def main() -> None:
         song_info = import_dir(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
         if easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
-            files = batch_project(**song_info, dir_path=chart_dir)
+            files = export_project(**song_info, dir_path=chart_dir)
             pack_zip(files, chart_dir+'.mtmlz')
             easygui.msgbox('成功打包为 mtmlz 文件！', '导入谱面', '好的')

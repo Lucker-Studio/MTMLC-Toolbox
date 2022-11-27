@@ -1,11 +1,15 @@
 import math
 
-from common import *
+from .common import (CHART_FRAME_HEIGHT, DEFAULT_LINE_INITIAL_ALPHA,
+                     DEFAULT_LINE_INITIAL_POSITION, NOTE_PROPERTIES,
+                     SLOW_MOVING_LINEAR, SLOW_MOVING_SINE)
+from .common.mtmlc_commands import *
 
 
-def proj2chart(project_data: dict) -> tuple:
+def compile_proj(project_data: dict) -> tuple:
     """
-    将工程文件数据转换为谱面文件数据
+    编译工程文件
+    返回：lines, notes, commands（未展开）
     """
 
     lines = []  # 判定线列表

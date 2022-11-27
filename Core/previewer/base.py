@@ -1,6 +1,6 @@
 import math
 
-from common import *
+from ..common import NOTE_PROPERTIES
 
 
 class Linear_func:

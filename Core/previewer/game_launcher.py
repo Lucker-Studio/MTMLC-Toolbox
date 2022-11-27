@@ -3,10 +3,10 @@ import os
 import easygui
 import pygame
 
-from common import *
-
-from .game_controller import Game
+from ..file_io import read_json
 from .chart_reader import read_mtmlc
+from .config import DEFAULT_MUSIC_VOLUME, DEFAULT_SPEED_RATE
+from .game_controller import Game
 from .window_controller import Window
 
 
@@ -33,18 +33,18 @@ def launch(chart_dir: str) -> None:
             else:
                 return
         while True:
-            input_data = easygui.multenterbox('请确认或更改播放参数', song_info['title']+' - 预览谱面', ['流速倍率(不小于1)', '音乐音量(0~1之间)'], [PREVIEW_DEFAULT_NOTE_SPEED_RATE, PREVIEW_DEFAULT_MUSIC_VOLUME])
+            input_data = easygui.multenterbox('请确认或更改播放参数', song_info['title']+' - 预览谱面', ['流速倍率(不小于1)', '音乐音量(0~1之间)'], [DEFAULT_SPEED_RATE, DEFAULT_MUSIC_VOLUME])
             if input_data is None:
                 return
             try:
-                note_speed_rate, music_volume = map(float, input_data)
-                assert note_speed_rate >= 1 and 0 <= music_volume <= 1
+                speed_rate, music_volume = map(float, input_data)
+                assert speed_rate >= 1 and 0 <= music_volume <= 1
                 break
             except Exception:
                 easygui.msgbox('输入有误，请重新输入！', '好的')
         try:
             game_window = Window(song_info['title']+' '+chart_info['difficulty'], os.path.join(chart_dir, song_info['illustration_file']), num_of_tracks)
-            game = Game(mtmlc_data, activated_notes, os.path.join(chart_dir, song_info['music_file']), game_window, note_speed_rate, music_volume)
+            game = Game(mtmlc_data, activated_notes, os.path.join(chart_dir, song_info['music_file']), game_window, speed_rate, music_volume)
             game.main_loop()
         except Exception as e:
             pygame.quit()

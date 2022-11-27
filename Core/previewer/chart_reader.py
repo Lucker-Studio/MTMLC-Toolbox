@@ -1,9 +1,8 @@
 import hashlib
 import struct
 
-from common import *
-
-from .base import *
+from ..common import COMMAND_PARAM_TYPE, MTMLC_STRUCT_FORMAT
+from .base import Line, Note
 
 
 def read_mtmlc(mtmlc_path: str, mtmlc_md5: str) -> tuple:

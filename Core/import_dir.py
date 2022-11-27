@@ -1,9 +1,9 @@
 import os
 import traceback
 
-from common import *
-
-from .converter import mc2mtmlproj
+from .common import RESOURCES_DIR
+from .file_io import read_json, write_json
+from .mc2mtmlproj import mc2mtmlproj
 
 
 def import_dir(dir_path: str) -> list:
@@ -22,8 +22,7 @@ def import_dir(dir_path: str) -> list:
                 write_json(project_data, target)
                 song_info['charts'].append({**chart_info, 'path': target})
             except Exception:
-                if DEBUG_MODE:
-                    traceback.print_exc()
+                traceback.print_exc()
     if len(song_info['charts']) == 0:
         raise Exception('不含有效谱面')
     else:

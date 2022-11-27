@@ -3,19 +3,19 @@ import time
 import pygame
 import tinytag
 
-from common import *
-
-from .base import *
+from ..common.mtmlc_commands import *
+from .base import Linear_func, Sine_func
+from .config import MISS_TIME, WAIT_TIME
 from .window_controller import Window
 
 
 class Game:
-    def __init__(self, mtmlc_data: tuple, activated_notes: list, music_path: str, game_window: Window, note_speed_rate: float, music_volume: float) -> None:
+    def __init__(self, mtmlc_data: tuple, activated_notes: list, music_path: str, game_window: Window, speed_rate: float, music_volume: float) -> None:
         self.lines, self.notes, self.commands = mtmlc_data
         self.activated_notes = activated_notes
         self.game_window = game_window
-        self.note_speed_rate = note_speed_rate
-        self.game_time = -PREVIEW_WAIT_TIME
+        self.speed_rate = speed_rate
+        self.game_time = -WAIT_TIME
         self.start_time = 0  # 游戏开始的绝对时间
         self.music_length = tinytag.TinyTag.get(music_path).duration
 
@@ -60,12 +60,12 @@ class Game:
             for track_notes in self.activated_notes:
                 for note_id in track_notes:
                     note = self.notes[note_id]
-                    if self.game_time-note.end_time > PREVIEW_MISS_TIME:
+                    if self.game_time-note.end_time > MISS_TIME:
                         track_notes.remove(note_id)
                     else:
-                        alpha = 1-(max(0, self.game_time-note.end_time)/PREVIEW_MISS_TIME)**2
-                        note_pos = line_pos[note.line_id]+self.note_speed_rate*(line_play_pos[note.line_id]-note.showing_position_offset)
-                        self.game_window.draw_note(note_pos, self.note_speed_rate*note.showing_length, note.get_showing_track(self.game_time), alpha)
+                        alpha = 1-(max(0, self.game_time-note.end_time)/MISS_TIME)**2
+                        note_pos = line_pos[note.line_id]+self.speed_rate*(line_play_pos[note.line_id]-note.showing_position_offset)
+                        self.game_window.draw_note(note_pos, self.speed_rate*note.showing_length, note.get_showing_track(self.game_time), alpha)
 
             self.game_window.end_drawing()
 
