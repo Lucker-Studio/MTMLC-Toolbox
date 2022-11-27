@@ -4,9 +4,9 @@ import traceback
 import easygui
 
 from common import *
-from export_chart.batcher import batch_charts
+from export_chart.batcher import batch_project
 
-from .converter import malody2omegar
+from .converter import mc2mtmlproj
 from .dir_importer import import_dir
 
 
@@ -40,7 +40,7 @@ def main() -> None:
                     if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
                         raise Exception('已存在同名文件')
                     mc_data = read_json(chart)
-                    project_data = malody2omegar(mc_data)[-1]
+                    project_data = mc2mtmlproj(mc_data)[-1]
                     write_json(project_data, target)
                 else:
                     raise Exception('不支持的文件格式')
@@ -64,7 +64,7 @@ def main() -> None:
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
-                    files = batch_charts(**song_info, dir_path=dir_path)
+                    files = batch_project(**song_info, dir_path=dir_path)
                     pack_zip(files, dir_path+'.mtmlz')
                     ok_list.append(dir_path)
                 except Exception as e:
@@ -88,6 +88,6 @@ def main() -> None:
         song_info = import_dir(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
         if easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
-            files = batch_charts(**song_info, dir_path=chart_dir)
+            files = batch_project(**song_info, dir_path=chart_dir)
             pack_zip(files, chart_dir+'.mtmlz')
             easygui.msgbox('成功打包为 mtmlz 文件！', '导入谱面', '好的')

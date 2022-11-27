@@ -3,7 +3,7 @@ import traceback
 
 from common import *
 
-from .converter import malody2omegar
+from .converter import mc2mtmlproj
 
 
 def import_dir(dir_path: str) -> list:
@@ -17,7 +17,7 @@ def import_dir(dir_path: str) -> list:
             try:
                 target = os.path.join(dir_path, chart_name+'.mtmlproj')
                 mc_data = read_json(os.path.join(dir_path, file_name))
-                song_info_upd, chart_info, project_data = malody2omegar(mc_data)
+                song_info_upd, chart_info, project_data = mc2mtmlproj(mc_data)
                 song_info.update(song_info_upd)
                 write_json(project_data, target)
                 song_info['charts'].append({**chart_info, 'mtmlproj_path': target})

@@ -4,10 +4,10 @@ import tempfile
 import easygui
 
 from common import *
-from export_chart.batcher import batch_charts
-from export_chart.converter import mtmlproj2mtmlc
-from export_chart.mtmlc_writer import write_mtmlc
-from import_chart.converter import malody2omegar
+from export_chart.batcher import batch_project
+from export_chart.converter import proj2chart
+from export_chart.chart_writer import write_mtmlc
+from import_chart.converter import mc2mtmlproj
 from import_chart.dir_importer import import_dir
 
 from .game_launcher import launch
@@ -25,12 +25,12 @@ def main() -> None:
     elif chart_ext == '.mcz':
         unpack_zip(file_path, chart_dir)
         song_info = import_dir(chart_dir)
-        files = batch_charts(**song_info, dir_path=chart_dir)
+        files = batch_project(**song_info, dir_path=chart_dir)
         pack_dir(files, chart_dir)
     elif chart_ext == '.mc':
         mtmlc_path = os.path.join(chart_dir, chart_info['difficulty']+'.mtmlc')
-        song_info, chart_info, project_data = malody2omegar(read_json(file_path))
-        lines, notes, commands = mtmlproj2mtmlc(project_data)
+        song_info, chart_info, project_data = mc2mtmlproj(read_json(file_path))
+        lines, notes, commands = proj2chart(project_data)
         write_mtmlc(lines, notes, commands, mtmlc_path)
         song_info['music_file'] = os.path.join(file_dir, song_info['music_file'])
         if 'illustration_file' in song_info:
@@ -47,7 +47,7 @@ def main() -> None:
         write_json(song_info, os.path.join(chart_dir, 'index.mtmlinfo'))
     elif chart_ext == '.mtmlinfo':
         song_info = read_json(file_path)
-        files = batch_charts(**song_info, dir_path=file_dir)
+        files = batch_project(**song_info, dir_path=file_dir)
         pack_dir(files, chart_dir)
     else:
         easygui.msgbox('不支持此格式！', '预览谱面', '好的')

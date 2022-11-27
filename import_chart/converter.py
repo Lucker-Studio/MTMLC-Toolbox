@@ -1,9 +1,9 @@
 from common import *
 
 
-def malody2omegar(mc_data: dict) -> tuple:
+def mc2mtmlproj(mc_data: dict) -> tuple:
     """
-    将 Malody 谱面数据转换为 Omegar 工程文件数据
+    将 Malody 谱面数据转换为工程文件数据
     返回值：song_info, chart_info, project_data
     """
     song_info = {}

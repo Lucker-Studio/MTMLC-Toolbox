@@ -3,9 +3,9 @@ import math
 from common import *
 
 
-def mtmlproj2mtmlc(project_data: dict) -> tuple:
+def proj2chart(project_data: dict) -> tuple:
     """
-    将工程文件数据转换为 mtmlc 谱面文件数据
+    将工程文件数据转换为谱面文件数据
     """
 
     lines = []  # 判定线列表

@@ -16,7 +16,7 @@ def write_mtmlc(lines: list, notes: list, commands: list, mtmlc_path: str) -> No
             debug_log.write('\t'.join(map(lambda x: f'{x:.3f}' if type(x) == float else str(x), data))+'\n')
 
     output_log('[META]')
-    meta = [MTMLC_WRITING_VERSION, len(lines), len(notes), len(commands)]
+    meta = [len(lines), len(notes), len(commands)]
     output_log(*meta)
 
     output_log('[LINE]')

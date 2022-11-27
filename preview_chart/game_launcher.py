@@ -6,7 +6,7 @@ import pygame
 from common import *
 
 from .game_controller import Game
-from .mtmlc_reader import read_mtmlc
+from .chart_reader import read_mtmlc
 from .window_controller import Window
 
 

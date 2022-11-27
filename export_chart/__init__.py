@@ -2,7 +2,7 @@ import easygui
 
 from common import *
 
-from .batcher import batch_charts
+from .batcher import batch_project
 
 
 def main() -> None:
@@ -99,6 +99,6 @@ def main() -> None:
     mtmlz_path = easygui.filesavebox('保存 mtmlz 文件', default=song_info['title']+'.mtmlz')
     if mtmlz_path is None:  # 未保存文件
         return
-    files = batch_charts(**song_info)
+    files = batch_project(**song_info)
     pack_zip(files, mtmlz_path)
     easygui.msgbox('导出成功！', '导出谱面', '好耶')

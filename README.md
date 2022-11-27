@@ -2,7 +2,6 @@
 
 *Version 1 (2022/11/27)*
 
-
 ## 工程文件 (*.mtmlproj)
 
 - `music_offset`：第 0 拍对应音乐第几秒
@@ -28,14 +27,13 @@
     - `showing_track_changes`：变轨事件列表，格式与 `motions` 相同（若未指定，则为空）
     - `properties`：属性（`value` 的类型均为 `bool`，若未指定，则等于默认值）
 
-
 ## 谱面文件 (*.mtmlc)
 
 谱面文件中无符号整型（uint）和浮点型（float）均为 4 字节小端型数据。
 
 谱面文件中时间单位为秒。
 
-谱面文件主体分为四部分：meta 区，line 区，note 区，cmd 区。
+谱面文件分为四部分：meta 区，line 区，note 区，cmd 区。
 
 ### meta 区
 
@@ -134,7 +132,6 @@ cmd 区中每条指令的格式如下：
 - 参数 2：$k$ 的值（float）
 - 参数 3：$b$ 的值（float）
 
-
 ## 索引文件 (*.mtmlinfo)
 
 - `title`：曲名
@@ -147,7 +144,6 @@ cmd 区中每条指令的格式如下：
   - `writer`：谱师
   - `path`：工程文件路径（仅工程文件夹内）
   - `md5`：谱面文件 MD5 字符串（仅歌曲压缩包内）
-
 
 ## 歌曲压缩包 (*.mtmlz)
 
