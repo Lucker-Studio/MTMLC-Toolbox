@@ -16,7 +16,7 @@ def write_mtmlc(lines: list, notes: list, commands: list, mtmlc_path: str) -> No
             debug_log.write('\t'.join(map(lambda x: f'{x:.3f}' if type(x) == float else str(x), data))+'\n')
 
     output_log('[META]')
-    meta = [mtmlc_WRITING_VERSION, len(lines), len(notes), len(commands)]
+    meta = [MTMLC_WRITING_VERSION, len(lines), len(notes), len(commands)]
     output_log(*meta)
 
     output_log('[LINE]')
@@ -41,7 +41,7 @@ def write_mtmlc(lines: list, notes: list, commands: list, mtmlc_path: str) -> No
         f.write('MTML'.encode('ascii'))
         for data in meta+lines_expanded+notes_expanded+commands_expanded:
             # 将二进制数据写入文件
-            f.write(struct.pack(mtmlc_STRUCT_FORMAT[type(data)], data))
+            f.write(struct.pack(MTMLC_STRUCT_FORMAT[type(data)], data))
 
     if DEBUG_MODE:
         debug_log.close()

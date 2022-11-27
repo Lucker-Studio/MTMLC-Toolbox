@@ -114,11 +114,8 @@ COMMAND_PARAM_TYPE = {
 mtmlc 写入
 """
 
-# 写入的 mtmlc 版本
-mtmlc_WRITING_VERSION = 5
-
 # mtmlc 数据存储格式
-mtmlc_STRUCT_FORMAT = {int: '<I', float: '<f'}
+MTMLC_STRUCT_FORMAT = {int: '<I', float: '<f'}
 
 
 """
@@ -126,18 +123,15 @@ mtmlz 打包
 """
 
 # 支持的音频格式
-mtmlz_SUPPORTED_MUSIC_FORMATS = ['*.ogg', '*.mp3']
+MTMLZ_SUPPORTED_MUSIC_FORMATS = ['*.ogg', '*.mp3']
 
 # 支持的曲绘格式
-mtmlz_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
+MTMLZ_SUPPORTED_ILLUSTRATION_FORMATS = ['*.jpg', '*.png']
 
 
 """
 预览谱面
 """
-
-# 支持读取的 mtmlc 版本
-PREVIEW_SUPPORTED_mtmlc_VERSIONS = {5}
 
 # 窗口高度
 PREVIEW_WINDOW_HEIGHT = 600

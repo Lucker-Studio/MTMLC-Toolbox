@@ -20,8 +20,8 @@ def main() -> None:
         title = ''
         composer = ''
         illustrator = ''
-        music_file = mtmlz_SUPPORTED_MUSIC_FORMATS[0]
-        illustration_file = mtmlz_SUPPORTED_ILLUSTRATION_FORMATS[0]
+        music_file = MTMLZ_SUPPORTED_MUSIC_FORMATS[0]
+        illustration_file = MTMLZ_SUPPORTED_ILLUSTRATION_FORMATS[0]
         charts = []
 
         data = (title, composer, illustrator)  # 默认信息，可能来自于模板
@@ -35,10 +35,10 @@ def main() -> None:
                 title, composer, illustrator = data
                 break
 
-        music_file = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_file, mtmlz_SUPPORTED_MUSIC_FORMATS)
+        music_file = easygui.fileopenbox('请选择歌曲音频', '导出谱面', music_file, MTMLZ_SUPPORTED_MUSIC_FORMATS)
         if music_file is None:
             return
-        illustration_file = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_file, mtmlz_SUPPORTED_ILLUSTRATION_FORMATS)
+        illustration_file = easygui.fileopenbox('请选择曲绘图片', '导出谱面', illustration_file, MTMLZ_SUPPORTED_ILLUSTRATION_FORMATS)
         if illustration_file is None:
             return
 

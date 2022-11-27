@@ -33,17 +33,13 @@ def read_mtmlc(mtmlc_path: str, mtmlc_md5: str) -> tuple:
         """
         读取一个指定类型的数据
         """
-        return struct.unpack(mtmlc_STRUCT_FORMAT[data_type], next(read_4byte))[0]
+        return struct.unpack(MTMLC_STRUCT_FORMAT[data_type], next(read_4byte))[0]
 
     def read_multi_data(*args):
         """
         读取多个指定类型的数据
         """
         return list(map(read_data, args))
-
-    mtmlc_version = read_data(int)
-    if mtmlc_version not in PREVIEW_SUPPORTED_mtmlc_VERSIONS:
-        raise Exception(f'暂不支持此版本（{mtmlc_version}）的 mtmlc 文件')
 
     line_count, note_count, cmd_count = read_multi_data(int, int, int)
 
