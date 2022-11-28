@@ -62,7 +62,7 @@ def main() -> None:
             not_ok_list = []
             for dir_path, song_info in info_list.items():
                 try:
-                    files = export_project(**song_info, dir_path=dir_path)
+                    files = export_project(**song_info, folder_path=dir_path)
                     pack_zip(files, dir_path+'.mtmlz')
                     ok_list.append(dir_path)
                 except Exception as e:
@@ -85,6 +85,6 @@ def main() -> None:
         song_info = import_folder(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
         if easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
-            files = export_project(**song_info, dir_path=chart_dir)
+            files = export_project(**song_info, folder_path=chart_dir)
             pack_zip(files, chart_dir+'.mtmlz')
             easygui.msgbox('成功打包为 mtmlz 文件！', '导入谱面', '好的')

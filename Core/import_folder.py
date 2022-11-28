@@ -1,23 +1,23 @@
 import os
 import traceback
 
-from .common import RESOURCES_DIR
+from .common import RESOURCES_PATH
 from .file_io import read_json, write_json
 from .mc2mtmlproj import mc2mtmlproj
 
 
-def import_folder(dir_path: str) -> list:
+def import_folder(folder_path: str) -> list:
     """
     导入文件夹
     返回：song_info
     """
     song_info = {'charts': []}
-    for file_name in os.listdir(dir_path):
+    for file_name in os.listdir(folder_path):
         chart_name, chart_ext = os.path.splitext(file_name)
         if chart_ext == '.mc':
             try:
-                target = os.path.join(dir_path, chart_name+'.mtmlproj')
-                mc_data = read_json(os.path.join(dir_path, file_name))
+                target = os.path.join(folder_path, chart_name+'.mtmlproj')
+                mc_data = read_json(os.path.join(folder_path, file_name))
                 song_info_upd, chart_info, project_data = mc2mtmlproj(mc_data)
                 song_info.update(song_info_upd)
                 write_json(project_data, target)
@@ -30,6 +30,6 @@ def import_folder(dir_path: str) -> list:
         song_info.setdefault('title', 'Untitled Song')
         song_info.setdefault('composer', 'Unknown')
         song_info.setdefault('illustrator', 'Unknown')
-        song_info.setdefault('illustration_file', os.path.join(RESOURCES_DIR, 'Default.jpg'))
-        write_json(song_info, os.path.join(dir_path, 'index.mtmlinfo'))
+        song_info.setdefault('illustration_file', os.path.join(RESOURCES_PATH, 'Default.jpg'))
+        write_json(song_info, os.path.join(folder_path, 'index.mtmlinfo'))
         return song_info

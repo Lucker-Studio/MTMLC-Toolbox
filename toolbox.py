@@ -2,7 +2,6 @@ import easygui
 
 import Scripts
 
-
 PROGRAM_VERSION = 'v1.0'
 PROGRAM_TITLE = f'MTMLC Toolbox {PROGRAM_VERSION}'
 PROGRAM_NAME = f'Multi-track Multi-line Chart Toolbox {PROGRAM_VERSION}'

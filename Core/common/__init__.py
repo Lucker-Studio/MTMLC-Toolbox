@@ -6,9 +6,9 @@ from .mtmlc_commands import *
 
 # 资源路径
 if '_MEIPASS' in dir(sys):  # Pyinstaller 生成
-    RESOURCES_DIR = os.path.join(sys._MEIPASS, 'Resources')
+    RESOURCES_PATH = os.path.join(sys._MEIPASS, 'Resources')
 else:
-    RESOURCES_DIR = os.path.abspath('Resources')
+    RESOURCES_PATH = os.path.abspath('Resources')
 
 # note 属性
 NOTE_DEFAULT_PROPERTIES = {

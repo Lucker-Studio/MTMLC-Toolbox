@@ -45,15 +45,15 @@ def pack_zip(files: dict, zip_path: str) -> None:
             f.write(outside_path, inside_path)
 
 
-def pack_dir(files: dict, dir_path: str) -> None:
+def pack_folder(files: dict, folder_path: str) -> None:
     """
     打包到文件夹
     """
 
-    if not os.path.isdir(dir_path):
-        os.makedirs(dir_path)
+    if not os.path.isdir(folder_path):
+        os.makedirs(folder_path)
     for inside_path, outside_path in files.items():
-        shutil.copy(outside_path, os.path.join(dir_path, inside_path))
+        shutil.copy(outside_path, os.path.join(folder_path, inside_path))
 
 
 def get_md5(file_path: str) -> str:
