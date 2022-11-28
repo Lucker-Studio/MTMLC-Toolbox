@@ -6,7 +6,7 @@ import easygui
 from ..export_project import export_project
 from ..file_io import *
 from ..mc2mtmlproj import mc2mtmlproj
-from ..import_dir import import_dir
+from ..import_folder import import_folder
 
 
 def main() -> None:
@@ -33,7 +33,7 @@ def main() -> None:
                     else:
                         os.makedirs(target)
                     unpack_zip(chart, target)
-                    info_list[target] = import_dir(target)
+                    info_list[target] = import_folder(target)
                 elif chart_ext == '.mc':
                     target = os.path.join(chart_dir, chart_name+'.mtmlproj')
                     if os.path.isfile(target) and not easygui.ynbox(f'文件 {target} 已存在，确认要覆盖吗？', '导入谱面', ('确认', '取消')):
@@ -82,7 +82,7 @@ def main() -> None:
         chart_dir = easygui.diropenbox('选择文件夹', '导入谱面')
         if chart_dir is None:
             return
-        song_info = import_dir(chart_dir)
+        song_info = import_folder(chart_dir)
         easygui.msgbox('导入成功！', '导入谱面', '好的')
         if easygui.ynbox('是否要立即打包为 mtmlz 文件？', '导入谱面', ('好的', '不用了')):
             files = export_project(**song_info, dir_path=chart_dir)

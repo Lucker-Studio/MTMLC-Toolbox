@@ -10,7 +10,7 @@ from ..common import RESOURCES_DIR
 from ..compile_proj import compile_proj
 from ..export_project import export_project
 from ..file_io import *
-from ..import_dir import import_dir
+from ..import_folder import import_folder
 from ..mc2mtmlproj import mc2mtmlproj
 from ..write_mtmlc import write_mtmlc
 from .game_launcher import launch
@@ -27,7 +27,7 @@ def main() -> None:
         unpack_zip(file_path, chart_dir)
     elif chart_ext == '.mcz':
         unpack_zip(file_path, chart_dir)
-        song_info = import_dir(chart_dir)
+        song_info = import_folder(chart_dir)
         files = export_project(**song_info, dir_path=chart_dir)
         pack_dir(files, chart_dir)
     elif chart_ext == '.mc':

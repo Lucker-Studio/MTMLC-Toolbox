@@ -43,9 +43,10 @@ def compile_proj(project_data: dict) -> tuple:
             i += 1
         return float(beat_time_spb[i][1]+beat_time_spb[i][2]*(beat-beat_time_spb[i][0]))
 
-    def process_changes(initial_val: int, changes: list, linear_cmd_type: int, sine_cmd_type: int, *id) -> None:
+    def process_changes(initial_val: int, changes: list, linear_cmd_type: int, sine_cmd_type: int, *id) -> list:
         """
         处理缓动
+        返回：指令列表
         """
         ret = []
         changes_processed = {}
@@ -98,7 +99,10 @@ def compile_proj(project_data: dict) -> tuple:
             start_time = beat2sec(note['start'])  # 判定秒数
             end_time = beat2sec(note.get('end', note['start']))  # 结束秒数
 
-            def get_play_pos(t):
+            def get_play_pos(t: float) -> float:
+                """
+                获取某一时间的播放位置
+                """
                 k, b = [i[1:] for i in play_pos_changes if t >= i[0]][-1]
                 return k*t+b
 
@@ -120,7 +124,10 @@ def compile_proj(project_data: dict) -> tuple:
 
             if not initial_activated:
                 if appear_time is None:
-                    def solve(val, t0, t1, k, b):
+                    def solve(val: float, t0: float, t1: float, k: float, b: float) -> float:
+                        """
+                        获取一元一次方程在区间内的解
+                        """
                         if k != 0:
                             x = (val-b+showing_pos_offset)/k
                             if t0 <= x <= t1:

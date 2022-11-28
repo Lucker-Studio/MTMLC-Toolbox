@@ -6,9 +6,10 @@ from .file_io import read_json, write_json
 from .mc2mtmlproj import mc2mtmlproj
 
 
-def import_dir(dir_path: str) -> list:
+def import_folder(dir_path: str) -> list:
     """
     导入文件夹
+    返回：song_info
     """
     song_info = {'charts': []}
     for file_name in os.listdir(dir_path):

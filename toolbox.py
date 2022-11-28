@@ -1,18 +1,24 @@
-import traceback
-
 import easygui
 
-builtin_modules = {
-    '导入谱面': 'import_chart',
-    '导出谱面': 'export_chart',
-    '预览谱面': 'preview_chart'
-}
-title = 'MTMLC-Toolbox v1.0 Alpha'
+import Scripts
+
+
+PROGRAM_VERSION = 'v1.0'
+PROGRAM_TITLE = f'MTMLC Toolbox {PROGRAM_VERSION}'
+PROGRAM_NAME = f'Multi-track Multi-line Chart Toolbox {PROGRAM_VERSION}'
+
+
+def main() -> None:
+    """
+    工具箱主菜单
+    """
+    scripts = Scripts.get_scripts()
+    while choice := easygui.choicebox(f'欢迎使用 {PROGRAM_NAME}！\n请选择要使用的功能：', PROGRAM_TITLE, scripts.keys()):
+        try:
+            scripts[choice]()
+        except Exception:
+            easygui.exceptionbox(f'哎呀——功能“{choice}”出错了！', PROGRAM_TITLE)
+
 
 if __name__ == '__main__':
-    while ch := easygui.choicebox('请选择要使用的功能', title, builtin_modules.keys()):
-        try:
-            __import__(builtin_modules[ch]).main()
-        except Exception:
-            traceback.print_exc()
-            easygui.exceptionbox(f'使用功能“{ch}”时出错', title)
+    main()

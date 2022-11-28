@@ -8,6 +8,7 @@ from .base import Line, Note
 def read_mtmlc(mtmlc_path: str, mtmlc_md5: str) -> tuple:
     """
     读取 mtmlc 谱面文件
+    返回：(lines, notes, commands), activated_notes, num_of_tracks
     """
 
     chart_data = open(mtmlc_path, 'rb').read()
