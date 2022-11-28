@@ -2,7 +2,7 @@ import easygui
 
 from Core.common import SUPPORTED_ILLUSTRATION_FORMATS, SUPPORTED_MUSIC_FORMATS
 from Core.project_exporter import export_project
-from Core.file_io import pack_zip, write_json
+from Core.file_io import pack_zip, save_file, write_json
 
 
 def manual_export() -> None:
@@ -51,7 +51,7 @@ def manual_export() -> None:
                     'illustration_file': illustration_file,
                     'charts': charts
                 }
-                info_path = easygui.filesavebox('保存 mtmlinfo 文件', '手动导出', 'index.mtmlinfo')
+                info_path = save_file('保存 mtmlinfo 文件', '.mtmlinfo', 'index')
                 if info_path:
                     write_json(song_info, info_path)
                 break
@@ -83,14 +83,11 @@ def manual_export() -> None:
         if data is None:
             continue  # 回到谱面列表
 
-        mtmlproj_path = easygui.fileopenbox('请选择工程文件', '手动导出', '*.mtmlproj')
-        if mtmlproj_path is None:
-            continue  # 回到谱面列表
-        charts.append({'difficulty': difficulty,  'writer': writer, 'path': mtmlproj_path})
+        if mtmlproj_path := easygui.fileopenbox('请选择工程文件', '手动导出', '*.mtmlproj'):
+            charts.append({'difficulty': difficulty,  'writer': writer, 'path': mtmlproj_path})
 
-    mtmlz_path = easygui.filesavebox('保存 mtmlz 文件', default=title+'.mtmlz')
-    if mtmlz_path is None:  # 未保存文件
-        return
     files = export_project(**song_info)
-    pack_zip(files, mtmlz_path)
-    easygui.msgbox('导出成功！', '手动导出', '好耶')
+
+    if mtmlz_path := save_file('保存 mtmlz 文件', '.mtmlz', title):
+        pack_zip(files, mtmlz_path)
+        easygui.msgbox('导出成功！', '手动导出', '好耶')

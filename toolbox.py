@@ -12,7 +12,7 @@ def main() -> None:
     工具箱主菜单
     """
     scripts = Scripts.get_scripts()
-    while choice := easygui.choicebox(f'欢迎使用 {PROGRAM_NAME}！\n请选择要使用的功能：', PROGRAM_TITLE, scripts.keys()):
+    while choice := easygui.buttonbox(f'欢迎使用 {PROGRAM_NAME}！\n请选择要使用的功能。', PROGRAM_TITLE, list(scripts.keys())):
         try:
             scripts[choice]()
         except Exception:
