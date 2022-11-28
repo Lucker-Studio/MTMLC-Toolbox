@@ -7,7 +7,7 @@ import tempfile
 import easygui
 
 from ..common import RESOURCES_PATH
-from ..compile_proj import compile_proj
+from ..compile_project import compile_project
 from ..export_project import export_project
 from ..file_io import *
 from ..import_folder import import_folder
@@ -33,7 +33,7 @@ def main() -> None:
     elif chart_ext == '.mc':
         song_info, chart_info, project_data = mc2mtmlproj(read_json(file_path))
         mtmlc_path = os.path.join(chart_dir, chart_info['difficulty']+'.mtmlc')
-        lines, notes, commands = compile_proj(project_data)
+        lines, notes, commands = compile_project(project_data)
         write_mtmlc(lines, notes, commands, mtmlc_path)
         song_info['music_file'] = os.path.join(file_dir, song_info['music_file'])
         if 'illustration_file' in song_info:
