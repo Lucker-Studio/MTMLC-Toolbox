@@ -11,11 +11,7 @@ a = Analysis(
     datas=[
         ('Resources', 'Resources')
     ],
-    hiddenimports=[
-        'export_chart',
-        'import_chart',
-        'preview_chart'
-    ],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
