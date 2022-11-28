@@ -1,9 +1,9 @@
 import os
 import tempfile
 
-from .compile_project import compile_project
+from .chart_compiler import compile_chart
 from .file_io import get_md5, read_json, write_json
-from .write_mtmlc import write_mtmlc
+from .mtmlc_writer import write_mtmlc
 
 
 def export_project(title: str, composer: str, illustrator: str, music_file: str, illustration_file: str, charts: list, folder_path: str = '') -> dict:
@@ -16,7 +16,7 @@ def export_project(title: str, composer: str, illustrator: str, music_file: str,
     for chart_info in charts:
         mtmlc_path = tempfile.mkstemp()[1]  # 获取临时 mtmlc 文件名
         project_data = read_json(os.path.join(folder_path, chart_info.pop('path')))
-        lines, notes, commands = compile_project(project_data)
+        lines, notes, commands = compile_chart(project_data)
         write_mtmlc(lines, notes, commands, mtmlc_path)
         files[chart_info['difficulty']+'.mtmlc'] = mtmlc_path
         chart_info['md5'] = get_md5(mtmlc_path)  # 计算 mtmlc 文件 MD5

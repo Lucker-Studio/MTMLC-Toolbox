@@ -6,9 +6,9 @@ from .common import (CHART_FRAME_HEIGHT, DEFAULT_LINE_INITIAL_ALPHA,
 from .common.mtmlc_commands import *
 
 
-def compile_project(project_data: dict) -> tuple:
+def compile_chart(project_data: dict) -> tuple:
     """
-    编译工程文件
+    将工程文件编译为谱面文件
     返回：lines, notes, commands（未展开）
     """
 

@@ -3,10 +3,10 @@ import traceback
 
 import easygui
 
-from ..export_project import export_project
+from ..project_exporter import export_project
 from ..file_io import *
-from ..mc2mtmlproj import mc2mtmlproj
-from ..import_folder import import_folder
+from ..malody_importer import mc2mtmlproj
+from ..folder_importer import import_folder
 
 
 def main() -> None:

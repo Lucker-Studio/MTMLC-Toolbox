@@ -1,7 +1,7 @@
 import easygui
 
 from Core.common import SUPPORTED_ILLUSTRATION_FORMATS, SUPPORTED_MUSIC_FORMATS
-from Core.export_project import export_project
+from Core.project_exporter import export_project
 from Core.file_io import pack_zip, write_json
 
 

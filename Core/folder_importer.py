@@ -3,7 +3,7 @@ import traceback
 
 from .common import RESOURCES_PATH
 from .file_io import read_json, write_json
-from .mc2mtmlproj import mc2mtmlproj
+from .malody_importer import mc2mtmlproj
 
 
 def import_folder(folder_path: str) -> list:
