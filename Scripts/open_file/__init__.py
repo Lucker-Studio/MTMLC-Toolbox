@@ -9,7 +9,7 @@ from .mtmlproj import handle_mtmlproj
 from .mtmlz import handle_mtmlz
 
 
-def open_file() -> None:
+def main() -> None:
     """
     打开文件
     """

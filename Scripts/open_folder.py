@@ -40,7 +40,7 @@ def batch_files(folder_path: str, file_type: str, title: str, operation) -> None
     easygui.msgbox(msg, title, '好的')
 
 
-def open_folder() -> None:
+def main() -> None:
     """
     打开文件夹
     """

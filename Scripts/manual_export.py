@@ -5,7 +5,7 @@ from Core.project_exporter import export_project
 from Core.file_io import pack_zip, save_file, write_json
 
 
-def manual_export() -> None:
+def main() -> None:
     """
     手动导出
     """

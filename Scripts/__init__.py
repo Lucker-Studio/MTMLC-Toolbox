@@ -1,6 +1,4 @@
-from .manual_export import manual_export
-from .open_file import open_file
-from .open_folder import open_folder
+from . import convert_8k_to_4k, manual_export, open_file, open_folder
 
 
 def get_scripts() -> dict:
@@ -9,7 +7,8 @@ def get_scripts() -> dict:
     返回：name-function dict
     """
     return {
-        '打开文件': open_file,
-        '打开文件夹': open_folder,
-        '手动导出': manual_export
+        '打开文件': open_file.main,
+        '打开文件夹': open_folder.main,
+        '手动导出': manual_export.main,
+        '8K 转双面 4K': convert_8k_to_4k.main
     }
